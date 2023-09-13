@@ -1,0 +1,9 @@
+afl_output/
+.DS_Store
+results/
+output.db
+submission/
+submission.zip
+
+# Core dumps.
+core.*
