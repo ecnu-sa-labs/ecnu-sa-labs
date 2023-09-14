@@ -1,0 +1,56 @@
+Answer the questions in this file after running AFL and CSA on the
+all the C programs. The questions are organized into two parts: Part A
+concerns with the performance of the tools on programs,
+and Part B concerns with the nature of the tools itself.
+
+Part A: Follow the below instructions to fill in the table below.
+
+Each of the C programs contains zero or more division instructions.
+
+First, inspect the code of each program, and fill in its ground truth
+(right/wrong) in the Ground Truth column: 
+
+- right if the program does not contain any divide-by-zero errors.
+- wrong if the program contains a divide-by-zero error.
+
+Next, refer to the logs of each analyzer's run on each program, and fill
+in its result (accept/reject) in the respective column:
+
+- accept if your analyzer does not report any divide-by-zero errors.
+- reject if your analyzer reports a divide-by-zero error.
+
+Lastly, use the above computed results to calculate Precision, Recall,
+and F-Measure scores for each analyzer on this suite of programs.
+
+============================================================
+| Program   | Ground Truth  |     AFL      |      CSA      |   
+|===========================================================
+| test0.c   |               |              |               |       
+| test1.c   |               |              |               |         
+| test2.c   |               |              |               |       
+| test3.c   |               |              |               |       
+| test4.c   |               |              |               |         
+| test5.c   |               |              |               |          
+| test6.c   |               |              |               |           
+| test7.c   |               |              |               |           
+| test8.c   |               |              |               |          
+| test9.c   |               |              |               |            
+|===========================================================
+| Precision |               |              |               |  
+| Recall    |               |              |               |
+| F-measure |               |              |               |
+============================================================
+
+Part B: Answer the below questions. Provide short
+explanations to justify your answers.
+
+Question 1: From the given programs, can AFL be a sound analysis? Can it be complete?
+
+
+
+Question 2: From the given programs, can CSA be a sound analysis? Can it be complete?
+
+
+
+Question 4: What are the pros and cons of using the CSA to find divide-by-zero errors?  Comment
+on both the accuracy and cost of the analyzer under these two domains.
