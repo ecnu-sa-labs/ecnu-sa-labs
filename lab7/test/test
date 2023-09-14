@@ -1,0 +1,9 @@
+#!/bin/sh
+
+USAGE="Usage ./test [target] [timeout]"
+[ -z "$1" ] && echo "$USAGE" && exit 1
+TARGET="./$1"
+[ ! -f "$TARGET" ] && echo "$TARGET not found" && exit 1
+TIME="${2:-10s}"
+
+timeout "$TIME" ../build/dse "$TARGET" || echo "Exiting test for $TARGET with E${?}"
