@@ -1,11 +1,14 @@
-# sa-labs
-Lab sessions for the software analysis course taught by Professor Ting Su at East China Normal University.
+# Labs for "Software Analysis, Testing and Verification"
+This repository provides the lab sessions for the "[Software Analysis, Testing and Verification (软件分析与验证前沿)](https://tingsu.github.io/files/courses/pa2023.html)" course at East China Normal University.
+
+
+We welcomen any comments or contributions. Feel free to create issues and pull requests.
 
 Lab env: https://hub.docker.com/u/ecnusa
 
 <br>
 
-| Lab Number | Lab Title                         |
+| Labs | Lab Title                         |
 |------------|-----------------------------------|
 | lab1       | Introduction to Software Analysis |
 | lab2       | The LLVM Framework                |
@@ -15,4 +18,7 @@ Lab env: https://hub.docker.com/u/ecnusa
 
 <br>
 
-Acknowledgement: Lab is currently developed based on the [cis547](https://software-analysis-class.org) course, and we are further designing it based on our ideas.
+Acknowledgement: The lab sessions are currently developed based on the [cis547](https://software-analysis-class.org) course, and we are further designing and refining the materials based on our ideas.
+
+
+

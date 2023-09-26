@@ -52,5 +52,5 @@ Question 2: From the given programs, can CSA be a sound analysis? Can it be comp
 
 
 
-Question 4: What are the pros and cons of using the CSA to find divide-by-zero errors?  Comment
+Question 3: What are the pros and cons of using the CSA to find divide-by-zero errors?  Comment
 on both the accuracy and cost of the analyzer under these two domains.
