@@ -1,10 +1,6 @@
----
-layout: lab
-_id: "1"
-title: "Introduction to Software Analysis"
-synopsis: |
-  Understanding basic concepts of software analysis and metrics used to estimate the effectiveness of analysis.
----
+## Introduction to Software Analysis
+
+Understanding basic concepts of software analysis and metrics used to estimate the effectiveness of analysis.
 
 ### Objective
 
