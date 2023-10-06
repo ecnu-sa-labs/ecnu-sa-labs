@@ -36,7 +36,7 @@ Ensure that you are comfortable with using `Makefile` in this lab.
 
 ##### Step 3.
 
-Inspect the Makefile to see the commands used to run AFL and Clang Static Analyzer(CSA).
+Inspect the Makefile to see the commands used to run AFL and Clang Static Analyzer (CSA).
 
 ```sh
 # Compile the program with AFL
@@ -87,22 +87,22 @@ under the `lab1/results` directory:
 
 ```
    ├── afl_logs/
-   │   ├── test1/
+   │   ├── test0/
    │   │   ├── out.txt
    │   │   ├── afl_output/
-   │   │   └── test1
-   │   ├── ... // similar for test2
+   │   │   └── test0
+   │   ├── ... // similar for test1
    │   ...
    │
    └── csa_logs/
-       ├── test1_out.txt
-       ├── ... // similar for test2
+       ├── test0_out.txt
+       ├── ... // similar for test1
        ...
 ```
 
 ##### Step 2.
 
-Determine the ground truth (right vs. wrong) of the C programs with respect to
+Determine the ground truth (`right` vs. `wrong`) of the C programs with respect to
 division-by-zero errors.
 In particular, for each division instruction in each program, determine by
 inspecting the program whether it can result in a division-by-zero error on
