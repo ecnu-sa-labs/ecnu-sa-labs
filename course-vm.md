@@ -33,9 +33,9 @@ About `.devcontainer/devcontainer.json`,
 
 When the F1 key work, you will see..
 
-![](./course-vm-c.png)
+![](./images/course-vm-c.png)
 
 When the F1 key doesn't work, you can do the following:
 
-![](./course-vm-a.png)
-![](./course-vm-b.png)
+![](./images/course-vm-a.png)
+![](./images/course-vm-b.png)

@@ -26,10 +26,7 @@ reference for most of the LLVM API used in this lab and also throughout the cour
 
 ### Setup
 
-+ Open the `lab2` folder in VS Code, using the 'Open Folder' option in VS Code or the terminal command:
-```
-code <lab2 directory>
-```
++ Open the `lab2` folder in VS Code, using the 'Open Folder' option in VS Code.
 + Make sure the Docker is running on your machine.
 + Open the VS Code [Command Palette][command-palette]; search and select `Reopen in Container`.
 + This will set up the development environment for this lab in VS Code.
