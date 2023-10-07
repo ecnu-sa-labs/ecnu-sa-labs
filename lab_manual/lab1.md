@@ -123,6 +123,18 @@ The files have idiosyncratic names of the form
 It is the contents of these files that AFL used as the input
 to the test program when it encountered a crash.
 
+Upon examining CSA's outputs, if a `core.DivideZero` warning emerges, it indicates that CSA has detected a division by zero error for that particular test case. 
+
+For example:
+
+```c
+c_programs/test9.c:10:17: warning: Division by zero [core.DivideZero]
+   10 |   int avg = sum / len;
+      |             ~~~~^~~~~
+```
+
+However, it's worth noting that not every test case will trigger this warning.
+
 ##### Step 4.
 
 Using your entries from Steps 2 and 3, calculate the
