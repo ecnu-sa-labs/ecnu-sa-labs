@@ -115,7 +115,7 @@ and `StaticAnalysisPass.so` from code that we have provided in
 named `libruntime.so` that provides some functions that are used in the lab.
 The remaining steps follow the depicted workflow from left to right:
 
-<img src="./flowchart.png"
+<img src="../images/flowchart.png"
   style="height: auto; width: 100%">
 
 ##### Step 2
@@ -308,7 +308,7 @@ In the next lab, you will use line coverage information to guide an automated te
 input generator, thereby realizing the architecture of modern industrial-strength
 fuzzers.
 
-<img src="./example-coverage-report.png"
+<img src="../images/example-coverage-report.png"
   style="height: auto; width: 100%">
 
 ##### Debug Location Primer
