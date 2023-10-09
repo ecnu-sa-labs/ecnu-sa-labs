@@ -34,6 +34,20 @@ reference for most of the LLVM API used in this lab and also throughout the cour
 under `/lab2`.
 + Afterwards, if VS Code prompts you to select a kit for the lab then pick Clang 8.
 
+```
+- lib
+  |
+  -- runtime.c: Some helper functions, such as `__binop_op__`, etc., that you will inject using your pass.
+
+- src
+  |
+  -- DynamicAnalysisPass.cpp: Report the location, type and the runtime values of the operands of a binary operator when it is executed.
+  ｜
+  -- StaticAnalysisPass.cpp: Report the location, type and operands of every binary operator when it is not executed.
+  ｜
+  -- Utils.cpp: Some helper functions, such as `getBinOpSymbol` and `getBinOpName`, etc.
+```
+
 ### Part 1: Understanding the LLVM IR
 
 ##### Step 1
@@ -109,7 +123,7 @@ and `StaticAnalysisPass.so` from code that we have provided in
 named `libruntime.so` that provides some functions that are used in the lab.
 The remaining steps follow the depicted workflow from left to right:
 
-<img src="./flowchart.png"
+<img src="../images/flowchart.png"
   style="height: auto; width: 100%">
 
 ##### Step 2
@@ -305,7 +319,7 @@ In the next lab, you will use line coverage information to guide an automated te
 input generator, thereby realizing the architecture of modern industrial-strength
 fuzzers.
 
-<img src="./example-coverage-report.png"
+<img src="../images/example-coverage-report.png"
   style="height: auto; width: 100%">
 
 ##### Debug Location Primer
