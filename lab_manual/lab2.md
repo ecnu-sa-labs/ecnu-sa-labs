@@ -1,12 +1,6 @@
----
-layout: lab
-_id: "2"
-title: "The LLVM Framework"
-synopsis: |
-  Building an understanding of the LLVM framework: IR, API, and the toolchain.
+## The LLVM Framework
 
-
----
+Building an understanding of the LLVM framework: IR, API, and the toolchain.
 
 ### Objective
 
