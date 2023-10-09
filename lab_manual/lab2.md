@@ -437,7 +437,7 @@ submission.zip created successfully.
 
 Then upload the `submission.zip` file to TA's email.
 
-[llvm-primer]: ../resources/llvm-framework-primer.pdf
+[llvm-primer]: https://tingsu.github.io/files/courses/llvm-framework-primer.pdf
 [llvm-lang]: https://llvm.org/docs/LangRef.html
 [llvm-api]: https://releases.llvm.org/8.0.1/docs/index.html
 [llvm-pass]: https://llvm.org/docs/WritingAnLLVMPass.html
