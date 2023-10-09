@@ -26,10 +26,7 @@ reference for most of the LLVM API used in this lab and also throughout the cour
 
 ### Setup
 
-+ Open the `lab2` folder in VS Code, using the 'Open Folder' option in VS Code or the terminal command:
-```
-code <lab2 directory>
-```
++ Open the `lab2` folder in VS Code, using the 'Open Folder' option in VS Code.
 + Make sure the Docker is running on your machine.
 + Open the VS Code [Command Palette][command-palette]; search and select `Reopen in Container`.
 + This will set up the development environment for this lab in VS Code.
@@ -127,17 +124,15 @@ program to LLVM IR, as you did in Part 1:
 
 ```sh
 /lab2$ cd test
-/lab2/test$ clang -emit-llvm -S -fno-discard-value-names -c -o simple0.ll
-simple0.c -g
-```
+/lab2/test$ clang -emit-llvm -S -fno-discard-value-names -c -o simple0.ll simple0.c -g
+
 
 ##### Step 3
 
 Next, we use opt to run the provided StaticAnalysisPass pass on the compiled C program:
 
 ```sh
-/lab2/test$ opt -load ../build/StaticAnalysisPass.so -StaticAnalysisPass -S
-simple0.ll -o simple0.static.ll
+/lab2/test$ opt -load ../build/StaticAnalysisPass.so -StaticAnalysisPass -S simple0.ll -o simple0.static.ll
 ...
 ```
 
@@ -151,8 +146,7 @@ Similarly, we use `opt` to run the provided `DynamicAnalysisPass` pass on the
 compiled C program:
 
 ```sh
-/lab2/test$ opt -load ../build/DynamicAnalysisPass.so -DynamicAnalysisPass -S
-simple0.ll -o simple0.dynamic.ll
+/lab2/test$ opt -load ../build/DynamicAnalysisPass.so -DynamicAnalysisPass -S simple0.ll -o simple0.dynamic.ll
 ```
 
 The program produced in `simple0.static.ll` should be identical to `simple0.ll`

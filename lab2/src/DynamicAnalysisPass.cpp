@@ -96,22 +96,11 @@ void instrumentBinOpOperands(Module *M, BinaryOperator *BinOp, int Line,
   auto *Int32Type = Type::getInt32Ty(Context);
   auto *CharType = Type::getInt8Ty(Context);
 
-  // Get symbol for binary operator.
-  char operator1 = getBinOpSymbol(BinOp->getOpcode());
-
-  // Convert line, column, and operator to LLVM values.
-  auto OperatorVal = ConstantInt::get(CharType, operator1);
-  auto LineVal = ConstantInt::get(Int32Type, Line);
-  auto ColVal = ConstantInt::get(Int32Type, Col);
-
-  // Get operands of binary operator.
-  auto op1 = BinOp->getOperand(0);
-  auto op2 = BinOp->getOperand(1);
-
-  std::vector<Value *> Args = {OperatorVal, LineVal, ColVal, op1, op2};
-
-  auto *BinOpsFunction = M->getFunction(BINOP_OPERANDS_FUNCTION_NAME);
-  CallInst::Create(BinOpsFunction, Args, "", BinOp);
+  /**
+   * TODO: Add code to instrument the BinaryOperator to print
+   * its location, operation type and the runtime values of its
+   * operands.
+   */
 }
 
 char Instrument::ID = 1;
