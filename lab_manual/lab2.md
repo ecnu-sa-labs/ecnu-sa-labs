@@ -1,12 +1,6 @@
----
-layout: lab
-_id: "2"
-title: "The LLVM Framework"
-synopsis: |
-  Building an understanding of the LLVM framework: IR, API, and the toolchain.
+## The LLVM Framework
 
-
----
+Building an understanding of the LLVM framework: IR, API, and the toolchain.
 
 ### Objective
 
@@ -130,8 +124,8 @@ program to LLVM IR, as you did in Part 1:
 
 ```sh
 /lab2$ cd test
-/lab2/test$ clang -emit-llvm -S -fno-discard-value-names -c -o simple0.l simple0.c -g
-```
+/lab2/test$ clang -emit-llvm -S -fno-discard-value-names -c -o simple0.ll simple0.c -g
+
 
 ##### Step 3
 
