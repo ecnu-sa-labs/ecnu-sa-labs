@@ -34,6 +34,20 @@ reference for most of the LLVM API used in this lab and also throughout the cour
 under `/lab2`.
 + Afterwards, if VS Code prompts you to select a kit for the lab then pick Clang 8.
 
+```
+- lib
+  |
+  -- runtime.c: Some helper functions, such as `__binop_op__`, etc., that you will inject using your pass.
+
+- src
+  |
+  -- DynamicAnalysisPass.cpp: Report the location, type and the runtime values of the operands of a binary operator when it is executed.
+  ｜
+  -- StaticAnalysisPass.cpp: Report the location, type and operands of every binary operator when it is not executed.
+  ｜
+  -- Utils.cpp: Some helper functions, such as `getBinOpSymbol` and `getBinOpName`, etc.
+```
+
 ### Part 1: Understanding the LLVM IR
 
 ##### Step 1
