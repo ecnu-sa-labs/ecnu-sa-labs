@@ -13,8 +13,6 @@ of test as _feedback_ to direct future test generation.
 You will use the code coverage metrics you saw in Lab 2 to help select interesting
 inputs for your fuzzer to mutate.
 
-### Pre-Requisites
-
 ### Setup
 
 The code for Lab3 is located under `/lab3`.
