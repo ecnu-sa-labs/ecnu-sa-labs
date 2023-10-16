@@ -17,7 +17,7 @@ inputs for your fuzzer to mutate.
 
 ### Setup
 
-The code for Lab3 is located under `cis547vm/lab3`.
+The code for Lab3 is located under `/lab3`.
 We will frequently refer to the top level directory for Lab 3 as `lab3`
 when describing file locations for the lab.
 Open the `lab3` directory in VSCode following the Instructions from [Course VM document][course-vm]
