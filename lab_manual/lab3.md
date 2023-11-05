@@ -264,6 +264,8 @@ Feel free to play around with additional mutations, and see if you can speed up
 the search for bugs on the binaries.
 You may use the C++ function `rand()` to generate a random integer.
 
+PS: To construct an effective mutation function, you might start by devising a provisional, ad hoc version specifically for the target program. Then, to improve its generality, gradually integrate random factors to mitigate the ad hoc element.
+
 You will notice that different programs will require different strategies,
 or that in some cases you may even have to switch between different mutation
 strategies in the middle of the fuzzing process.
