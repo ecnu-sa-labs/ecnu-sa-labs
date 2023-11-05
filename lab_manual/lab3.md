@@ -207,6 +207,8 @@ In both cases, the tests increased our knowledge of the program;
 hence, we insert these tests into our set of seeds and use them as a
 starting point for future test generation.
 
+PS: For a feedback mechanism design, if the mutation function enhances the coverage, the strategy is to add both the original and the newly mutated inputs to the pool of seed inputs for subsequent mutation cycles.
+
 ##### Building the Fuzzer
 
 In this lab, you will modify `src/Fuzzer.cpp` to build a coverage guided fuzzer.
