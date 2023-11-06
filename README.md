@@ -21,4 +21,8 @@ We welcomen any comments or contributions. Feel free to create issues and pull r
 Acknowledgement: The lab sessions are currently developed based on the [cis547](https://software-analysis-class.org) course, and we are further designing and refining the materials based on our ideas.
 
 
+## Contributors
 
+We thanks TAs and students who have contributed to this course design:
+
+<a href="https://ml-ming.dev/">明孟立</a>，王祺昌
