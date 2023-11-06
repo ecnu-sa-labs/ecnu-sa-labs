@@ -13,11 +13,9 @@ of test as _feedback_ to direct future test generation.
 You will use the code coverage metrics you saw in Lab 2 to help select interesting
 inputs for your fuzzer to mutate.
 
-### Pre-Requisites
-
 ### Setup
 
-The code for Lab3 is located under `cis547vm/lab3`.
+The code for Lab3 is located under `/lab3`.
 We will frequently refer to the top level directory for Lab 3 as `lab3`
 when describing file locations for the lab.
 Open the `lab3` directory in VSCode following the Instructions from [Course VM document][course-vm]
@@ -209,6 +207,8 @@ In both cases, the tests increased our knowledge of the program;
 hence, we insert these tests into our set of seeds and use them as a
 starting point for future test generation.
 
+PS: For a feedback mechanism design, if the mutation function enhances the coverage, the strategy is to add both the original and the newly mutated inputs to the pool of seed inputs for subsequent mutation cycles.
+
 ##### Building the Fuzzer
 
 In this lab, you will modify `src/Fuzzer.cpp` to build a coverage guided fuzzer.
@@ -265,6 +265,8 @@ The following is a list of potential suggestions for your mutations:
 Feel free to play around with additional mutations, and see if you can speed up
 the search for bugs on the binaries.
 You may use the C++ function `rand()` to generate a random integer.
+
+PS: To make the mutation function more universally applicable, start with a simple, specific version—for example, one that randomly inserts a newline character. Gradually expand its functionality by introducing other elements, transitioning from inserting just newlines to inserting a random assortment of characters.
 
 You will notice that different programs will require different strategies,
 or that in some cases you may even have to switch between different mutation

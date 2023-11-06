@@ -12,8 +12,9 @@ We welcomen any comments or contributions. Feel free to create issues and pull r
 | lab1       | Introduction to Software Analysis |
 | lab2       | The LLVM Framework                |
 | lab3       | Random Input Generation           |
-| lab4       | Dataflow Analysis                 |
-| lab5       | Dynamic Symbolic Execution        |
+| lab4       | Delta Debugging                   |
+| lab5       | Dataflow Analysis                 |
+| lab6       | Dynamic Symbolic Execution        |
 
 <br>
 
