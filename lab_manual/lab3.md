@@ -275,7 +275,7 @@ Feel free to play around with additional mutations, and see if you can speed up
 the search for bugs on the binaries.
 You may use the C++ function `rand()` to generate a random integer.
 
-**Note:** To make the mutation function more general, you could start with an ad hoc version, such as one that specifically inserts a newline character. Initially, this function being limited to adding just a newline is ad hoc. To generalize it, transition from inserting only newlines to incorporating a range of random characters.
+**Note:** To make the mutation function more general, you could start with an ad hoc version. For example, one that specifically inserts a newline character. Initially, this function being limited to adding just a newline is ad hoc. To generalize it, transition from inserting only newlines to incorporating a range of random characters.
 
 You will notice that different programs will require different strategies,
 or that in some cases you may even have to switch between different mutation
