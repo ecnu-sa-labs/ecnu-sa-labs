@@ -207,7 +207,16 @@ In both cases, the tests increased our knowledge of the program;
 hence, we insert these tests into our set of seeds and use them as a
 starting point for future test generation.
 
-PS: For a feedback mechanism design, if the mutation function enhances the coverage, the strategy is to add both the original and the newly mutated inputs to the pool of seed inputs for subsequent mutation cycles.
+**Note:** For a feedback mechanism design, if the newly mutated input enhances the coverage, you could add both the original and the newly mutated input to the pool of seed inputs for subsequent mutation cycles.
+
+```python
+# feedback mechanism
+for input in seed_pool:
+    mutated_input = mutate(input)
+    if enhances_coverage(mutated_input):
+        # add both original and mutated input to the seed pool
+        seed_pool.extend([input, mutated_input])
+```
 
 ##### Building the Fuzzer
 
@@ -266,7 +275,7 @@ Feel free to play around with additional mutations, and see if you can speed up
 the search for bugs on the binaries.
 You may use the C++ function `rand()` to generate a random integer.
 
-PS: To make the mutation function more universally applicable, start with a simple, specific version—for example, one that randomly inserts a newline character. Gradually expand its functionality by introducing other elements, transitioning from inserting just newlines to inserting a random assortment of characters.
+**Note:** To make the mutation function more general, you could start with an ad hoc version, such as one that specifically inserts a newline character. Initially, this function being limited to adding just a newline is ad hoc. To generalize it, transition from inserting only newlines to incorporating a range of random characters.
 
 You will notice that different programs will require different strategies,
 or that in some cases you may even have to switch between different mutation
