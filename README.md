@@ -25,4 +25,4 @@ Acknowledgement: The lab sessions are currently developed based on the [cis547](
 
 We thanks TAs and students who have contributed to this course design:
 
-<a href="https://ml-ming.dev/">明孟立</a>，王祺昌
+<a href="https://ml-ming.dev/">明孟立</a>，王祺昌，方润渲，沈佳伟，梁锡贤
