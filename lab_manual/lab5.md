@@ -63,6 +63,8 @@ In particular, the `-mem2reg` option promotes every [AllocaInst][LLVM AllocaInst
 
 Similar to former labs, you will implement your analyzer as an LLVM pass, called `DivZeroPass`.
 
+**If you haven't completed the code, running the following command will result in a segmentation fault, which is OK. Complete the code and then run the test again.**
+
 Then you will use the `opt` command to run this pass on the optimized LLVM IR program as follows:
 
 ```sh
