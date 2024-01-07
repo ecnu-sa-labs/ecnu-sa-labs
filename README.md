@@ -9,7 +9,7 @@ We welcome any comments or contributions. Feel free to create issues and pull re
 |------------|-----------------------------------|
 | lab1       | Introduction to Software Analysis |
 | lab2       | The LLVM Framework                |
-| lab3       | Random Input Generation           |
+| lab3       | Random Testing / Fuzzing          |
 | lab4       | Delta Debugging                   |
 | lab5       | Dataflow Analysis                 |
 | lab6       | Pointer Analysis                  |
