@@ -11,7 +11,7 @@ You will combine the dataflow analysis from the previous lab with a flow-insensi
 
 The skeleton code for Lab 6 is located under `/lab6`.
 We will frequently refer to the top level directory for Lab 6 as `lab6` when describing file locations.
-This lab is built upon your work from [Lab 6][Lab06], so you can reuse most of your content from the `/lab6/src` directory.
+This lab is built upon your work from [Lab 6][Lab06], so you can reuse most of your content from the `/lab5/src` directory.
 
 #### Step 1.
 
