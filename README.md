@@ -24,4 +24,4 @@ Acknowledgement: The lab sessions are currently developed based on the [cis547](
 
 We thanks TAs and students who have contributed to this course design:
 
-<a href="https://0x21af.github.io/">明孟立</a>，王祺昌，方润渲，梁锡贤，沈佳伟
+<a href="https://ml-ming.dev/">明孟立</a>，王祺昌，方润渲，梁锡贤，沈佳伟
