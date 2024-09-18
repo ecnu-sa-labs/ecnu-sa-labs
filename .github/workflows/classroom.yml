@@ -1,0 +1,34 @@
+name: Autograding Tests
+on:
+  - push
+  - workflow_dispatch
+  - repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Autograding
+      id: autograder
+      run: |
+        output=$(./lab1/autograder.sh)
+        echo "grade=$output" >> $GITHUB_OUTPUT
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TOTAL_GRADE: "${{ steps.autograder.outputs.grade }}"
+      with:
+        runners: autograder
+      # For more information on this runner, see the documentation at https://github.com/classroom-resources/autograding-grading-reporter
+      # To output the results of the tests, you can use the
+      # autograding-grading-reporter action like this:
+      # env:
+      # ADDITION-TEST_RESULTS: "${{ steps.autograder.outputs.grade }}"
+      #     with:
+      #         runners: addition-test
