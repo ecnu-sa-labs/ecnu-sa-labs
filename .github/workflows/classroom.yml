@@ -19,16 +19,6 @@ jobs:
       run: |
         output=$(./lab1/autograder.sh)
         echo "grade=$output" >> $GITHUB_OUTPUT
-    - name: Autograding Reporter
-      uses: classroom-resources/autograding-grading-reporter@v1
-      env:
-        TOTAL_GRADE: "${{ steps.autograder.outputs.grade }}"
-      with:
-        runners: autograder
-      # For more information on this runner, see the documentation at https://github.com/classroom-resources/autograding-grading-reporter
-      # To output the results of the tests, you can use the
-      # autograding-grading-reporter action like this:
-      # env:
-      # ADDITION-TEST_RESULTS: "${{ steps.autograder.outputs.grade }}"
-      #     with:
-      #         runners: addition-test
+    - name: Report
+      run: |
+        echo "${{steps.autograder.outputs.grade}}"
