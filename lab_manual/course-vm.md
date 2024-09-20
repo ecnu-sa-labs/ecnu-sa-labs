@@ -28,6 +28,8 @@ About `.devcontainer/devcontainer.json`,
 ```
 Before you start with the labs, make sure that docker engine is running in the background. 
 ![](../images/course-vm-f.jpg)
+
+Please clone the repository in your computer using `git clone "your repository https url"`.
 **Note: You will need to open the lab folder such as lab1 or lab2 in VS Code rather than the ecnu-sa-labs folder. **
 ![](../images/course-vm-e.jpg)
 
