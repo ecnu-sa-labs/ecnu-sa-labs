@@ -1,5 +1,5 @@
 # Labs for "Software Analysis, Testing and Verification"
-This repository provides the lab sessions for the course "[Software Analysis, Testing and Verification (软件分析与验证前沿)](https://tingsu.github.io/files/courses/pa2023.html)" at East China Normal University.
+This repository provides the lab sessions for the course "[Software Analysis, Testing and Verification (软件分析与验证前沿)](https://tingsu.github.io/files/courses/pa2024.html)" at East China Normal University.
 
 We welcome any comments or contributions. Feel free to create issues and pull requests.
 
@@ -22,6 +22,9 @@ Acknowledgement: The lab sessions are currently developed based on the [cis547](
 
 ## Contributors
 
-We thanks TAs and students who have contributed to this course design:
+We thanks the TAs and students who have contributed to this course design:
 
-<a href="https://ml-ming.dev/">明孟立</a>，王祺昌，方润渲，梁锡贤，沈佳伟
+<a href="https://ml-ming.dev/">明孟立</a>，
+<a href="https://apochens.github.io/">黄杉</a>，
+<a href="">麻恩泽</a>，
+王祺昌，方润渲，<a href="https://xixianliang.github.io/resume/">梁锡贤</a>，沈佳伟

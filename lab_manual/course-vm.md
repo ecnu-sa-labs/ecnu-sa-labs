@@ -1,11 +1,10 @@
----
-layout: default
-title: "Setting up Course Environment"
----
+## Setting up Course Lab Environment
 
-**Step1.** We will use Docker containers with VS Code to ensure everyone uses a consistent development environment for the labs throughout the semester. Before proceeding, you need to install docker on your local machine; we will refer to this machine as the host machine. 
+**Step1.** We will use Docker containers with VS Code to ensure everyone uses a consistent development environment for the labs in this course. Before proceeding, you need to install <a href="https://www.docker.com/">docker</a> on your local machine; we will refer to this machine as the host machine. 
 
-**Step2.** After this, install VS Code and within VS Code install the Remote Development Extension. 
+**Step2.** After this, install <a href="https://code.visualstudio.com/Download">VS Code</a> and within VS Code install the <a href="https://code.visualstudio.com/docs/remote/remote-overview">Remote Development Extension</a>. 
+
+![](../images/remote_development.png)
 
 **Step3.** For the course labs, we provide a configuration file(`.devcontainer/devcontainer.json`) in each lab that instructs VS Code how to set up a development environment using an appropriate docker image and various other configuration options. 
 
@@ -15,7 +14,7 @@ About `.devcontainer/devcontainer.json`,
 "image": "ecnusa/ecnu-sa-labs:latest",
 "runArgs": [
 	"--cap-add=SYS_PTRACE",
-	"--security-opt",
+	"--security-opt",`
 	"seccomp=unconfined",
 	"--privileged"
 ],
