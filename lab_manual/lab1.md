@@ -1,17 +1,18 @@
 ## Introduction to Software Analysis
 
-Understanding basic concepts of software analysis and metrics used to estimate the effectiveness of analysis.
+Understanding the basic concepts of software analysis and metrics used to estimate the effectiveness of analysis.
 
 ### Objective
 
 The objective of this lab is to use standard analysis tools for static and
 dynamic analysis on C programs to discover divide-by-zero errors and interpreting
 their results to better understand various trade-offs between the techniques.
+Specifically, we will use <a href="https://github.com/google/AFL">AFL</a> (American Fuzzy Lop), a dynamic analyzer (fuzzer) and <a href="https://clang-analyzer.llvm.org/">CSA</a> (Clang Static Analyzer), a static analyzer.
 
 ### Pre-Requisites
 
 The lectures introduce various terminology used throughout this lab such as:
-static and dynamic analysis, soundness, completeness, precision, and more.
+static and dynamic analysis, soundness, completeness, precision, recall, and more.
 
 ### Setup
 
@@ -36,21 +37,22 @@ Ensure that you are comfortable with using `Makefile` in this lab.
 
 ##### Step 3.
 
-Inspect the Makefile to see the commands used to run AFL and Clang Static Analyzer (CSA).
+Inspect the Makefile to see the commands used to run <a href="https://github.com/google/AFL">AFL</a> and <a href="https://clang-analyzer.llvm.org/">CSA</a>.
 
 ```sh
 # Compile the program with AFL
 AFL_DONT_OPTIMIZE=1 afl-gcc c_programs/test1.c -o test1
 # Run AFL for 30s on test1
 timeout 30s afl-fuzz -i afl_input -o afl_output test1
+
 # Run CSA on test1.c
 clang -v --analyze c_programs/test1.c
 ```
 
 ### Lab Instructions
 
-In this lab, you will run two analysis tools on a suite of C programs,
-study the tools’ results, and report your findings.
+In this lab, you will run AFL and CSA on a suite of C programs,
+study these two tools’ results, and report your findings.
 
 ##### Step 1.
 
@@ -123,7 +125,7 @@ The files have idiosyncratic names of the form
 It is the contents of these files that AFL used as the input
 to the test program when it encountered a crash.
 
-Upon examining CSA's outputs, if a `core.DivideZero` warning emerges, it indicates that CSA has detected a division by zero error for that particular test case. 
+Upon examining CSA's outputs, if a `core.DivideZero` warning emerges, it indicates that CSA has detected a division by zero error. 
 
 For example:
 
@@ -132,8 +134,6 @@ c_programs/test9.c:10:17: warning: Division by zero [core.DivideZero]
    10 |   int avg = sum / len;
       |             ~~~~^~~~~
 ```
-
-However, it's worth noting that not every test case will trigger this warning.
 
 ##### Step 4.
 
