@@ -1,6 +1,11 @@
 ## Setting up Course Lab Environment
 
+Our labs use VScode and Docker containers to build a flexible, consistent and ready-to-use environment. You can view the picture below to understand the architecture of our lab environment (a.k.a VScode's remote development mode). Conceptually, your local machine (OS) runs VS Code, and the VS code connects to the remote machine (OS) running in a docker container. In this way, you can edits the files in the remote machine via VS code on your local machine, and run all the labs on this remote machine (OS). In the docker container, we have already setup everything (Ubuntu XX.XX, LLVM XX.XX) for you.
+
+![](../images/principle_of_vscode_remote_development.png)
+
 **Step1.** For this course, we will use Docker containers with VS Code to ensure everyone uses a consistent development environment for the labs . Before proceeding, you need to install <a href="https://www.docker.com/">docker</a> on your local machine(Note:For windows users, please select Download for Windows-AMD64; For Mac users, please select Download for Mac); we will refer to this machine as the host machine. 
+
 ![](../images/course-vm-d.jpg)
 
 **Step2.** After this, install <a href="https://code.visualstudio.com/Download">VS Code</a> and within VS Code install the <a href="https://code.visualstudio.com/docs/remote/remote-overview">Remote Development Extension</a>. 
