@@ -1,6 +1,6 @@
 ## Setting up Course Lab Environment
 
-**Step1.** For this course, we will use Docker containers with VS Code to ensure everyone uses a consistent development environment for the labs . Before proceeding, you need to install <a href="https://www.docker.com/">docker</a> on your local machine(Note:for windows users, please install ); we will refer to this machine as the host machine. 
+**Step1.** For this course, we will use Docker containers with VS Code to ensure everyone uses a consistent development environment for the labs . Before proceeding, you need to install <a href="https://www.docker.com/">docker</a> on your local machine(Note:For windows users, please select Download for Windows-AMD64; For Mac users, please select Download for Mac); we will refer to this machine as the host machine. 
 ![](../images/course-vm-d.jpg)
 
 **Step2.** After this, install <a href="https://code.visualstudio.com/Download">VS Code</a> and within VS Code install the <a href="https://code.visualstudio.com/docs/remote/remote-overview">Remote Development Extension</a>. 
