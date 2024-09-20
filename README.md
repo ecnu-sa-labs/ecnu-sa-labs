@@ -5,15 +5,21 @@ We welcome any comments or contributions. Feel free to create issues and pull re
 
 <br>
 
-| Labs       | Lab Title                         |
-|------------|-----------------------------------|
-| lab1       | Introduction to Software Analysis |
-| lab2       | The LLVM Framework                |
-| lab3       | Random Testing / Fuzzing          |
-| lab4       | Delta Debugging                   |
-| lab5       | Dataflow Analysis                 |
-| lab6       | Pointer Analysis                  |
-| lab7       | Dynamic Symbolic Execution        |
+### Instructions
+
+Before preceding the labs, you need to setup the lab environment. Checkout this [lab tutorial](lab_manual/course-vm.md). Later, you can access the lab tutorials for our labs
+in the following table.
+
+
+| Labs                         | Lab Title                         |
+|------------------------------|-----------------------------------|
+| [lab1](lab_manual/lab1.md)       | Introduction to Software Analysis |
+| [lab2](lab_manual/lab2.md)       | The LLVM Framework                |
+| [lab3](lab_manual/lab3.md)       | Random Testing / Fuzzing          |
+| [lab4](lab_manual/lab4.md)       | Delta Debugging                   |
+| [lab5](lab_manual/lab5.md)       | Dataflow Analysis                 |
+| [lab6](lab_manual/lab6.md)       | Pointer Analysis                  |
+| [lab7](lab_manual/lab7.md)       | Dynamic Symbolic Execution        |
 
 <br>
 
