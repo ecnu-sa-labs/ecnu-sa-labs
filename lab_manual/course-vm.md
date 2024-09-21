@@ -4,16 +4,19 @@ Our labs use VScode and Docker containers to build a flexible, consistent and re
 
 ![](../images/principle_of_vscode_remote_development.png)
 
-**Step1.** For this course, we will use Docker containers with VS Code to ensure everyone uses a consistent development environment for the labs . Before proceeding, you need to install <a href="https://www.docker.com/">docker</a> on your local machine.
+#### Step 1. 
+For this course, we will use Docker containers with VS Code to ensure everyone uses a consistent development environment for the labs . Before proceeding, you need to install <a href="https://www.docker.com/">docker</a> on your local machine.
 Note: for windows users, please select `Download for Windows-AMD64`; For Mac users, please select `Download for Mac`; we will refer to this machine as the host machine. 
 
 ![](../images/course-vm-d.jpg)
 
-**Step2.** After this, install <a href="https://code.visualstudio.com/Download">VS Code</a> and within VS Code install <a href="https://code.visualstudio.com/docs/remote/remote-overview">Remote Development Extension</a>. 
+#### Step 2.  
+After this, install <a href="https://code.visualstudio.com/Download">VS Code</a> and within VS Code install <a href="https://code.visualstudio.com/docs/remote/remote-overview">Remote Development Extension</a>. 
 
 ![](../images/remote_development.png)
 
-**Step3.** Clone the repository of the course labs on your local machine.
+#### Step 3. 
+Clone the repository of the course labs on your local machine.
 For the course labs, we provide a configuration file (`.devcontainer/devcontainer.json`) in each lab that instructs VS Code how to set up a development environment using an appropriate docker image and various other configuration options. 
 
 About `.devcontainer/devcontainer.json`,
@@ -40,7 +43,8 @@ Before you start working on some lab, please open the Docker.
 
 
 
-**Step4.** To start working on a lab, open the lab inside VS Code. Note that you need to open the lab folder such as `lab1` or `lab2` in VS Code rather than the `ecnu-sa-labs` folder.
+#### Step 4. 
+To start working on a lab, open the lab inside VS Code. Note that you need to open the lab folder such as `lab1` or `lab2` in VS Code rather than the `ecnu-sa-labs` folder.
 
 
 ![](../images/course-vm-lab1-folder.jpg)

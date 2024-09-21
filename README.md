@@ -23,14 +23,18 @@ in the following table.
 
 <br>
 
-Acknowledgement: The lab sessions are currently developed based on the [cis547](https://software-analysis-class.org) course, and we are further designing and refining the materials based on our ideas.
-
 
 ## Contributors
 
 We thanks the TAs and students who have contributed to this course design:
 
-<a href="https://ml-ming.dev/">明孟立</a>，
-<a href="https://apochens.github.io/">黄杉</a>，
-<a href="">麻恩泽</a>，
-王祺昌，方润渲，<a href="https://xixianliang.github.io/resume/">梁锡贤</a>，沈佳伟
+<a href="https://ml-ming.dev/">明孟立</a>,
+<a href="https://apochens.github.io/">黄杉</a>,
+<a href="">麻恩泽</a>,
+王祺昌,
+方润渲,
+<a href="https://xixianliang.github.io/resume/">梁锡贤</a>,
+沈佳伟
+
+
+Acknowledgement: The lab sessions are currently developed based on the [cis547](https://software-analysis-class.org) course, and we are further designing and refining the materials based on our ideas.
