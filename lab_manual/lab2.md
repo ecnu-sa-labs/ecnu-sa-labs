@@ -17,7 +17,7 @@ by executing instrumented code.
 
 ### Pre-Requisites
 
-+ Read the [LLVM Primer][llvm-primer]: Part I (Overview of LLVM) and Part II
++ Read the course slides on LLVM Primer: Part I (Overview of LLVM) and Part II
 (Structure of LLVM IR).
 This is required for the first part of this lab as well as throughout the rest
 of the course to be able to read LLVM IR for debugging purposes.
@@ -28,12 +28,14 @@ reference for most of the LLVM API used in this lab and also throughout the cour
 
 + Open the `lab2` folder in VS Code, using the 'Open Folder' option in VS Code.
 + Make sure the Docker is running on your machine.
-+ Open the VS Code [Command Palette][command-palette]; search and select `Reopen in Container`.
++ Open the VS Code [Command Palette][command-palette] by pressing F1; search and select `Reopen in Container`.
 + This will set up the development environment for this lab in VS Code.
-+ Inside the development environment the skeleton code for Lab 2 will be locate
++ Inside the development environment the skeleton code for Lab 2 will be located
 under `/lab2`.
 + Afterwards, if VS Code prompts you to select a kit for the lab then pick Clang 8.
 
+
+### Lab2's project structure:
 ```
 - lib
   |
@@ -50,9 +52,9 @@ under `/lab2`.
 
 ### Part 1: Understanding the LLVM IR
 
-##### Step 1
+#### Step 1
 
-Study the [LLVM Primer][llvm-primer] to understand the structure of the LLVM IR.
+Study the LLVM Primer to understand the structure of the LLVM IR.
 The primer shows how to run `clang` on a sample C program to generate the
 corresponding LLVM IR program.
 You can use the C programs under `/lab2/test` directory to try it out:
@@ -72,7 +74,7 @@ Briefly,
 + `-fno-discard-value-names` preserves names of values in the generated
 LLVM for improving readability.
 
-##### Step 2
+#### Step 2
 
 Write by hand the C programs corresponding to the LLVM IR programs
 under the `/lab2/ir_programs` directory by filling in the provided
@@ -94,9 +96,11 @@ Alternatively you can let the provided Makefile automatically do this for you:
 /lab2/c_programs$ make test1
 ```
 
+Please submit the programs under `/lab2/c_programs` for auto-grading.
+
 ### Part 2: Understanding the LLVM API
 
-##### Step 1
+#### Step 1
 
 In this and future labs, we will use `CMake`, a modern tool for managing the
 build process.
@@ -126,7 +130,7 @@ The remaining steps follow the depicted workflow from left to right:
 <img src="../images/flowchart.png"
   style="height: auto; width: 100%">
 
-##### Step 2
+#### Step 2
 
 As noted in Step 1, you will implement the functionality of this lab as two
 LLVM passes called `StaticAnalysisPass` and `DynamicAnalysisPass`.
@@ -141,7 +145,7 @@ program to LLVM IR, as you did in Part 1:
 /lab2/test$ clang -emit-llvm -S -fno-discard-value-names -c -o simple0.ll simple0.c -g
 ```
 
-##### Step 3
+#### Step 3
 
 Next, we use opt to run the provided StaticAnalysisPass pass on the compiled C program:
 
@@ -179,7 +183,7 @@ You can use `diff` to verify this:
 ...
 ```
 
-##### Step 4
+#### Step 4
 
 Next, compile the instrumented program and link it with the provided runtime
 library to produce a standalone executable named `simple0`:
@@ -188,7 +192,7 @@ library to produce a standalone executable named `simple0`:
 /lab2/test$ clang -o simple0 -L../build -lruntime simple0.dynamic.ll
 ```
 
-##### Step 5
+#### Step 5
 
 Finally run the executable on the empty input; note that you may have to manually
 provide test input for programs that expect non-empty input:
@@ -250,7 +254,7 @@ Division on Line 4, Column 13 with first operand=3 and second operand=2
 
 ### Lab Instructions
 
-##### Static Analysis
+#### Static Analysis
 As mentioned previously, you are provided with `src/StaticAnalysisPass.cpp` that
 contains one static analysis that reports the location of all instructions in the
 program, and you will be adding another analysis to it.
@@ -273,7 +277,7 @@ of `getBinOpSymbol`.
 You can use the `variable` function from `Utils.h` to get the name of an operand from
 its corresponding LLVM Value.
 
-##### Dynamic Analysis
+#### Dynamic Analysis
 
 It involves inspecting a running program for information about its state and
 behavior during runtime; this is in contrast to static analysis which analyzes
@@ -301,11 +305,11 @@ In order to get the runtime values of the operands, it is necessary to keep in m
 that in LLVM **a variable defined by an instruction is represented by the
 instruction itself**.
 
-##### Code Coverage Primer
+#### Code Coverage Primer
 
 Code coverage is a measure of how much of a program’s code is executed in a
 particular run.
-There are a number of different criterias to describe coverage.
+There are a number of different criteria to describe coverage.
 In this lab we are providing line coverage and you are implementing an artificial
 criteria of tracking binary operators during the execution of a program using the
 same mechanisms underlying modern code coverage tools, such as the LLVM’s source-based
@@ -321,7 +325,7 @@ fuzzers.
 <img src="../images/example-coverage-report.png"
   style="height: auto; width: 100%">
 
-##### Debug Location Primer
+#### Debug Location Primer
 
 When you compile a C program with the `-g` option, LLVM will include debug information
 for LLVM IR instructions.
@@ -348,7 +352,7 @@ level tasks:
 + Check for binary operators and instrument it using `instrumentBinOpOperands`.
 + Implement `instrumentBinOpOperands` to insert calls to `__binop_op__`.
 
-##### Inserting Instructions into LLVM code
+#### Inserting Instructions into LLVM code
 
 Once you are familiar with the organization of LLVM IR, LLVM instructions, and the
 `Instruction` class after finishing Part 1 and completing static analysis, you can
@@ -372,7 +376,7 @@ instruction (`CallInst`), as discussed below.
 You should also take a look at how a call instruction was inserted into a program
 in the `instrumentCoverage` function, as an example of the instructions below.
 
-##### Loading C functions into LLVM code
+#### Loading C functions into LLVM code
 
 We have provided the definition of C functions in the `runtime.c` file for you, but
 you have to inject LLVM instructions to call them from instrumented code.
@@ -408,7 +412,7 @@ Furthermore, the `Instruction` class is a subclass of the `Value`; this makes
 passing a variable defined by an Instruction to a function as an argument
 relatively straightforward.
 
-##### Debug Locations
+#### Debug Locations
 
 As we alluded previously, LLVM will store code location information of the
 original C program for LLVM instructions when compiled with `-g`.
