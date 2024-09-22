@@ -5,7 +5,7 @@ We welcome any comments or contributions. Feel free to create issues and pull re
 
 <br>
 
-### Instructions
+## Instructions
 
 Before preceding the labs, you need to setup the lab environment. Checkout this [lab tutorial](lab_manual/course-vm.md). Later, you can access the lab tutorials for our labs
 in the following table.
@@ -23,6 +23,10 @@ in the following table.
 
 <br>
 
+
+## Troubleshooting (常见问题汇总)
+
+- 第一次配置实验课环境([lab tutorial](lab_manual/course-vm.md))，请使用科学上网工具。Windows上的科学上网工具有：Clash for windows, Clash Meta, V2rayN（请打开tun模式实现接近于全局的代理）。
 
 ## Contributors
 
