@@ -56,7 +56,7 @@ Note: If you have encountered error messages while building, the alternative way
 
 ![](../images/course-vm-lab1-rebuild-and-reopen-container.jpg)
 
-This will reload VS Code and set up the development environment. You can now edit, run and debug your lab in VS Code. You can open the terminal in VS code
+This will reload VS Code and set up the development environment. You can now edit, run and debug your lab in VS Code. You can open the terminal in VS code：
 
 ![](../images/course-vm-lab1.jpg) 
 
