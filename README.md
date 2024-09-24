@@ -41,5 +41,7 @@ We thanks the TAs and students who have contributed to this course design:
 <a href="https://xixianliang.github.io/resume/">梁锡贤</a>,
 沈佳伟
 
+林童奕凡、高雨宸
+
 
 Acknowledgement: The lab sessions are currently developed based on the [cis547](https://software-analysis-class.org) course, and we are further designing and refining the materials based on our ideas.
