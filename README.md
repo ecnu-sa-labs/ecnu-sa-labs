@@ -5,7 +5,21 @@ We welcome any comments or contributions. Feel free to create issues and pull re
 
 <br>
 
-## Instructions （教程指引）
+## Course 
+
+| Lectures                         |  Title                         |  Paper Readings                        |  Tools                        |
+|------------------------------|-----------------------------------|-----------------------------------|-----------------------------------|
+| [lec1]()      | Course Introduction: Program Analysis |  [Soundiness](https://yanniss.github.io/Soundiness-CACM.pdf), [False Positives/Negatives](https://dl.acm.org/doi/10.1145/3660781)    |        |
+| [lec2]()       | The LLVM Framework   |      |      |
+| [lec3]()       | Software Specifications          |  [Oracle Problem](https://ieeexplore.ieee.org/document/6963470), [Programs, Tests, and Oracles](https://dl.acm.org/doi/10.1145/1985793.1985847), [code coverage effectiveness](https://dl.acm.org/doi/10.1145/2568225.2568271), [mutation testing effectiveness](https://dl.acm.org/doi/10.1145/2635868.2635929), [testing_techniques](https://dl.acm.org/doi/10.1016/j.jss.2013.02.061)  |       |
+| [lec4]()       | Random Testing / Fuzzing          |      |       |
+
+
+<br>
+
+
+
+## Lab Instructions （教程指引）
 
 Before preceding the labs, you need to setup the lab environment. Checkout this [lab tutorial](lab_manual/course-vm.md). Later, you can access the lab tutorials for our labs
 in the following table.
@@ -22,6 +36,8 @@ in the following table.
 | [lab7](lab_manual/lab7.md)       | Dynamic Symbolic Execution        |
 
 <br>
+
+
 
 
 ## Troubleshooting (常见问题汇总)
