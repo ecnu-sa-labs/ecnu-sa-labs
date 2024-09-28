@@ -16,14 +16,24 @@ First, inspect the code of each program, and fill in its ground truth
 Next, refer to the logs of each analyzer's run on each program, and fill
 in its result (accept/reject) in the respective column:
 
-- accept if your analyzer does not report any divide-by-zero errors.
-- reject if your analyzer reports a divide-by-zero error.
+- accept if the analyzer does not report any divide-by-zero errors.
+- reject if the analyzer reports a divide-by-zero error.
 
 Lastly, use the above computed results to calculate Precision, Recall,
 and F1 score for each analyzer on this suite of programs.
 
-Note: F1 score provides a way to combine both precision and recall into a single measure that captures both properties.
+Note: 
+
+- F1 score provides a way to combine both precision and recall into a single measure that captures both properties.
 The F1 score is calculated as follows: F1 score = (2 * Precision * Recall) / (Precision + Recall)
+
+- An accept or a reject (marked by you) does not necessarily mean a FP or a FN. You need decide which accept or reject is 
+FP, FN, TP, TN according to Ground Truth. 
+
+- Please fill the results of Precision, Recall, and F1 score in the form of either a value (e.g., 0.8) or a fraction (e.g., 3/5).
+
+- You do not need to fill the results of Precision, Recall, and F1 score for the Ground Truth column.
+
 
 ============================================================
 | Program   | Ground Truth  |     AFL      |      CSA      |   

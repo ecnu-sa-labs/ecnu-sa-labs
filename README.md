@@ -5,7 +5,7 @@ We welcome any comments or contributions. Feel free to create issues and pull re
 
 <br>
 
-## Course 
+## Course (课程内容)
 
 | Lectures                         |  Title                         |  Paper Readings                        |  Tools                        |
 |------------------------------|-----------------------------------|-----------------------------------|-----------------------------------|
@@ -13,7 +13,7 @@ We welcome any comments or contributions. Feel free to create issues and pull re
 | [lec2]()       | The LLVM Framework   |      |      |
 | [lec3]()       | Software Specifications          |  [Oracle Problem](https://ieeexplore.ieee.org/document/6963470), [Programs, Tests, and Oracles](https://dl.acm.org/doi/10.1145/1985793.1985847), [code coverage effectiveness](https://dl.acm.org/doi/10.1145/2568225.2568271), [mutation testing effectiveness](https://dl.acm.org/doi/10.1145/2635868.2635929), [testing_techniques](https://dl.acm.org/doi/10.1016/j.jss.2013.02.061)  |       |
 | [lec4]()       | Random Testing / Fuzzing          |  [Sanitizers](https://oaklandsok.github.io/papers/song2019.pdf)    |      |
-
+| [lec5]()       | Property-based Testing         |      |      |
 
 <br>
 
@@ -21,8 +21,13 @@ We welcome any comments or contributions. Feel free to create issues and pull re
 
 ## Lab Instructions （教程指引）
 
-Before preceding the labs, you need to setup the lab environment. Checkout this [lab tutorial](lab_manual/course-vm.md). Later, you can access the lab tutorials for our labs
-in the following table.
+Before preceding the labs, you need to setup the lab environment. Checkout this [lab tutorial](lab_manual/course-vm.md). Later, you can access the lab tutorials for our labs in the following table.
+
+### Quick Notes
+
+- Get familar with using VScode, Git, Linux shell commands and Docker.
+- Always be patient and careful when reading the documentation (e.g., lab tutorial, instructions). 
+- Before rasing questions to TAs, please double check with the documentation. 
 
 
 | Labs                         | Lab Title                         |
@@ -30,10 +35,11 @@ in the following table.
 | [lab1](lab_manual/lab1.md)       | Introduction to Software Analysis |
 | [lab2](lab_manual/lab2.md)       | The LLVM Framework                |
 | [lab3](lab_manual/lab3.md)       | Random Testing / Fuzzing          |
-| [lab4](lab_manual/lab4.md)       | Delta Debugging                   |
-| [lab5](lab_manual/lab5.md)       | Dataflow Analysis                 |
-| [lab6](lab_manual/lab6.md)       | Pointer Analysis                  |
-| [lab7](lab_manual/lab7.md)       | Dynamic Symbolic Execution        |
+| [lab4](lab_manual/lab3.md)       | Property-based Testing            |
+| [lab5](lab_manual/lab4.md)       | Delta Debugging                   |
+| [lab6](lab_manual/lab5.md)       | Dataflow Analysis                 |
+| [lab7](lab_manual/lab6.md)       | Pointer Analysis                  |
+| [lab8](lab_manual/lab7.md)       | Dynamic Symbolic Execution        |
 
 <br>
 
