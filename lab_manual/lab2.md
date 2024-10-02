@@ -175,7 +175,7 @@ simple0.ll -o simple0.dynamic.ll
 
 The program produced in `simple0.static.ll` should be identical to `simple0.ll`
 while the program in `simple0.dynamic.ll` won’t be for this lab.
-You can use `diff` to verify this:
+You can use `diff`[^1] to verify this:
 
 ```sh
 /lab2/test$ diff simple0.static.ll simple0.ll
