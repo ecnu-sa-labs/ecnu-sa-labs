@@ -81,7 +81,7 @@ under the `/lab2/ir_programs` directory by filling in the provided
 template code in the `/lab2/c_programs` directory.
 Ensure that running the above command on your hand-written C programs
 generates the exact LLVM IR programs provided as we will auto-grade them.
-You can do so by using the diff command-line utility to check if your
+You can do so by using the diff[^1] command-line utility to check if your
 files are the same.
 
 ```sh
@@ -89,6 +89,10 @@ files are the same.
 /lab2/c_programs$ clang -emit-llvm -S -fno-discard-value-names -c test1.c
 /lab2/c_programs$ diff test1.ll ../ir_programs/test1.ll
 ```
+
+[^1]: Note that you can use `diff --strip-trailing-cr` or `diff -w` (`-w` ignores differences in white spaces, and "White space" characters include tab, vertical tab, form feed, carriage return, and space)
+to ignore the differences in carriage returns and spaces.
+
 
 Alternatively you can let the provided Makefile automatically do this for you:
 
@@ -171,7 +175,7 @@ simple0.ll -o simple0.dynamic.ll
 
 The program produced in `simple0.static.ll` should be identical to `simple0.ll`
 while the program in `simple0.dynamic.ll` won’t be for this lab.
-You can use `diff` to verify this:
+You can use `diff`[^1] to verify this:
 
 ```sh
 /lab2/test$ diff simple0.static.ll simple0.ll
