@@ -29,8 +29,6 @@ Before preceding the labs, you need to setup the lab environment. Checkout this 
 - Always be patient and careful when reading the documentation (e.g., lab tutorial, instructions). 
 - Before rasing questions to TAs, please double check with the documentation. 
 
-#### Pre
-
 
 | Labs                         | Lab Title                         |
 |------------------------------|-----------------------------------|
