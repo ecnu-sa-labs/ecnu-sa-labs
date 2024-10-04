@@ -7,7 +7,7 @@ We welcome any comments or contributions. Feel free to create issues and pull re
 
 ## Course (课程内容)
 
-| Lectures                         |  Title                         |  Paper Readings                        |  Tools                        |
+| Lectures                         |  Title                         |  Extended Readings                        |  Relevant Tools                        |
 |------------------------------|-----------------------------------|-----------------------------------|-----------------------------------|
 | [lec1]()      | Course Introduction: Program Analysis |  [Soundiness](https://yanniss.github.io/Soundiness-CACM.pdf), [False Positives/Negatives](https://dl.acm.org/doi/10.1145/3660781)    |        |
 | [lec2]()       | The LLVM Framework   |      |      |
@@ -32,16 +32,17 @@ Before preceding the labs, you need to setup the lab environment. Checkout this 
 #### Pre
 
 
-| Labs                         | Lab Title                         |
-|------------------------------|-----------------------------------|
-| [lab1](lab_manual/lab1.md)       | Introduction to Software Analysis |
-| [lab2](lab_manual/lab2.md)       | The LLVM Framework                |
-| [lab3](lab_manual/lab3.md)       | Random Testing / Fuzzing          |
-| [lab4](lab_manual/lab3.md)       | Property-based Testing            |
-| [lab5](lab_manual/lab4.md)       | Delta Debugging                   |
-| [lab6](lab_manual/lab5.md)       | Dataflow Analysis                 |
-| [lab7](lab_manual/lab6.md)       | Pointer Analysis                  |
-| [lab8](lab_manual/lab7.md)       | Dynamic Symbolic Execution        |
+| Labs                         | Lab Title                         |  Relevant Research Projects                       |
+|------------------------------|-----------------------------------|-----------------------------------|
+| [lab1](lab_manual/lab1.md)       | Introduction to Software Analysis |                               |
+| [lab2](lab_manual/lab2.md)       | The LLVM Framework                |                               |
+| [lab3](lab_manual/lab3.md)       | Random Testing / Fuzzing          |                              |
+| [lab4](lab_manual/lab3.md)       | Property-based Testing            |  [Kea](https://github.com/ecnusse/Kea) |
+| [lab5](lab_manual/lab4.md)       | Delta Debugging                   |                               |
+| [lab6](lab_manual/lab5.md)       | Dataflow Analysis                 |                               |
+| [lab7](lab_manual/lab6.md)       | Pointer Analysis                  |                               |
+| [lab8](lab_manual/lab7.md)       | Taint Analysis                    | [BinPRE](https://github.com/ecnusse/BinPRE)                              |
+| [lab9](lab_manual/lab8.md)       | Dynamic Symbolic Execution        |  [SmartRocket TestGrid]()                             |
 
 <br>
 
