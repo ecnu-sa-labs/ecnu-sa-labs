@@ -9,8 +9,8 @@ We welcome any comments or contributions. Feel free to create issues and pull re
 
 | Lectures                         |  Title                         |  Paper Readings                        |  Tools                        |
 |------------------------------|-----------------------------------|-----------------------------------|-----------------------------------|
-| [lec1]()      | Course Introduction: Program Analysis |  [Soundiness](https://yanniss.github.io/Soundiness-CACM.pdf), [False Positives/Negatives](https://dl.acm.org/doi/10.1145/3660781)    |        |
-| [lec2]()       | The LLVM Framework   |      |      |
+| [lec1](https://tingsu.github.io/files/courses/slides/lec-1-course_introduction.pdf)      | Course Introduction: Program Analysis |  [Soundiness](https://yanniss.github.io/Soundiness-CACM.pdf), [False Positives/Negatives](https://dl.acm.org/doi/10.1145/3660781)    |        |
+| [lec2](https://tingsu.github.io/files/courses/slides/lec-2-llvm-framework-primer.pdf)       | The LLVM Framework   |      |      |
 | [lec3]()       | Software Specifications          |  [Oracle Problem](https://ieeexplore.ieee.org/document/6963470), [Programs, Tests, and Oracles](https://dl.acm.org/doi/10.1145/1985793.1985847), [code coverage effectiveness](https://dl.acm.org/doi/10.1145/2568225.2568271), [mutation testing effectiveness](https://dl.acm.org/doi/10.1145/2635868.2635929), [testing_techniques](https://dl.acm.org/doi/10.1016/j.jss.2013.02.061)  |       |
 | [lec4]()       | Random Testing / Fuzzing          |  [Sanitizers](https://oaklandsok.github.io/papers/song2019.pdf)    |      |
 | [lec5]()       | Property-based Testing         |      |      |
