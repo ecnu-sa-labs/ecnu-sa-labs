@@ -25,7 +25,7 @@ Before preceding the labs, you need to setup the lab environment. Checkout this 
 
 ### Quick Notes
 
-- Get familar with using VScode, Git, Linux shell commands and Docker.
+- Get familar with using VScode, Git, Linux shell commands and Docker. If you are not familar with these stuffs, go and grab [The Missing Semester of Your CS Education](https://missing.csail.mit.edu/).
 - Always be patient and careful when reading the documentation (e.g., lab tutorial, instructions). 
 - Before rasing questions to TAs, please double check with the documentation. 
 
