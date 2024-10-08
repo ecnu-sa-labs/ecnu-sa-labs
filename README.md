@@ -54,6 +54,8 @@ Before preceding the labs, you need to setup the lab environment. Checkout this 
 
 ## Contributors （贡献者）
 
+主讲老师：[苏亭](http://tingsu.github.io/)、[孙海英](https://faculty.ecnu.edu.cn/_s43/shy/main.psp)
+
 We thanks the TAs and students who have contributed to this course design:
 
 <a href="https://ml-ming.dev/">明孟立</a>,
