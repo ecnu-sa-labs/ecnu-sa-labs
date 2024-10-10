@@ -341,18 +341,17 @@ a crashing input in at least seven of them.
 
 ### Submission
 
-Once you are done with the lab, you can create a `submission.zip` file by using the following command:
+Once you are done with the lab, submit your code by commiting and pushing the changes under `lab3/`. Specifically, you need to submit the changes to `src/Fuzzer.cpp`.
 
 ```sh
-lab3$ make submit
-...
-submission.zip created successfully.
+lab3$ git add src/Fuzzer.cpp
+lab3$ git commit -m "your commit message here"
+lab3$ git push
 ```
-Then upload the `submission.zip` file to TA's mail.
 
 If you'd like us to use a specific seed value for your fuzzer during grading,
 update `lab3/config.txt` with the seed value you'd like us to use.
-The same seed value will be used for all test cases.
+The same seed value will be used for all test cases. If you do this, you need to submit the changes to `lab3/config.txt`.
 
 
 [fuzzing-book-mutaion]: https://fuzzingbook.org/html/MutationFuzzer.html
