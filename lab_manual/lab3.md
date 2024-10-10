@@ -10,7 +10,7 @@ security-critical and crashing bugs in programs.
 For this purpose, your fuzzer will begin with seed inputs, and generate new
 inputs by mutating previous inputs. It will use output from previous rounds
 of test as _feedback_ to direct future test generation.
-You will use the code coverage metrics you saw in Lab 2 to help select interesting
+You will use the code coverage metrics you saw in `lab2` to help select interesting
 inputs for your fuzzer to mutate.
 
 ### Setup
@@ -18,14 +18,14 @@ inputs for your fuzzer to mutate.
 The code for Lab3 is located under `/lab3`.
 We will frequently refer to the top level directory for Lab 3 as `lab3`
 when describing file locations for the lab.
-Open the `lab3` directory in VSCode following the Instructions from [Course VM document][course-vm]
+Open the `lab3` directory in VSCode.
 
-This lab builds off the code coverage instrumentation from Lab 2.
+This lab builds off the code coverage instrumentation from `lab2`.
 You are provided with a `Instrument.cpp` file in `lab3/src`;
 it contains two instrumentations, namely coverage and sanitize.
 You have already seen code coverage in the previous lab and the implementation
 here is identical to it.
-In lab 1, you have seen that when a program encounters a divide-by-zero error it causes a Floating Point Exception and leads to a core dump.
+In `lab1`, you have seen that when a program encounters a divide-by-zero error it causes a Floating Point Exception and leads to a core dump.
 The sanitizer instrumentation inserts a call to the `__sanitize__` function
 before every division instruction.
 This function gracefully exits the program with return code `1`
@@ -50,8 +50,8 @@ when it hits a Divide-by-Zero error and report code coverage during execution.
 ##### Step 2.
 
 Next, we want to prepare a test program to fuzz with the `fuzzer`.
-This will be done by first instrumenting the program, similar to Lab 2.
-So to instrument and build the program `sanity1.c` you would run:
+This will be done by first instrumenting the program, similar to `lab2`.
+So to instrument and build the program `sanity1.c`, you would run:
 
 ```sh
 lab3/test$ clang -emit-llvm -S -fno-discard-value-names -c -o sanity1.ll sanity1.c -g
@@ -75,7 +75,7 @@ where fuzzer will store its results.
 lab3/test$ mkdir fuzz_output_sanity1
 ```
 
-You may recall from lab 1, that AFL could generate new inputs forever and never
+You may recall from `lab1`, that AFL could generate new inputs forever and never
 stop running. This is also the case for your fuzzer.
 So for this we will use `timeout` to stop the fuzzer after a specified time.
 
@@ -94,7 +94,7 @@ lab3/test$ make fuzz-sanity1
 ```
 
 This will run the `fuzzer` on `sanity1` for ten seconds and store the results to
-`lab3/test/fuzz_output_sanity1`
+`lab3/test/fuzz_output_sanity1`.
 Additionally, it will use the `lab3/config.txt` to set the `seed` which
 used to generate random numbers and `freq`, which determines how often we write a
 non-crashing input to output (larger is less frequent).
@@ -129,7 +129,7 @@ A full-fledged fuzzer consists of three key features:
 2. strategies to mutate test inputs to increase code coverage,
 3. a feedback mechanism to help drive the types of mutations used.
 
-##### Mutation-Fuzzing Primer
+##### Mutation-based Fuzzing Primer
 
 Consider the following code that reads some string input from the command line:
 
