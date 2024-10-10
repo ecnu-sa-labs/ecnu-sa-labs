@@ -453,9 +453,9 @@ In particular, for this course we shall use them to find bugs in a program.
 Once you are done with the lab, submit your code by commiting and pushing the changes under `lab2/`. Specifically, you need to submit the changes to `src/DynamicAnalysisPass.cpp` and `src/StaticAnalysisPass.cpp`
 
 ```
-   lab1$ git add src/DynamicAnalysisPass.cpp src/StaticAnalysisPass.cpp
-   lab1$ git commit -m "your commit message here"
-   lab1$ git push
+   lab2$ git add src/DynamicAnalysisPass.cpp src/StaticAnalysisPass.cpp
+   lab2$ git commit -m "your commit message here"
+   lab2$ git push
 ```
 
 <!--
