@@ -13,7 +13,7 @@ We welcome any comments or contributions. Feel free to create issues and pull re
 | [lec2](https://tingsu.github.io/files/courses/slides/lec-2-llvm-framework-primer.pdf)       | The LLVM Framework   |      |   [LLVM](https://llvm.org/)   |
 | [lec3](https://tingsu.github.io/files/courses/slides/lec-3-software_specifications_and_testing.pdf)       | Software Specifications          |  [oracle problem](https://ieeexplore.ieee.org/document/6963470), [programs, tests, and oracles](https://dl.acm.org/doi/10.1145/1985793.1985847), [code coverage effectiveness](https://dl.acm.org/doi/10.1145/2568225.2568271), [mutation testing effectiveness](https://dl.acm.org/doi/10.1145/2635868.2635929), [testing techniques](https://dl.acm.org/doi/10.1016/j.jss.2013.02.061)，[sanitizers](https://oaklandsok.github.io/papers/song2019.pdf)  |       |
 | [lec4](https://tingsu.github.io/files/courses/slides/lec-4-random_fuzz_testing.pdf)       | Random (Fuzz) Testing | [classic fuzz testing](https://arxiv.org/pdf/2008.06537), [havoc](https://dl.acm.org/doi/abs/10.1145/3510003.3510174), [fuzzing book](https://www.fuzzingbook.org/), [Fuzzing101](https://github.com/antonio-morales/Fuzzing101)   |   [AFL](https://github.com/google/AFL), [AFL++](https://github.com/AFLplusplus/AFLplusplus), [LibFuzzer](https://llvm.org/docs/LibFuzzer.html)    | 
-| [lec5]()       | Property-based Testing         |      |      |
+| [lec5](https://tingsu.github.io/files/courses/slides/lec-5-MT-and-PBT.pdf)       | Property-based Testing         |   [Papers](https://tingsu.github.io/files/courses/pa2022.html)   |      |
 
 <br>
 
