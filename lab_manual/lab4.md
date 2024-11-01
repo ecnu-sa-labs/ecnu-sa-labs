@@ -154,11 +154,10 @@ This is
 
 ### Items to Submit
 
-Once you are done with the lab, you can create a `submission.zip` file by using the following command:
+Once you are done with the lab, submit your code by commiting and pushing the changes under `lab4/`. Specifically, you need to submit the changes to `delta_debugger/delta.py`.
 
 ```sh
-lab4$ make submit
-...
-submission.zip created successfully.
+lab4$ git add delta_debugger/delta.py
+lab4$ git commit -m "your commit message here"
+lab4$ git push
 ```
-Then upload the `submission.zip` file to TA's mail.
