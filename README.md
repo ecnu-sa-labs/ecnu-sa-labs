@@ -33,17 +33,17 @@ Before preceding the labs, you need to setup the lab environment. Checkout this 
 - Before rasing questions to TAs, please double check with the documentation. 
 
 
-| Labs                         | Lab Title                         |  Relevant Research Projects                       |
-|------------------------------|-----------------------------------|-----------------------------------|
-| [lab1](lab_manual/lab1.md)       | Introduction to Software Analysis |                               |
-| [lab2](lab_manual/lab2.md)       | The LLVM Framework                |                               |
-| [lab3](lab_manual/lab3.md)       | Random Testing / Fuzzing          |                              |
-|       | Property-based Testing            |  [Kea](https://github.com/ecnusse/Kea) |
-| [lab4](lab_manual/lab4.md)       | Delta Debugging                   |                               |
-| [lab5](lab_manual/lab5.md)       | Dataflow Analysis                 |                               |
-| [lab6](lab_manual/lab6.md)       | Pointer Analysis                  |                               |
-|       | Taint Analysis                    | [BinPRE](https://github.com/ecnusse/BinPRE)                              |
-| [lab7](lab_manual/lab7.md)       | Dynamic Symbolic Execution        |  [SmartRocket TestGrid]()                             |
+| Labs                         | Lab Title                         | Estimated Time |  Relevant Research Projects       |
+|------------------------------|-----------------------------------|----------------|-----------------------------------|
+| [lab1](lab_manual/lab1.md)   | Introduction to Software Analysis | 1-2h           |                                   |
+| [lab2](lab_manual/lab2.md)   | The LLVM Framework                | ~6h            |                                   |
+| [lab3](lab_manual/lab3.md)   | Random Testing / Fuzzing          | ~6h            |                                   |
+|                              | Property-based Testing            |                | [Kea](https://github.com/ecnusse/Kea) |
+| [lab4](lab_manual/lab4.md)   | Delta Debugging                   |                |                                   |
+| [lab5](lab_manual/lab5.md)   | Dataflow Analysis                 |                |                                   |
+| [lab6](lab_manual/lab6.md)   | Pointer Analysis                  |                |                                   |
+|                              | Taint Analysis                    |                | [BinPRE](https://github.com/ecnusse/BinPRE) |
+| [lab7](lab_manual/lab7.md)   | Dynamic Symbolic Execution        |                | [SmartRocket TestGrid]()          |
 
 <br>
 
