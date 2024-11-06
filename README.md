@@ -53,7 +53,7 @@ Before preceding the labs, you need to setup the lab environment. Checkout this 
 ## Troubleshooting (常见问题汇总)
 
 - 第一次配置实验课环境([lab tutorial](lab_manual/course-vm.md))，由于需要下载docker image，请使用科学上网工具。Windows上的科学上网工具有：`Clash for windows`, `Clash Meta`, `V2rayN`（请打开tun模式实现接近于全局的代理）。
-- 如果你的电脑系统是Mac，且使用的是Mac M芯片，可能需要安装[Rosetta](https://support.apple.com/en-us/102527) (Rosetta enables a Mac with Apple silicon to use apps built for a Mac with an Intel processor)。另外，确认Docker的`Settings` -> `General`里是否已经勾选上`Use Rosetta for x86_64/amd64 emulation on Apple Silicon`。
+- 如果你的电脑系统是Mac，且使用的是Apple Silicon芯片，可能需要安装[Rosetta](https://support.apple.com/en-us/102527) (Rosetta enables a Mac with Apple silicon to use apps built for a Mac with an Intel processor)。另外，确认Docker的`Settings` -> `General`里是否已经勾选上`Use Rosetta for x86_64/amd64 emulation on Apple Silicon`。
 
 ## Contributors （贡献者）
 
