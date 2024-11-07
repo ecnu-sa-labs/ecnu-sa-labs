@@ -33,17 +33,17 @@ Before preceding the labs, you need to setup the lab environment. Checkout this 
 - Before rasing questions to TAs, please double check with the documentation. 
 
 
-| Labs                         | Lab Title                         |  Relevant Research Projects                       |
-|------------------------------|-----------------------------------|-----------------------------------|
-| [lab1](lab_manual/lab1.md)       | Introduction to Software Analysis |                               |
-| [lab2](lab_manual/lab2.md)       | The LLVM Framework                |                               |
-| [lab3](lab_manual/lab3.md)       | Random Testing / Fuzzing          |                              |
-|       | Property-based Testing            |  [Kea](https://github.com/ecnusse/Kea) |
-| [lab4](lab_manual/lab4.md)       | Delta Debugging                   |                               |
-| [lab5](lab_manual/lab5.md)       | Dataflow Analysis                 |                               |
-| [lab6](lab_manual/lab6.md)       | Pointer Analysis                  |                               |
-|       | Taint Analysis                    | [BinPRE](https://github.com/ecnusse/BinPRE)                              |
-| [lab7](lab_manual/lab7.md)       | Dynamic Symbolic Execution        |  [SmartRocket TestGrid]()                             |
+| Labs                         | Lab Title                         | Estimated Time |  Relevant Research Projects       |
+|------------------------------|-----------------------------------|----------------|-----------------------------------|
+| [lab1](lab_manual/lab1.md)   | Introduction to Software Analysis | 1-2h           |                                   |
+| [lab2](lab_manual/lab2.md)   | The LLVM Framework                | ~6h            |                                   |
+| [lab3](lab_manual/lab3.md)   | Random Testing / Fuzzing          | ~6h            |                                   |
+|                              | Property-based Testing            |                | [Kea](https://github.com/ecnusse/Kea) |
+| [lab4](lab_manual/lab4.md)   | Delta Debugging                   |                |                                   |
+| [lab5](lab_manual/lab5.md)   | Dataflow Analysis                 |                |                                   |
+| [lab6](lab_manual/lab6.md)   | Pointer Analysis                  |                |                                   |
+|                              | Taint Analysis                    |                | [BinPRE](https://github.com/ecnusse/BinPRE) |
+| [lab7](lab_manual/lab7.md)   | Dynamic Symbolic Execution        |                | [SmartRocket TestGrid]()          |
 
 <br>
 
@@ -53,7 +53,7 @@ Before preceding the labs, you need to setup the lab environment. Checkout this 
 ## Troubleshooting (常见问题汇总)
 
 - 第一次配置实验课环境([lab tutorial](lab_manual/course-vm.md))，由于需要下载docker image，请使用科学上网工具。Windows上的科学上网工具有：`Clash for windows`, `Clash Meta`, `V2rayN`（请打开tun模式实现接近于全局的代理）。
-- 如果你的电脑系统是Mac，且使用的是Mac M芯片，可能需要安装[Rosetta](https://support.apple.com/en-us/102527) (Rosetta enables a Mac with Apple silicon to use apps built for a Mac with an Intel processor)。另外，确认Docker的`Settings` -> `General`里是否已经勾选上`Use Rosetta for x86_64/amd64 emulation on Apple Silicon`。
+- 如果你的电脑系统是Mac，且使用的是Apple Silicon芯片，可能需要安装[Rosetta](https://support.apple.com/en-us/102527) (Rosetta enables a Mac with Apple silicon to use apps built for a Mac with an Intel processor)。另外，确认Docker的`Settings` -> `General`里是否已经勾选上`Use Rosetta for x86_64/amd64 emulation on Apple Silicon`。
 
 ## Contributors （贡献者）
 
@@ -63,7 +63,7 @@ We thanks the TAs and students who have contributed to this course design:
 
 <a href="https://ml-ming.dev/">明孟立</a>,
 <a href="https://apochens.github.io/">黄杉</a>,
-<a href="">麻恩泽</a>,
+<a href="https://joseph9morgan.github.io/">麻恩泽</a>,
 徐瑞阳,
 王祺昌,
 方润渲,
