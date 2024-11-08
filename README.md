@@ -16,7 +16,7 @@ We welcome any comments or contributions. Feel free to create issues and pull re
 | [lec5](https://tingsu.github.io/files/courses/slides/lec-5-MT-and-PBT.pdf)       | Metamorphic Testing & Property-based Testing         |   [Papers](https://tingsu.github.io/files/courses/pa2022.html)   |      |
 | [lec6](https://tingsu.github.io/files/courses/slides/lec-6_delta_debugging.pdf)       | Delta Debugging        |    |      |
 | [lec7](https://tingsu.github.io/files/courses/slides/lec-7_data_flow_analysis1.pdf) |  Data-flow Analysis I        |    |      |
-| [lec8](https://tingsu.github.io/files/courses/slides/lec-7_data_flow_analysis2.pdf) |  Data-flow Analysis II        |    |      |
+| [lec8](https://tingsu.github.io/files/courses/slides/lec-8_data_flow_analysis2.pdf) |  Data-flow Analysis II        |    |      |
 | [lec9]() |  Data-flow Analysis III        |    |      |
 <br>
 
