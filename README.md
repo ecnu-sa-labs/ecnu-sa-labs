@@ -17,7 +17,7 @@ We welcome any comments or contributions. Feel free to create issues and pull re
 | [lec6](https://tingsu.github.io/files/courses/slides/lec-6_delta_debugging.pdf)       | Delta Debugging        |  [Reducer](https://www.fuzzingbook.org/html/Reducer.html)  |      |
 | [lec7](https://tingsu.github.io/files/courses/slides/lec-7_data_flow_analysis1.pdf) |  Data-flow Analysis I        |    |      |
 | [lec8](https://tingsu.github.io/files/courses/slides/lec-8_data_flow_analysis2.pdf) |  Data-flow Analysis II        |    |      |
-| [lec9]() |  Data-flow Analysis III        |    |      |
+| [lec9](https://tingsu.github.io/files/courses/slides/lec-9_data_flow_analysis3.pdf) |  Data-flow Analysis III        |    |      |
 <br>
 
 
@@ -40,6 +40,7 @@ Before preceding the labs, you need to setup the lab environment. Checkout this 
 | [lab3](lab_manual/lab3.md)   | Random Testing / Fuzzing          | ~6h            |                                   |
 |                              | Property-based Testing            |                | [Kea](https://github.com/ecnusse/Kea) |
 | [lab4](lab_manual/lab4.md)   | Delta Debugging                   |                |                                   |
+| [exercise](exercise/exercise_data_flow_analysis.pdf)   | Dataflow Analysis                   |                |                                   |
 | [lab5](lab_manual/lab5.md)   | Dataflow Analysis                 |                |                                   |
 | [lab6](lab_manual/lab6.md)   | Pointer Analysis                  |                |                                   |
 |                              | Taint Analysis                    |                | [BinPRE](https://github.com/ecnusse/BinPRE) |
