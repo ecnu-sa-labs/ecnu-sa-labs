@@ -1,4 +1,4 @@
-## Introduction to Software Analysis
+## Understanding Static and Dynamic Analysis
 
 Understanding the basic concepts of software analysis and metrics used to estimate the effectiveness of analysis.
 

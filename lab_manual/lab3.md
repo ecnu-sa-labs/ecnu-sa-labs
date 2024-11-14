@@ -1,4 +1,5 @@
-## Random Input Generation
+## Building A Fuzzer
+
 Building a coverage-guided random input generator a.k.a. "fuzzer" for testing C programs.
 
 ### Objective

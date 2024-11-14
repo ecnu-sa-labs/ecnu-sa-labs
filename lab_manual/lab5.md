@@ -1,4 +1,4 @@
-## Dataflow Analysis
+## Building A Static Analyzer (Dataflow Analysis)
 
 Building a "division-by-zero" static analysis for a subset of the C language that includes branches and loops.
 

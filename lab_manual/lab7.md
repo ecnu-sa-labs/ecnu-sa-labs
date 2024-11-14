@@ -1,4 +1,4 @@
-## Dynamic Symbolic Execution
+## Building A Dynamic Symbolic Execution Engine
 
 Building a dynamic symbolic executor for C programs with LLVM and Z3.
 
