@@ -74,7 +74,7 @@ Then you will use the `opt` command to run this pass on the optimized LLVM IR pr
 Upon successful completion of this lab, the output in `test/test04.out` should be as follows:
 
 ```
-Running DivZero on main
+Running DivZero on f
 Potential Instructions by DivZero:
   %div1 = sdiv i32 %div, %div
 ```
@@ -358,7 +358,7 @@ As we demonstrated in the Setup section, run your analyzer on the test files usi
 If there is a divide-by-zero error in the program, your output should be as follows:
 
 ```sh
-Running DivZero on Main
+Running DivZero on f
 Instructions that potentially divide by zero:
   %div = sdiv i32 1, 0
 ```
