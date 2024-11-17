@@ -499,14 +499,13 @@ Out set:
 
 ### Submission
 
-Once you are done with the lab, you can create a `submission.zip` file by using the following command:
-```sh
-lab5$ make submit
-...
-submission.zip created successfully.
-```
+Once you are done with the lab, submit your code by commiting and pushing the changes under `lab5/`. Specifically, you need to submit the changes to `src/ChaoticIteration.cpp`, `src/DivZeroAnalysis.cpp` and `src/Transfer.cpp`.
 
-Then upload the submission file to TA's mail.
+```sh
+lab4$ git add src/ChaoticIteration.cpp src/DivZeroAnalysis.cpp src/Transfer.cpp
+lab4$ git commit -m "your commit message here"
+lab4$ git push
+```
 
 [LLVM template functions]: http://releases.llvm.org/8.0.0/docs/ProgrammersManual.html#the-isa-cast-and-dyn-cast-templates
 [LLVM CmpInst]: https://llvm.org/doxygen/classllvm_1_1CmpInst.html
