@@ -18,6 +18,7 @@ We welcome any comments or contributions. Feel free to create issues and pull re
 | [lec7](https://tingsu.github.io/files/courses/slides/lec-7_data_flow_analysis1.pdf) |  Data-flow Analysis I        |    |      |
 | [lec8](https://tingsu.github.io/files/courses/slides/lec-8_data_flow_analysis2.pdf) |  Data-flow Analysis II        |    |      |
 | [lec9](https://tingsu.github.io/files/courses/slides/lec-9_data_flow_analysis3.pdf) |  Data-flow Analysis III        |    |      |
+| [lec10](https://tingsu.github.io/files/courses/slides/lec-10_pointer_analysis.pdf) |  Pointer Analysis     |    |      |
 <br>
 
 
