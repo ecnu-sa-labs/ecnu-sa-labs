@@ -49,14 +49,14 @@ We are now ready to run our bare-bones lab on a sample input C program.
 
 Before running the pass on a test program, we need to generate the LLVM IR code for it.
 
-The `clang` command generates LLVM IR program from the input C program `test03.c`.
+The `clang` command generates LLVM IR program from the input C program `test04.c`.
 
 The `opt` command optimizes that LLVM IR program and generates an equivalent LLVM IR program that is simpler to process for the analyzer you will be building in this lab.
 In particular, the `-mem2reg` option promotes every [AllocaInst][LLVM AllocaInst] to a register, allowing your analyzer to ignore handling pointers in this lab.
 
 ```sh
-/lab5/test$ clang -emit-llvm -S -fno-discard-value-names -Xclang -disable-O0-optnone -c -o test03.ll test03.c
-/lab5/test$ opt -mem2reg -S test03.ll -o test03.opt.ll
+/lab5/test$ clang -emit-llvm -S -fno-discard-value-names -Xclang -disable-O0-optnone -c -o test04.ll test04.c
+/lab5/test$ opt -mem2reg -S test04.ll -o test04.opt.ll
 ```
 
 ##### Step 3
@@ -68,18 +68,18 @@ Similar to former labs, you will implement your analyzer as an LLVM pass, called
 Then you will use the `opt` command to run this pass on the optimized LLVM IR program as follows:
 
 ```sh
-/lab5/test$ opt -load ../build/DivZeroPass.so -DivZero -disable-output test03.opt.ll > test03.out 2> test03.err
+/lab5/test$ opt -load ../build/DivZeroPass.so -DivZero -disable-output test04.opt.ll > test04.out 2> test04.err
 ```
 
-Upon successful completion of this lab, the output in `test/test03.out` should be as follows:
+Upon successful completion of this lab, the output in `test/test04.out` should be as follows:
 
 ```
-Running DivZero on main
+Running DivZero on f
 Potential Instructions by DivZero:
   %div1 = sdiv i32 %div, %div
 ```
 
-The debug output of your program (printed using `errs()`) will be available in the `test/test03.err` file.
+The debug output of your program (printed using `errs()`) will be available in the `test/test04.err` file.
 
 ### Format of Input Programs
 
@@ -352,13 +352,13 @@ Follow these steps to compile using the reference binary:
 As we demonstrated in the Setup section, run your analyzer on the test files using `opt`:
 
 ```sh
-/lab5/test$ opt -load ../build/DivZeroPass.so -DivZero -disable-output test03.opt.ll
+/lab5/test$ opt -load ../build/DivZeroPass.so -DivZero -disable-output test04.opt.ll
 ```
 
 If there is a divide-by-zero error in the program, your output should be as follows:
 
 ```sh
-Running DivZero on Main
+Running DivZero on f
 Instructions that potentially divide by zero:
   %div = sdiv i32 1, 0
 ```
@@ -499,14 +499,13 @@ Out set:
 
 ### Submission
 
-Once you are done with the lab, you can create a `submission.zip` file by using the following command:
-```sh
-lab5$ make submit
-...
-submission.zip created successfully.
-```
+Once you are done with the lab, submit your code by commiting and pushing the changes under `lab5/`. Specifically, you need to submit the changes to `src/ChaoticIteration.cpp`, `src/DivZeroAnalysis.cpp` and `src/Transfer.cpp`.
 
-Then upload the submission file to TA's mail.
+```sh
+lab4$ git add src/ChaoticIteration.cpp src/DivZeroAnalysis.cpp src/Transfer.cpp
+lab4$ git commit -m "your commit message here"
+lab4$ git push
+```
 
 [LLVM template functions]: http://releases.llvm.org/8.0.0/docs/ProgrammersManual.html#the-isa-cast-and-dyn-cast-templates
 [LLVM CmpInst]: https://llvm.org/doxygen/classllvm_1_1CmpInst.html
