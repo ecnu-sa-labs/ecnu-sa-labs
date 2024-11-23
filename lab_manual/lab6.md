@@ -11,7 +11,7 @@ You will combine the dataflow analysis from the previous lab with a flow-insensi
 
 The skeleton code for Lab 6 is located under `/lab6`.
 We will frequently refer to the top level directory for Lab 6 as `lab6` when describing file locations.
-This lab is built upon your work from [Lab 6][Lab06], so you can reuse most of your content from the `/lab5/src` directory.
+This lab is built upon your work from Lab 5, so you can reuse most of your content from the `/lab5/src` directory.
 
 #### Step 1.
 
@@ -371,9 +371,9 @@ This ensures that all pointer references are in-sync and will converge upon a pr
 Once you are done with the lab, submit your code by commiting and pushing the changes under `lab6/`. Specifically, you need to submit the changes to `src/ChaoticIteration.cpp`, `src/DivZeroAnalysis.cpp` and `src/Transfer.cpp`.
 
 ```sh
-lab4$ git add src/ChaoticIteration.cpp src/DivZeroAnalysis.cpp src/Transfer.cpp
-lab4$ git commit -m "your commit message here"
-lab4$ git push
+lab6$ git add src/ChaoticIteration.cpp src/DivZeroAnalysis.cpp src/Transfer.cpp
+lab6$ git commit -m "your commit message here"
+lab6$ git push
 ```
 
 [LLVM AllocaInst]: https://llvm.org/doxygen/classllvm_1_1AllocaInst.html
