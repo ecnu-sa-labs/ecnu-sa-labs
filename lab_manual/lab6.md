@@ -368,14 +368,12 @@ This ensures that all pointer references are in-sync and will converge upon a pr
 
 ### Submission
 
-Once you are done with the lab, you can create a `submission.zip` file by using the following command:
+Once you are done with the lab, submit your code by commiting and pushing the changes under `lab6/`. Specifically, you need to submit the changes to `src/ChaoticIteration.cpp`, `src/DivZeroAnalysis.cpp` and `src/Transfer.cpp`.
 
 ```sh
-lab6$ make submit
-...
-submission.zip created successfully.
+lab4$ git add src/ChaoticIteration.cpp src/DivZeroAnalysis.cpp src/Transfer.cpp
+lab4$ git commit -m "your commit message here"
+lab4$ git push
 ```
-
-Then upload the submission file to TA's mail.
 
 [LLVM AllocaInst]: https://llvm.org/doxygen/classllvm_1_1AllocaInst.html
