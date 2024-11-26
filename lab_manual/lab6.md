@@ -34,11 +34,11 @@ We are now ready to run our bare-bones lab on a sample input C program.
 Before running the pass, the LLVM IR code must be generated.
 
 ```sh
-/lab6/test$ clang -emit-llvm -S -fno-discard-value-names -Xclang -disable-O0-optnone -c test03.c -o test03.ll
-/lab6/test$ opt -load ../build/DivZeroPass.so -DivZero test03.ll
+/lab6/test$ clang -emit-llvm -S -fno-discard-value-names -Xclang -disable-O0-optnone -c test13.c -o test13.ll
+/lab6/test$ opt -load ../build/DivZeroPass.so -DivZero test13.ll
 ```
 
-The first line (`clang`) generates LLVM IR code from the input C program `test03.c`.
+The first line (`clang`) generates LLVM IR code from the input C program `test13.c`.
 The next line (`opt`) runs your pass over the compiled LLVM IR code.
 
 In prior lab, we used an intermediate step with the argument `-mem2reg` which promoted every
@@ -48,7 +48,7 @@ However, in this lab we no longer do that so you will extend your previous code 
 Upon successful completion of this lab, the output should be as follows:
 
 ```sh
-/lab6/test$ opt -load ../build/DivZeroPass.so -DivZero test03.ll
+/lab6/test$ opt -load ../build/DivZeroPass.so -DivZero test13.ll
 Running DivZero on f
 Potential Instructions by DivZero:
     %div = sdiv i32 1, %2
@@ -344,7 +344,7 @@ Now we’re storing the pointer at `%a` into variable `%c`, which is a pointer t
 We can again use type information from `getType()` on each of these operands to determine whether pointer-aliasing may apply.
 
 This clearly complicates our abstract domain analysis - if some further instruction updates the value of `%a`, we not only need to update the abstract value of `%c`, but also consider updating the abstract value of other pointers that point to `%a`.
-This also applies to changes made to `%c` which is what happens in the `test03.c` example.
+This also applies to changes made to `%c` which is what happens in the `test13.c` example.
 
 ```c
 int f() {
