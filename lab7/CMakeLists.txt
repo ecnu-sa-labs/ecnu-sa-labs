@@ -21,5 +21,4 @@ add_library(runtime MODULE
   lib/runtime.cpp
   )
 
-  # 链接所需的 LLVM 库
 target_link_libraries(runtime PRIVATE LLVM-8)
