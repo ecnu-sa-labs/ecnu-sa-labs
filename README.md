@@ -19,6 +19,7 @@ We welcome any comments or contributions. Feel free to create issues and pull re
 | [lec8](https://tingsu.github.io/files/courses/slides/lec-8_data_flow_analysis2.pdf) |  Data-flow Analysis II        |    |      |
 | [lec9](https://tingsu.github.io/files/courses/slides/lec-9_data_flow_analysis3.pdf) |  Data-flow Analysis III        |    |      |
 | [lec10](https://tingsu.github.io/files/courses/slides/lec-10_pointer_analysis.pdf) |  Pointer Analysis     |    |      |
+| [lec11](https://tingsu.github.io/files/courses/slides/lec-11_taint_analysis.pdf) |  Taint Analysis     |    |      |
 <br>
 
 
@@ -44,8 +45,8 @@ Before preceding the labs, you need to setup the lab environment. Checkout this 
 | [exercise](exercise/exercise_data_flow_analysis.pdf)   | Dataflow Analysis                   |                |                                   |
 | [lab5](lab_manual/lab5.md)   | Dataflow Analysis                 |                |                                   |
 | [lab6](lab_manual/lab6.md)   | Pointer Analysis                  |                |                                   |
-|                              | Taint Analysis                    |                | [BinPRE](https://github.com/ecnusse/BinPRE) |
-| [lab7](lab_manual/lab7.md)   | Dynamic Symbolic Execution        |                | [SmartRocket TestGrid]()          |
+|  [lab7]()               | Taint Analysis    |                | [BinPRE](https://github.com/ecnusse/BinPRE) |
+| [lab8](lab_manual/lab7.md)   | Symbolic Execution        |                | [SmartRocket TestGrid]()          |
 
 <br>
 
