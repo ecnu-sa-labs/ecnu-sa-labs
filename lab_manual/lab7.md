@@ -246,9 +246,9 @@ Different taint analysis tools have different features of data structures and ta
 
 #### TODO List:
 In terms of code/technical implementation, dynamic taint analysis requires the following three steps:   
-`Ⅰ.`Develop the instrumentation logic and package it as an LLVM pass;  
-`Ⅱ.`Use the pass to instrument the IR file of the target program, inserting calls to runtime functions;  
-`Ⅲ.`Compile the modified IR file into an executable and run it.
+`1.`Develop the instrumentation logic and package it as an LLVM pass;  
+`2.`Use the pass to instrument the IR file of the target program, inserting calls to runtime functions;  
+`3.`Compile the modified IR file into an executable and run it.
 
 So in this lab, we need to complete the instrumentation logic as well as  the run time function being inserted, you will have the following TODO list:
 
