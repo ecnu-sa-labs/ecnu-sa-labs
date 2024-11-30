@@ -77,7 +77,6 @@ From :%arraydecay3 to :%arraydecay2
 Taint propagated from 0x7ffc34796c80 to 0x7ffc34796c80
 From :%cmd to :%arraydecay5 
 Taint detected in sensitive position: 0x7ffc34796c80!
-Aborted!
 That's the address in:%arraydecay5
 ```
 
@@ -108,7 +107,6 @@ From :%add to :%secret_value
 Taint propagated from 0x7ffca89e707c to %19
 From :%secret_value to :%19 
 Taint detected in sensitive position: %19!
-Aborted!
 ```
 
 ### Lab Instructions
