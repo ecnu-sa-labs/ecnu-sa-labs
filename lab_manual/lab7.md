@@ -67,17 +67,30 @@ Next, compile the instrumented program and link it with the runtime library to p
 Finally run the executable. When you complete all the source files, they should work like this:
 ```
 /lab7/test$ ./InjectionAttack
-Filename:example.txt; ls -al
-tainted var address: 0x7ffc34796880
+Filename:example.txt ; ls -al
+tainted var address: 0x7ffc369a6c90
 That's the address in:%arraydecay
-Taint propagated from 0x7ffc34796880 to 0x7ffc34796880
+Taint propagated from 0x7ffc369a6c90 to 0x7ffc369a6c90
 From :%filename to :%arraydecay3 
-Taint propagated from 0x7ffc34796880 to 0x7ffc34796c80
+Taint propagated from 0x7ffc369a6c90 to 0x7ffc369a7090
 From :%arraydecay3 to :%arraydecay2 
-Taint propagated from 0x7ffc34796c80 to 0x7ffc34796c80
+Taint propagated from 0x7ffc369a7090 to 0x7ffc369a7090
 From :%cmd to :%arraydecay5 
-Taint detected in sensitive position: 0x7ffc34796c80!
+Taint detected in sensitive position: 0x7ffc369a7090!
 That's the address in:%arraydecay5
+This is an example txt file!total 264
+drwxrwxrwx 1 root root   512 Nov 30 08:02 .
+drwxrwxrwx 1 root root   512 Nov 26 12:10 ..
+-rwxr-xr-x 1 root root 19616 Nov 30 08:02 ControlFlowHijack
+-rwxrwxrwx 1 root root   605 Nov 26 12:08 ControlFlowHijack.cpp
+-rw-r--r-- 1 root root 60332 Nov 30 08:02 ControlFlowHijack.dynamic.ll
+-rw-r--r-- 1 root root 49436 Nov 30 08:02 ControlFlowHijack.ll
+-rwxr-xr-x 1 root root 18968 Nov 30 08:02 InjectionAttack
+-rwxrwxrwx 1 root root   420 Nov 26 12:08 InjectionAttack.cpp
+-rw-r--r-- 1 root root 53797 Nov 30 08:02 InjectionAttack.dynamic.ll
+-rw-r--r-- 1 root root 50311 Nov 30 08:02 InjectionAttack.ll
+-rwxrwxrwx 1 root root   346 Nov 26 12:08 Makefile
+-rw-r--r-- 1 root root    28 Nov 30 08:00 example.txt
 ```
 
 ```
@@ -107,6 +120,7 @@ From :%add to :%secret_value
 Taint propagated from 0x7ffca89e707c to %19
 From :%secret_value to :%19 
 Taint detected in sensitive position: %19!
+You've discovered the secret value!
 ```
 
 ### Lab Instructions
