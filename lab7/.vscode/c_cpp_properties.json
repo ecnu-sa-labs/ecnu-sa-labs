@@ -4,8 +4,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/usr/include/**",
-                "/z3-4.8.5-x64-ubuntu-16.04/**"
+                "/usr/include/llvm-8",
+                "/usr/include/llvm-c-8"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",
@@ -15,4 +15,4 @@
         }
     ],
     "version": 4
-  }
+}

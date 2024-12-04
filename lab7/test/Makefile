@@ -1,20 +1,16 @@
-.PRECIOUS: %.ll %.instrumented.ll
-
-SRC:=$(wildcard *.c)
-TARGETS:=$(patsubst %.c, %, $(SRC))
-
-build-all: ${TARGETS}
-
-all: $(patsubst %, dse-%, $(TARGETS))
+TARGETS=InjectionAttack ControlFlowHijack
 
 
-%: %.c
-	clang -emit-llvm -S -fno-discard-value-names -c -o $@.ll $<
-	opt -load ../build/InstrumentPass.so -DSEInstrument -S $*.ll -o $*.instrumented.ll
-	clang -o $@ -L${PWD}/../build -lruntime $*.instrumented.ll
+all: simple
 
-dse-%: %
-	./test $<
+simple: $(TARGETS)
+
+
+
+%: %.cpp
+	clang -emit-llvm -S -fno-discard-value-names -c -o $@.ll $< -g
+	opt -load ../build/DynTaintAnalysisPass.so -DynTaintAnalysisPass -S $@.ll -o $@.dynamic.ll
+	clang -o $@ -L${PWD}/../build -lruntime $@.dynamic.ll
 
 clean:
-	rm -f *.ll *.out *.err *.smt2 input.txt branch.txt ${TARGETS}
+	rm -f *.ll *.*cov *.binops ${TARGETS}
