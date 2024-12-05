@@ -14,13 +14,13 @@ We welcome any comments or contributions. Feel free to create issues and pull re
 | [lec3](https://tingsu.github.io/files/courses/slides/lec-3-software_specifications_and_testing.pdf)       | Software Specifications          |  [oracle problem](https://ieeexplore.ieee.org/document/6963470), [programs, tests, and oracles](https://dl.acm.org/doi/10.1145/1985793.1985847), [code coverage effectiveness](https://dl.acm.org/doi/10.1145/2568225.2568271), [mutation testing effectiveness](https://dl.acm.org/doi/10.1145/2635868.2635929), [testing techniques](https://dl.acm.org/doi/10.1016/j.jss.2013.02.061)，[sanitizers](https://oaklandsok.github.io/papers/song2019.pdf)  |       |
 | [lec4](https://tingsu.github.io/files/courses/slides/lec-4-random_fuzz_testing.pdf)       | Random (Fuzz) Testing | [classic fuzz testing](https://arxiv.org/pdf/2008.06537), [havoc](https://dl.acm.org/doi/abs/10.1145/3510003.3510174), [fuzzing book](https://www.fuzzingbook.org/), [Fuzzing101](https://github.com/antonio-morales/Fuzzing101)   |   [AFL](https://github.com/google/AFL), [AFL++](https://github.com/AFLplusplus/AFLplusplus), [LibFuzzer](https://llvm.org/docs/LibFuzzer.html)    | 
 | [lec5](https://tingsu.github.io/files/courses/slides/lec-5-MT-and-PBT.pdf)       | Metamorphic Testing & Property-based Testing         |   [Papers](https://tingsu.github.io/files/courses/pa2022.html)   |      |
-| [lec6](https://tingsu.github.io/files/courses/slides/lec-6_delta_debugging.pdf)       | Delta Debugging        |  [Reducer](https://www.fuzzingbook.org/html/Reducer.html)  |      |
+| [lec6](https://tingsu.github.io/files/courses/slides/lec-6_delta_debugging.pdf)       | Delta Debugging        | [Delta Debugging](https://dl.acm.org/doi/pdf/10.1145/318774.318946), [Reducer](https://www.fuzzingbook.org/html/Reducer.html)  |      |
 | [lec7](https://tingsu.github.io/files/courses/slides/lec-7_data_flow_analysis1.pdf) |  Data-flow Analysis I        |    |      |
 | [lec8](https://tingsu.github.io/files/courses/slides/lec-8_data_flow_analysis2.pdf) |  Data-flow Analysis II        |    |      |
 | [lec9](https://tingsu.github.io/files/courses/slides/lec-9_data_flow_analysis3.pdf) |  Data-flow Analysis III        |    |      |
 | [lec10](https://tingsu.github.io/files/courses/slides/lec-10_pointer_analysis.pdf) |  Pointer Analysis     |    |      |
 | [lec11](https://tingsu.github.io/files/courses/slides/lec-11_taint_analysis.pdf) |  Taint Analysis     |    |      |
-| [lec12]() |  Symbolic Execution     |    |      |
+| [lec12](https://tingsu.github.io/files/courses/slides/lec-12-symbolic-execution.pdf) |  Symbolic Execution     |    |      |
 <br>
 
 
@@ -47,7 +47,7 @@ Before preceding the labs, you need to setup the lab environment. Checkout this 
 | [lab5](lab_manual/lab5.md)   | Dataflow Analysis                 |                |                                   |
 | [lab6](lab_manual/lab6.md)   | Pointer Analysis                  |                |                                   |
 | [lab7](lab_manual/lab7.md)   | Taint Analysis    |                | [BinPRE](https://github.com/ecnusse/BinPRE) |
-| [lab8](lab_manual/lab7.md)   | Symbolic Execution        |                | [SmartRocket TestGrid]()          |
+| [lab8](lab_manual/lab8.md)   | Symbolic Execution        |                | [SmartRocket TestGrid]()          |
 
 <br>
 
