@@ -47,7 +47,7 @@ Before preceding the labs, you need to setup the lab environment. Checkout this 
 | [lab5](lab_manual/lab5.md)   | Dataflow Analysis                 |                |                                   |
 | [lab6](lab_manual/lab6.md)   | Pointer Analysis                  |                |                                   |
 | [lab7](lab_manual/lab7.md)   | Taint Analysis    |                | [BinPRE](https://github.com/ecnusse/BinPRE) |
-| [lab8](lab_manual/lab8.md)   | Symbolic Execution        |                | [SmartRocket TestGrid]()          |
+| [lab8](lab_manual/lab8.md)   | Symbolic Execution (MiniKLEE)       |                | [SmartRocket TestGrid]()          |
 
 <br>
 
