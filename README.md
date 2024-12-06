@@ -72,7 +72,8 @@ We thanks the TAs and students who have contributed to this course design:
 王祺昌,
 方润渲,
 <a href="https://xixianliang.github.io/resume/">梁锡贤</a>,
-沈佳伟
+沈佳伟,
+陈浩仪
 
 林童奕凡、高雨宸
 
