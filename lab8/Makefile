@@ -1,6 +1,6 @@
 # Compiler and linker
 CXX = clang++
-CXXFLAGS = -std=c++14 -Wall -I./include -I/usr/include/llvm-14 -I/usr/include/c++/7 -I /usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/llvm-c-14
+CXXFLAGS = -std=c++14 -g -Wall -I./include -I/usr/include/llvm-14 -I/usr/include/c++/7 -I /usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/llvm-c-14
 LDFLAGS = -nostdlib++ -L/usr/lib/llvm-14/lib -lLLVM -lpthread /usr/lib/x86_64-linux-gnu/libstdc++.so.6
 
 # File names
