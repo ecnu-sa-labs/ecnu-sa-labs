@@ -22,10 +22,46 @@
       + [6.1 Functions You Need to Know](#61-functions-you-need-to-know)
       + [6.2 Tips](#62-tips)
       + [6.3 Proof of Concept (POC)](#63-proof-of-concept-poc)
+   * [7. Submission](#7-submission)
 
-<!-- TOC end -->
 
-<!-- TOC --><a name="1-objectives"></a>
+<a name="0-attention"></a>
+## 0. Attention
+
+> Due to the different virtualization mechanisms of Windows and our older Docker image, please note the following adjustments
+
+**Change to use WSL2 if you are using Windows.**
+
+Open PowerShell, download WSL2, and execute the following command:
+
+``` bash
+wsl --install -d Ubuntu
+```
+(Optional) In PowerShell, set Ubuntu as the default OS:
+
+``` bash
+wsl --set-default Ubuntu
+```
+Open WSL2, download your repository, and open it with VSCode (using the Windows version of VSCode, no need to download it separately):
+
+``` bash
+lab8: code .
+```
+Make sure VSCode has the Docker and Dev Container extensions installed, then simply reopen the container.
+
+Additionally, a potential issue is that the LLVM version in our current container is outdated and not suitable for running MiniKLEE. To address this, I added a hot patch to download the appropriate LLVM version **automically** from the network when the container starts. However, for some students with **poor network**, you'd better switch to a domestic mirror, such as Aliyun or Tsinghua mirrors. After switching the mirror, re-download the corresponding LLVM version. You can either restart the container to download it **automatically** or **download it manually**:
+
+``` bash
+lab8$ rm llvm.sh                        # Remove the current llvm.sh
+lab8$ wget https://apt.llvm.org/llvm.sh # Download llvm.sh from the network
+lab8$ chmod +x llvm.sh                  # Grant execute permission
+lab8$ ./llvm.sh 14 all                  # Execute to download LLVM version 14
+```
+
+> I apologize for the rushed lab preparation and any inconvenience it may have caused.
+
+
+<a name="1-objectives"></a>
 ## 1. Objectives
 
 In this lab, you’ll implement a dynamic symbolic execution (DSE) engine `miniklee`, including:
@@ -447,7 +483,18 @@ Get the symbolic value of the definition of coresponding instruction.
  
  To make the lab-doing life less painful, we have already provided a skeleton for the `fork` function (`src/Executor.cpp:fork`), the `fork` works as follow:
  
- - **Invoke solver to determine the feasibility of branch**: It first invokes the solver to check if there is a valid assignment for the given query (true and false branches under the path constraints) where the condition evaluates to true. To be clear, if the true branch is feasible, we say the `trueBranch` is set to true; otherwise, false. Similarly, if the false branch is feasible, `falseBranch` is set to true; otherwise, false.  (_we've already create the solver for you in the constructor function of `ExecutionState`, just looking for which API of `Solver` (in `include/Solver.h`) to use is fine_)
+ - **Invoke solver to determine the feasibility of branch**: It first invokes the solver to check if there is a valid assignment for the given query (true and false branches under the path constraints) where the condition evaluates to true. To be clear, if the true branch is feasible, we say the `trueBranch` is set to true; otherwise, false. Similarly, if the false branch is feasible, `falseBranch` is set to true; otherwise, false. You can implement this part as follows:
+
+``` c++
+    // Invoke solver to determinie the feasibility of the condition
+    bool trueBranch = solver->evaluate(
+        Query(current.constraints, condition)
+    );
+    bool falseBranch = solver->evaluate(
+        Query(current.constraints, NotExpr::create(condition))
+    );
+```
+
  - **Perform actions based on the solver's results.**
    - **`trueBranch` is considered true, `falseBranch` is considered false**
      - Just return current state as the first position of `StatePair`
@@ -455,8 +502,8 @@ Get the symbolic value of the definition of coresponding instruction.
      - Just return current state as the second position of `StatePair`
    - **Both `trueBranch` and `falseBranch` are considered true**
      - Clone the current state (_may helpful to read the API provided by `ExecutionState` in `src/ExecutionState.cpp`_)
-     - Add the new cloned state to the state pool (_pushing back to the global variable `addedStates` is fine; do not directly manipulate the state pool `states`. See `src/Executor:update` for the reason._)  
-     - Add current condition to current state (state passing true branch), and the negated condition to cloned state (state passing false branch), (_read the friendly code in `include/Expr.h` for how to create a `NotExpr` expression_)
+     - Add the new cloned state to the state pool (_pushing back to the global variable `addedStates` is fine; do not directly manipulate the state pool `states`._)  
+     - Add current condition to current state (state passing true branch), and the negated condition to cloned state (state passing false branch)
      - Return the two states within a `StatePair`
 
 **Tip 3: "Too long didn't read; I just want to lie flat."**
@@ -468,3 +515,14 @@ Read the friendly source code of KLEE to get inspired.
 <!-- TOC --><a name="63-proof-of-concept-poc"></a>
 ### 6.3 Proof of Concept (POC)
 After implementing task 3, run the test case `test/example.c` to verify your changes. You should now see the same results of running `refminiklee` (except for the randomly generated value). Please self-check according to the [2.1 Motivating Example](#21-motivating-example).
+
+<!-- TOC --><a name="7-submission"></a>
+## 7. Submission
+
+Once you are done with the lab, submit your code by commiting and pushing the changes under lab8/. Specifically, you need to submit the changes to `src/Executor.cpp`
+
+``` bash
+   lab8$ git add src/Executor.cpp
+   lab8$ git commit -m "your commit message here"
+   lab8$ git push
+```
