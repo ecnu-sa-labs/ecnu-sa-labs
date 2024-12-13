@@ -69,16 +69,6 @@ namespace miniklee {
 
     /// evaluate - Determine for a particular state if the query
     /// expression is provably true, provably false or neither.
-    ///
-    /// \param [out] result - if
-    /// \f[ \forall X constraints(X) \to query(X) \f]
-    /// then Solver::True,
-    /// else if
-    /// \f[ \forall X constraints(X) \to \lnot query(X) \f]
-    /// then Solver::False,
-    /// else
-    /// Solver::Unknown
-    ///
     /// \return True on success.
     bool evaluate(const Query&);
 
