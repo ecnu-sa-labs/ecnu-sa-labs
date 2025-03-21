@@ -1,15 +1,25 @@
-# Setting up Course Lab Environment
+# Setting up course lab environment
 
-Our labs use VScode and Docker containers to build a flexible, consistent and ready-to-use development environment. You can view the picture below to understand the architecture of our lab environment (a.k.a VScode's remote development mode). Conceptually, your local machine (OS) runs VS Code, and the VS code connects to the remote machine (OS) running in a docker container. In this way, you can edits the files in the remote machine via VS code on your local machine, and run all the labs on this remote machine (OS). In the docker container, we have already setup everything (Ubuntu 18.04, LLVM 8.0.1) for you. You local machine needs to have at least 15GB disk space and 8GB memory.
+Our labs use VScode and Docker containers to build a flexible, consistent and ready-to-use development environment. You can view the picture below to understand the architecture of our lab environment (a.k.a VS Code's remote development mode). Conceptually, your local machine runs VS Code, and the VS code connects to the remote machine running in a docker container. In this way, you can edits the files in the remote machine via VS Code on your local machine, and run all the labs on the remote machine. In the docker container, we have already setup everything for you. 
 
 ![](../images/principle_of_vscode_remote_development.png)
 
 
-#### Step 1. 
-For this course, we will use Docker containers with VS Code to ensure everyone uses a consistent development environment for the labs . Before proceeding, you need to install <a href="https://www.docker.com/">docker</a> on your local machine.
-Note: for windows users, please select `Download for Windows-AMD64`; For Mac users, please select `Download for Mac`; we will refer to this machine as the host machine. If you don't have direct access to <a href="https://www.docker.com/">docker</a>, please refer to <a href="https://pan.baidu.com/s/1B7W2EeSUts_k2lzoTnJhDg?pwd=yebz">this link</a> for download.
+### The Docker container
 
-![](../images/course-vm-d.jpg)
+- Ubuntu 18.04, LLVM 8.0.1 (TODO)
+
+Tips: You local machine needs to have at least 15GB disk space and 8GB memory to run the docker container.
+
+### What you need to install?
+
+- [Docker](https://www.docker.com/)
+- [VS code](https://code.visualstudio.com/Download)
+
+### Instructions for setting up lab environment
+
+#### Step 1. 
+For this course, we will use Docker containers with VS Code to ensure everyone uses a consistent development environment for the labs . Before proceeding, you need to install <a href="https://www.docker.com/">docker</a> on your local machine[^1].
 
 #### Step 2.  
 After this, install <a href="https://code.visualstudio.com/Download">VS Code</a> and within VS Code install <a href="https://code.visualstudio.com/docs/remote/remote-overview">Remote Development Extension</a>. 
@@ -76,3 +86,7 @@ When the F1 key doesn't work, you can do the following:
 
 ![](../images/course-vm-a.png)
 ![](./images/course-vm-b.png) -->
+
+[^1]: Note: for windows users, please select `Download for Windows-AMD64`; For Mac users, please select `Download for Mac`; we will refer to your local machine as the host machine as follows. If you don't have direct access to <a href="https://www.docker.com/">docker</a>, please refer to <a href="https://pan.baidu.com/s/1B7W2EeSUts_k2lzoTnJhDg?pwd=yebz">this link</a> for download.
+
+![](../images/course-vm-d.jpg)
