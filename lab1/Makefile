@@ -6,6 +6,7 @@ TARGETS := test0 test1 test2 test3 test4 test5 test6 test7 test8 test9
 all: $(TARGETS)
 
 results/afl_logs/%/out.txt: c_programs/%.c
+    @mkdir -p afl_output/
 	@mkdir -p results/afl_logs/$*
 	AFL_DONT_OPTIMIZE=1 afl-gcc $< -o $* 2>/dev/null
 	- timeout 30s afl-fuzz -m none -i afl_input -o afl_output -- ./$* > $@ 2>/dev/null
