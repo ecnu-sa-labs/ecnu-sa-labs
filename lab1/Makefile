@@ -8,8 +8,8 @@ all: $(TARGETS)
 results/afl_logs/%/out.txt: c_programs/%.c
     @mkdir -p afl_output/
 	@mkdir -p results/afl_logs/$*
-	AFL_DONT_OPTIMIZE=1 afl-gcc $< -o $* 2>/dev/null
-	- timeout 30s afl-fuzz -m none -i afl_input -o afl_output -- ./$* > $@ 2>/dev/null
+	AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1 AFL_DONT_OPTIMIZE=1 afl-gcc $< -o $* 2>/dev/null
+	-AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1 timeout 30s afl-fuzz -m none -i afl_input -o afl_output -- ./$* > $@ 2>/dev/null
 	@cp -r afl_output results/afl_logs/$*/
 	@cp -f $* results/afl_logs/$*/ 2>/dev/null || true
 	@rm -rf afl_output $*
