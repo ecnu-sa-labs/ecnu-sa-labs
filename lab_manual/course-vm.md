@@ -7,7 +7,7 @@ Our labs use VScode and Docker containers to build a flexible, consistent and re
 
 ### The Docker container
 
-- Ubuntu 18.04, LLVM 8.0.1 (TODO)
+- Ubuntu 22.04, LLVM 19
 
 :star: You host machine needs to have at least 15GB disk space and 8GB memory to run the docker container.
 
