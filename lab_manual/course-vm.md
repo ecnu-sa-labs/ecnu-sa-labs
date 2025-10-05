@@ -91,7 +91,7 @@ You can open the lab folder in VS Code again, open the Command Paletteand, and s
 :star: Note: Any changes you have made in the lab folder (in the container) will be available in your ecnu-sa-labs folder (in your host machine).
 
 
-[^1]: Note: for windows users, please select `Download for Windows-AMD64`; For Mac users, please select `Download for Mac`. If you don't have direct access to <a href="https://www.docker.com/">docker</a>, please refer to <a href="https://pan.baidu.com/s/1B7W2EeSUts_k2lzoTnJhDg?pwd=yebz">this link</a> for download.
+[^1]: Note: for windows users, please select `Download for Windows-AMD64`; For Mac users, please select `Download for Mac`. If you don't have direct access to <a href="https://www.docker.com/">docker</a>, please refer to <a href="https://pan.quark.cn/s/4821f240ebf1">this link</a> for download.
 
 [^2]: `devcontainer.json`文件是一个 JSON 格式的配置文件，通常存放在项目根目录下的 `.devcontainer` 文件夹中。它定义了开发容器的配置信息，包括容器的基础镜像、需要安装的工具和扩展、环境变量等。通过这个文件，开发者可以确保项目在不同的开发环境中都能保持一致的运行状态。
 
