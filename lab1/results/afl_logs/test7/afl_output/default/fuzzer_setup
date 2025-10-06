@@ -1,0 +1,5 @@
+# environment variables:
+AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1
+AFL_KILL_SIGNAL=9
+# command line:
+'afl-fuzz' '-m' 'none' '-i' 'afl_input' '-o' 'afl_output' '--' './test7'

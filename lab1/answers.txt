@@ -36,22 +36,22 @@ FP, FN, TP, TN according to Ground Truth.
 
 
 ============================================================
-| Program   | Ground Truth  |     AFL      |      CSA      |   
+| Program   | Ground Truth 6|     AFL  5   |      CSA    4 |   
 |===========================================================
-| test0.c   |               |              |               |       
-| test1.c   |               |              |               |         
-| test2.c   |               |              |               |       
-| test3.c   |               |              |               |       
-| test4.c   |               |              |               |         
-| test5.c   |               |              |               |          
-| test6.c   |               |              |               |           
-| test7.c   |               |              |               |           
-| test8.c   |               |              |               |          
-| test9.c   |               |              |               |            
+| test0.c   |     right     |    accept    |    accept     |       
+| test1.c   |     wrong     |    reject    |    accept     |         
+| test2.c   |     wrong     |    reject    |    reject     |       
+| test3.c   |     right     |    accept    |    accept     |       
+| test4.c   |     right     |    accept    |    accept     |         
+| test5.c   |     wrong     |    accept    |    reject     |          
+| test6.c   |     wrong     |    reject    |    accept     |           
+| test7.c   |     wrong     |    reject    |    accept     |           
+| test8.c   |     right     |    accept    |    reject     |          
+| test9.c   |     wrong     |    reject    |    reject     |            
 |===========================================================
-| Precision |               |              |               |  
-| Recall    |               |              |               |
-| F1 score  |               |              |               |
+| Precision |       1       |      1       |     0.75      |  
+| Recall    |       1       |      0.833   |     1         |
+| F1 score  |       1       |      0.909   |     0.857     |
 ============================================================
 
 Part B: Answer the below questions. Provide short
@@ -59,11 +59,14 @@ explanations to justify your answers.
 
 Question 1: From the given programs, can AFL be a sound analysis? Can it be complete?
 
-
+AFL is a sound analysis, but not complete.
 
 Question 2: From the given programs, can CSA be a sound analysis? Can it be complete?
 
-
+CSA is not a sound analysis, neither complete.
 
 Question 3: What are the pros and cons of using the CSA to find divide-by-zero errors?  Comment
 on both the accuracy and cost of the analyzer under these two domains.
+
+CSA provides good accuracy for logical errors but has limitations with input-dependent errors.The analysis cost is higher than basic tools but justified for critical code sections where early bug detection saves significant debugging time.
+
