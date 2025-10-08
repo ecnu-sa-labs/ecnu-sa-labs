@@ -1,6 +1,5 @@
 afl_output/
 .DS_Store
-results/
 output.db
 submission/
 submission.zip
