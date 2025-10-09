@@ -1,6 +1,23 @@
 #include "Instrument.h"
 #include "Utils.h"
 
+#include "llvm/ADT/StringRef.h"
+#include "llvm/Config/llvm-config.h"
+#include "llvm/IR/DebugInfoMetadata.h"
+#include "llvm/IR/Function.h"
+#include "llvm/IR/InstIterator.h"
+#include "llvm/IR/Instructions.h"
+#include "llvm/IR/Module.h"
+#include "llvm/IR/PassManager.h"
+#include "llvm/IR/Type.h"
+#include "llvm/IR/Constants.h"
+#include "llvm/Passes/OptimizationLevel.h"
+#include "llvm/Passes/PassBuilder.h"
+#include "llvm/Passes/PassPlugin.h"
+#include "llvm/Support/raw_ostream.h"
+
+#include <vector>
+
 using namespace llvm;
 
 namespace instrument {
@@ -33,10 +50,14 @@ bool Instrument::runOnFunction(Function &F) {
   Type *Int32Type = Type::getInt32Ty(Context);
   Type *Int8Type = Type::getInt8Ty(Context);
 
-  M->getOrInsertFunction(COVERAGE_FUNCTION_NAME, VoidType, Int32Type,
-                         Int32Type);
-  M->getOrInsertFunction(BINOP_OPERANDS_FUNCTION_NAME, VoidType, Int8Type,
-                         Int32Type, Int32Type, Int32Type, Int32Type);
+  (void)M->getOrInsertFunction(
+      COVERAGE_FUNCTION_NAME,
+      FunctionType::get(VoidType, {Int32Type, Int32Type}, /*isVarArg=*/false));
+  (void)M->getOrInsertFunction(
+      BINOP_OPERANDS_FUNCTION_NAME,
+      FunctionType::get(VoidType,
+                        {Int8Type, Int32Type, Int32Type, Int32Type, Int32Type},
+                        /*isVarArg=*/false));
 
   for (inst_iterator Iter = inst_begin(F), E = inst_end(F); Iter != E; ++Iter) {
     Instruction &Inst = (*Iter);
@@ -105,5 +126,37 @@ void instrumentBinOpOperands(Module *M, BinaryOperator *BinOp, int Line,
 
 char Instrument::ID = 1;
 static RegisterPass<Instrument> X(PASS_NAME, PASS_NAME, false, false);
+
+
+struct DynamicAnalysisNPMWrapper : public PassInfoMixin<DynamicAnalysisNPMWrapper> {
+  PreservedAnalyses run(Function &F, FunctionAnalysisManager &) {
+    Instrument P;
+    bool Modified = P.runOnFunction(F);
+    return Modified ? PreservedAnalyses::none() : PreservedAnalyses::all();
+  }
+};
+
+extern "C" LLVM_ATTRIBUTE_WEAK PassPluginLibraryInfo llvmGetPassPluginInfo() {
+  return {
+      LLVM_PLUGIN_API_VERSION,
+      PASS_NAME,
+      "0.1",
+      [](PassBuilder &PB) {
+        PB.registerPipelineParsingCallback(
+            [](StringRef Name, FunctionPassManager &FPM,
+               ArrayRef<PassBuilder::PipelineElement>) {
+              if (Name == "dynamic-analysis" || Name == PASS_NAME) {
+                FPM.addPass(DynamicAnalysisNPMWrapper());
+                return true;
+              }
+              return false;
+            });
+        PB.registerPipelineStartEPCallback(
+            [](ModulePassManager &MPM, OptimizationLevel) {
+              MPM.addPass(
+                  createModuleToFunctionPassAdaptor(DynamicAnalysisNPMWrapper()));
+            });
+      }};
+}
 
 } // namespace instrument

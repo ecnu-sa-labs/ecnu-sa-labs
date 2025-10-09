@@ -1,6 +1,9 @@
 #include "Utils.h"
 
 #include "llvm/IR/Instruction.h"
+#include "llvm/IR/Value.h"
+#include "llvm/Support/raw_ostream.h"
+#include <string>
 
 using namespace llvm;
 
@@ -51,6 +54,8 @@ std::string variable(Value *V) {
   std::string Code;
   raw_string_ostream SS(Code);
   V->print(SS);
+  SS.flush();
+
   Code.erase(0, Code.find_first_not_of(WHITESPACES));
   auto RetVal = Code.substr(0, Code.find_first_of(WHITESPACES));
   if (RetVal == "i32") {

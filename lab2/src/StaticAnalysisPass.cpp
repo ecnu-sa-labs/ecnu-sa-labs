@@ -1,6 +1,18 @@
 #include "Instrument.h"
 #include "Utils.h"
 
+#include "llvm/ADT/StringRef.h"
+#include "llvm/Config/llvm-config.h"
+#include "llvm/IR/DebugInfoMetadata.h"
+#include "llvm/IR/Function.h"
+#include "llvm/IR/InstIterator.h"
+#include "llvm/IR/Instructions.h"
+#include "llvm/IR/PassManager.h"
+#include "llvm/Passes/OptimizationLevel.h"
+#include "llvm/Passes/PassBuilder.h"
+#include "llvm/Passes/PassPlugin.h"
+#include "llvm/Support/raw_ostream.h"
+
 using namespace llvm;
 
 namespace instrument {
@@ -36,6 +48,36 @@ bool Instrument::runOnFunction(Function &F) {
 }
 
 char Instrument::ID = 1;
-static RegisterPass<Instrument> X(PASS_NAME, PASS_NAME, false, false);
+
+struct StaticAnalysisNPMWrapper : public PassInfoMixin<StaticAnalysisNPMWrapper> {
+  PreservedAnalyses run(Function &F, FunctionAnalysisManager &) {
+    Instrument P;
+    bool Modified = P.runOnFunction(F);
+    return Modified ? PreservedAnalyses::none() : PreservedAnalyses::all();
+  }
+};
+
+extern "C" LLVM_ATTRIBUTE_WEAK PassPluginLibraryInfo llvmGetPassPluginInfo() {
+  return {
+      LLVM_PLUGIN_API_VERSION,
+      PASS_NAME,
+      "0.1",
+      [](PassBuilder &PB) {
+        PB.registerPipelineParsingCallback(
+            [](StringRef Name, FunctionPassManager &FPM,
+               ArrayRef<PassBuilder::PipelineElement>) {
+              if (Name == "static-analysis" || Name == PASS_NAME) {
+                FPM.addPass(StaticAnalysisNPMWrapper());
+                return true;
+              }
+              return false;
+            });
+        PB.registerPipelineStartEPCallback(
+            [](ModulePassManager &MPM, OptimizationLevel) {
+              MPM.addPass(
+                  createModuleToFunctionPassAdaptor(StaticAnalysisNPMWrapper()));
+            });
+      }};
+}
 
 } // namespace instrument
