@@ -61,7 +61,7 @@ You can use the C programs under `/lab2/test` directory to try it out:
 
 ```sh
 /lab2$ cd test
-/lab2/test$ clang -emit-llvm -S -fno-discard-value-names -c simple0.c
+/lab2/test$ clang -emit-llvm -S -O0 -g -fno-discard-value-names -Xclang -disable-O0-optnone -c simple0.c
 ```
 
 `clang` is a compiler front-end for C that uses LLVM as a back-end.
@@ -86,7 +86,7 @@ files are the same.
 
 ```sh
 /lab2$ cd c_programs
-/lab2/c_programs$ clang -emit-llvm -S -fno-discard-value-names -c test1.c
+/lab2/c_programs$ clang -emit-llvm -S -O0 -g -fno-discard-value-names -Xclang -disable-O0-optnone -c test1.c
 /lab2/c_programs$ diff test1.ll ../ir_programs/test1.ll
 ```
 
@@ -146,7 +146,7 @@ program to LLVM IR, as you did in Part 1:
 
 ```sh
 /lab2$ cd test
-/lab2/test$ clang -emit-llvm -S -fno-discard-value-names -c -o simple0.ll simple0.c -g
+/lab2/test$ clang -emit-llvm -S -O0 -g -fno-discard-value-names -Xclang -disable-O0-optnone -c -o simple0.ll simple0.c -g
 ```
 
 #### Step 3
@@ -154,13 +154,11 @@ program to LLVM IR, as you did in Part 1:
 Next, we use opt to run the provided StaticAnalysisPass pass on the compiled C program:
 
 ```sh
-/lab2/test$ opt -load ../build/StaticAnalysisPass.so -StaticAnalysisPass -S
-simple0.ll -o simple0.static.ll
-...
+/lab2/test$ opt -load-pass-plugin ../build/StaticAnalysisPass.so -passes='function(static-analysis)' -S simple0.ll -o simple0.static.ll
 ```
 
 `opt` is an LLVM tool that performs analyses and optimizations on LLVM IR.
-The option `-load` loads our LLVM pass library while `-StaticAnalysisPass` instructs
+The option `-load-pass-plugin` loads our LLVM pass library while `-passes='function(static-analysis)'` instructs
 opt to run the pass on `simple0.ll`.
 (Libraries can and often do contain multiple LLVM passes.)
 Consult the [documentation of opt][opt-doc] to understand the potential ways to use
@@ -169,8 +167,7 @@ Similarly, we use `opt` to run the provided `DynamicAnalysisPass` pass on the
 compiled C program:
 
 ```sh
-/lab2/test$ opt -load ../build/DynamicAnalysisPass.so -DynamicAnalysisPass -S
-simple0.ll -o simple0.dynamic.ll
+/lab2/test$ opt -load-pass-plugin ../build/DynamicAnalysisPass.so -passes='function(dynamic-analysis)' -S simple0.ll -o simple0.dynamic.ll
 ```
 
 The program produced in `simple0.static.ll` should be identical to `simple0.ll`
@@ -223,10 +220,7 @@ output for `StaticAnalysisPass` on `simple0.c` should be:
 Running Static Analysis Pass on function main
 Locating Instructions
 2, 7
-2, 7
 3, 7
-3, 7
-4, 7
 4, 11
 4, 15
 4, 13
@@ -235,18 +229,13 @@ Division on Line 4, Column 13 with first operand %0 and second operand %1
 5, 3
 ```
 
-You may notice here that multiple instructions can have the same location.
-We will explore the reasoning behind this later in the document.
 After completing `DynamicAnalysisPass`, executing `simple0` should create two files:
 `simple0.cov` and `simple0.binops` with the following contents:
 
 ```
 # simple0.cov
 2, 7
-2, 7
 3, 7
-3, 7
-4, 7
 4, 11
 4, 15
 4, 13
@@ -480,7 +469,7 @@ Then upload the `submission.zip` file to TA's email.
 [clang-cli-opts]:https://releases.llvm.org/8.0.0/tools/clang/docs/UsersManual.html#command-line-options
 [cmake-tutorial]: https://cmake.org/cmake/help/latest/guide/tutorial/index.html
 [makefile-tutorial]: https://www.gnu.org/software/make/manual/html_node/Simple-Makefile.html#Simple-Makefile
-[opt-doc]: https://releases.llvm.org/8.0.0/docs/CommandGuide/opt.html
+[opt-doc]: https://llvm.org/docs/CommandGuide/opt.html
 [instrumentation-def]: https://en.wikipedia.org/wiki/Instrumentation_(computer_programming)
 [llvm-insert-inst]: https://releases.llvm.org/8.0.0/docs/ProgrammersManual.html#creating-and-inserting-new-instructions
 [llvm-insert-function]: https://llvm.org/doxygen/classllvm_1_1Module.html#a89b5f89041a0375f7ece431f29421bee
