@@ -32,7 +32,7 @@ reference for most of the LLVM API used in this lab and also throughout the cour
 + This will set up the development environment for this lab in VS Code.
 + Inside the development environment the skeleton code for Lab 2 will be located
 under `/lab2`.
-+ Afterwards, if VS Code prompts you to select a kit for the lab then pick Clang 8.
++ Afterwards, if VS Code prompts you to select a kit for the lab then pick Clang 19.
 
 
 ### Lab2's project structure:
