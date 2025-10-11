@@ -10,7 +10,7 @@ simple: $(TARGETS)
 %: %.c
 	clang -emit-llvm -S -fno-discard-value-names -c -o $@.ll $< -g
 	opt -load-pass-plugin ../build/StaticAnalysisPass.so -passes="StaticAnalysisPass" -S $@.ll -o $@.static.ll
-	opt -load-pass-plugin ../build/StaticAnalysisPass.so -passes="DynamicAnalysisPass" -S $@.ll -o $@.dynamic.ll
+	opt -load-pass-plugin ../build/DynamicAnalysisPass.so -passes="DynamicAnalysisPass" -S $@.ll -o $@.dynamic.ll
 	clang -o $@ -L${PWD}/../build -lruntime $@.dynamic.ll
 
 clean:
