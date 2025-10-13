@@ -61,7 +61,7 @@ You can use the C programs under `/lab2/test` directory to try it out:
 
 ```sh
 /lab2$ cd test
-/lab2/test$ clang -emit-llvm -S -O0 -g -fno-discard-value-names -Xclang -disable-O0-optnone -c simple0.c
+/lab2/test$ clang-19 -emit-llvm -S -O0 -fno-discard-value-names -Xclang -disable-O0-optnone -c simple0.c
 ```
 
 `clang` is a compiler front-end for C that uses LLVM as a back-end.
@@ -88,7 +88,7 @@ files are the same.
 
 ```sh
 /lab2$ cd c_programs
-/lab2/c_programs$ clang -emit-llvm -S -O0 -g -fno-discard-value-names -Xclang -disable-O0-optnone -c test1.c
+/lab2/c_programs$ clang-19 -emit-llvm -S -O0 -fno-discard-value-names -Xclang -disable-O0-optnone -c test1.c
 /lab2/c_programs$ diff test1.ll ../ir_programs/test1.ll
 ```
 
@@ -148,7 +148,7 @@ program to LLVM IR, as you did in Part 1:
 
 ```sh
 /lab2$ cd test
-/lab2/test$ clang -emit-llvm -S -O0 -g -fno-discard-value-names -Xclang -disable-O0-optnone -c -o simple0.ll simple0.c
+/lab2/test$ clang-19 -emit-llvm -S -O0 -fno-discard-value-names -Xclang -disable-O0-optnone -c -o simple0.ll simple0.c
 ```
 
 #### Step 3
@@ -156,7 +156,7 @@ program to LLVM IR, as you did in Part 1:
 Next, we use opt to run the provided StaticAnalysisPass pass on the compiled C program:
 
 ```sh
-/lab2/test$ opt -load-pass-plugin ../build/StaticAnalysisPass.so -passes='function(static-analysis)' -S simple0.ll -o simple0.static.ll
+/lab2/test$ opt-19 -load-pass-plugin ../build/StaticAnalysisPass.so -passes='function(static-analysis)' -S simple0.ll -o simple0.static.ll
 ```
 
 `opt` is an LLVM tool that performs analyses and optimizations on LLVM IR.
@@ -169,7 +169,7 @@ Similarly, we use `opt` to run the provided `DynamicAnalysisPass` pass on the
 compiled C program:
 
 ```sh
-/lab2/test$ opt -load-pass-plugin ../build/DynamicAnalysisPass.so -passes='function(dynamic-analysis)' -S simple0.ll -o simple0.dynamic.ll
+/lab2/test$ opt-19 -load-pass-plugin ../build/DynamicAnalysisPass.so -passes='function(dynamic-analysis)' -S simple0.ll -o simple0.dynamic.ll
 ```
 
 The program produced in `simple0.static.ll` should be identical to `simple0.ll`
@@ -192,7 +192,7 @@ Next, compile the instrumented program and link it with the provided runtime
 library to produce a standalone executable named `simple0`:
 
 ```sh
-/lab2/test$ clang -o simple0 -L../build -lruntime simple0.dynamic.ll
+/lab2/test$ clang-19 -o simple0 -L../build -lruntime simple0.dynamic.ll
 ```
 
 #### Step 5
