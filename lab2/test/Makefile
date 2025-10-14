@@ -8,7 +8,7 @@ simple: $(TARGETS)
 
 
 %: %.c
-	clang-19 -emit-llvm -S -O0 -fno-discard-value-names -Xclang -disable-O0-optnone -c -o $@.ll $<
+	clang-19 -emit-llvm -S -O0 -fno-discard-value-names -Xclang -disable-O0-optnone -c -o $@.ll $< -g
 	opt-19 -load-pass-plugin ../build/StaticAnalysisPass.so -passes="StaticAnalysisPass" -S $@.ll -o $@.static.ll
 	opt-19 -load-pass-plugin ../build/DynamicAnalysisPass.so -passes="DynamicAnalysisPass" -S $@.ll -o $@.dynamic.ll
 	clang-19 -o $@ -L${PWD}/../build -lruntime $@.dynamic.ll
