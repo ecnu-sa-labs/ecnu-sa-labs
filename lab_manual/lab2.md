@@ -99,13 +99,13 @@ to ignore the differences in carriage returns and spaces.
 Alternatively you can let the provided Makefile automatically do this for you:
 
 ```sh
-# clean temp files
+# clean temp files(*.ll, test1, test2, test3, test4)
 /lab2/c_programs$ make clean
 
 # run single test for file test1.c(if you have executed this before, please use `make clean` first)
 /lab2/c_programs$ make test1
 
-# run all four tests
+# run all four tests(you don't have to run `make clean` before execute this because it is integrated)
 /lab2/c_programs$ make
 ```
 
