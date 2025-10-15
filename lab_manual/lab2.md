@@ -99,7 +99,14 @@ to ignore the differences in carriage returns and spaces.
 Alternatively you can let the provided Makefile automatically do this for you:
 
 ```sh
+# clean temp files
+/lab2/c_programs$ make clean
+
+# run single test for file test1.c(if you have executed this before, please use `make clean` first)
 /lab2/c_programs$ make test1
+
+# run all four tests
+/lab2/c_programs$ make
 ```
 
 Please submit the programs under `/lab2/c_programs` for auto-grading.
