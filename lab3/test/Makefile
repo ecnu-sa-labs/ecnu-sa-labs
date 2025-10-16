@@ -3,9 +3,9 @@ TARGETS:=$(shell find . -type f -name "*.c" -exec basename -s .c -a {} \;)
 all: ${TARGETS}
 
 %: %.c
-	clang -emit-llvm -S -fno-discard-value-names -c -o $@.ll $< -g
-	opt -load ../build/InstrumentPass.so -Instrument -S $@.ll -o $@.instrumented.ll
-	clang -o $@ -L${PWD}/../build -lruntime -lm $@.instrumented.ll
+	clang-19 -emit-llvm -S -fno-discard-value-names -O0 -Xclang -disable-O0-optnone -c -o $@.ll $< -g
+	opt-19 -load-pass-plugin ../build/InstrumentPass.so -passes="InstrumentPass" -S $@.ll -o $@.instrumented.ll
+	clang-19 -o $@ -L${PWD}/../build -lruntime -lm $@.instrumented.ll
 
 fuzz-%: %
 	@./test.sh $< 10s
