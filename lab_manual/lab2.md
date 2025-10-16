@@ -148,7 +148,7 @@ program to LLVM IR, as you did in Part 1:
 
 ```sh
 /lab2$ cd test
-/lab2/test$ clang-19 -emit-llvm -S -O0 -fno-discard-value-names -Xclang -disable-O0-optnone -c -o simple0.ll simple0.c -g
+/lab2/test$ clang-19 -emit-llvm -S -O0 -fno-discard-value-names -Xclang -disable-O0-optnone -c -o simple0.ll simple0.c
 ```
 
 #### Step 3
