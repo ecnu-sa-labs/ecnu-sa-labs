@@ -258,16 +258,20 @@ bool test(std::string &Target, std::string &Input, std::string &OutDir) {
     exit(1);
   }
 
-  // Print number of inputs tried and number of crashes found so far.
-  fprintf(stderr, "\e[A\rTried %d inputs, %d crashes found\n", Count,
-          failureCount);
 
   // If return code is non-zero, it indicates a crash.
   if (ReturnCode != 0) {
     // Store input that caused crash.
     storeCrashingInput(Input, OutDir);
+    // Print number of inputs tried and number of crashes found so far.
+    fprintf(stderr, "\e[A\rTried %d inputs, %d crashes found\n", Count,
+      failureCount);
     return false;
   }
+
+  // Print number of inputs tried and number of crashes found so far.
+  fprintf(stderr, "\e[A\rTried %d inputs, %d crashes found\n", Count,
+    failureCount);
 
   // Store passing inputs at a specified frequency.
   if (PassCount++ % Freq == 0) {
