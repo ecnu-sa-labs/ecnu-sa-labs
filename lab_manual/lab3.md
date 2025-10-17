@@ -55,9 +55,9 @@ This will be done by first instrumenting the program, similar to `lab2`.
 So to instrument and build the program `sanity1.c`, you would run:
 
 ```sh
-lab3/test$ clang -emit-llvm -S -fno-discard-value-names -c -o sanity1.ll sanity1.c -g
-lab3/test$ opt -load ../build/InstrumentPass.so -Instrument -S sanity1.ll -o sanity1.instrumented.ll
-lab3/test$ clang -o sanity1 -L${PWD}/../build -lruntime -lm sanity1.instrumented.ll
+lab3/test$ clang-19 -emit-llvm -S -fno-discard-value-names -O0 -Xclang -disable-O0-optnone -c -o sanity1.ll sanity1.c -g
+lab3/test$ opt-19 -load-pass-plugin ../build/InstrumentPass.so -passes="InstrumentPass" -S sanity1.ll -o sanity1.instrumented.ll
+lab3/test$ clang-19 -o sanity1 -L${PWD}/../build -lruntime -lm sanity1.instrumented.ll
 ```
 
 Alternatively you can use the provided `Makefile` to do the same with:
