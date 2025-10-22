@@ -1,18 +1,29 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
+project("Hello, Lab3" LANGUAGES C CXX)
 
-find_package(LLVM 8 REQUIRED CONFIG)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+find_package(LLVM 19 REQUIRED CONFIG)
 list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_DIR}")
 include(HandleLLVMOptions)
 include(AddLLVM)
 
-message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
-
-option(USE_REFERENCE "Build with reference solution" OFF)
-
 add_definitions(${LLVM_DEFINITIONS})
 include_directories(${LLVM_INCLUDE_DIRS} include)
-link_directories(${LLVM_LIBRARY_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
+link_directories(${LLVM_LIBRARY_DIRS})
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+llvm_map_components_to_libnames(LLVM_LIBS
+  Core
+  Support
+  IRReader
+  Analysis
+  Passes
+)
 
 add_executable(fuzzer
   src/Fuzzer.cpp
@@ -26,3 +37,4 @@ add_llvm_library(InstrumentPass MODULE
 add_library(runtime MODULE
   lib/runtime.c
   )
+

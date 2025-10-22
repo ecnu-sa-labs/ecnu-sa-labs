@@ -5,9 +5,16 @@
 
 #include "Instrument.h"
 
+
+#include "llvm/Passes/OptimizationLevel.h"
+#include "llvm/Passes/PassBuilder.h"
+#include "llvm/Passes/PassPlugin.h"
+
 using namespace llvm;
 
 namespace instrument {
+
+const auto PASS_NAME = "InstrumentPass";
 
 // Names of functions that will be used for instrumentation.
 static const char *SANITIZE_FUNCTION_NAME = "__sanitize__";
@@ -127,6 +134,38 @@ bool Instrument::runOnFunction(Function &F) {
 
 char Instrument::ID = 1;
 static RegisterPass<Instrument>
-    X("Instrument", "Instrumentations for Dynamic Analysis", false, false);
+X(PASS_NAME, PASS_NAME, false, false);
+
+
+struct InstrumentNPMWrapper : public PassInfoMixin<InstrumentNPMWrapper> {
+  PreservedAnalyses run(Function& F, FunctionAnalysisManager&) {
+    Instrument P;
+    bool Modified = P.runOnFunction(F);
+    return Modified ? PreservedAnalyses::none() : PreservedAnalyses::all();
+  }
+};
+
+extern "C" LLVM_ATTRIBUTE_WEAK PassPluginLibraryInfo llvmGetPassPluginInfo() {
+  return {
+      LLVM_PLUGIN_API_VERSION,
+      PASS_NAME,
+      "0.1",
+      [](PassBuilder& PB) {
+        PB.registerPipelineParsingCallback(
+            [](StringRef Name, FunctionPassManager& FPM,
+              ArrayRef<PassBuilder::PipelineElement>) {
+                if (Name == PASS_NAME) {
+                  FPM.addPass(InstrumentNPMWrapper());
+                return true;
+              }
+              return false;
+            });
+        // Optional: Register for other pipeline points if needed
+        PB.registerPipelineStartEPCallback(
+            [](ModulePassManager& MPM, OptimizationLevel) {
+              MPM.addPass(createModuleToFunctionPassAdaptor(InstrumentNPMWrapper()));
+            });
+      } };
+}
 
 } // namespace instrument
