@@ -178,7 +178,7 @@ while the program in `simple0.dynamic.ll` won’t be for this lab.
 You can use `diff`[^1] to verify this:
 
 ```sh
-# The -o parameter in opt will output debugging information. When using diff, only focus on the consistency of the code content.
+# The -g parameter in clang will output debugging information. When using diff, only focus on the consistency of the code content.
 /lab2/test$ diff simple0.static.ll simple0.ll
 1c1
 < ; ModuleID = 'simple0.ll'
