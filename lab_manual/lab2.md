@@ -89,24 +89,18 @@ files are the same.
 ```sh
 /lab2$ cd c_programs
 /lab2/c_programs$ clang-19 -emit-llvm -S -O0 -fno-discard-value-names -Xclang -disable-O0-optnone -c test1.c
-/lab2/c_programs$ diff test1.ll ../ir_programs/test1.ll
+/lab2/c_programs$ diff -y --suppress-common-lines --report-identical-files --ignore-all-space test1.ll ../ir_programs/test1.ll
 ```
 
-[^1]: Note that you can use `diff --strip-trailing-cr` or `diff -w` (`-w` ignores differences in white spaces, and "White space" characters include tab, vertical tab, form feed, carriage return, and space)
-to ignore the differences in carriage returns and spaces.
+Note that you can use `diff --strip-trailing-cr` or `diff -w` (`-w` ignores differences in white spaces, and "White space" characters include tab, vertical tab, form feed, carriage return, and space) to ignore the differences in carriage returns and spaces.
 
 
 Alternatively you can let the provided Makefile automatically do this for you:
 
 ```sh
-# clean temp files(*.ll, test1, test2, test3, test4)
-/lab2/c_programs$ make clean
-
-# run single test for file test1.c(if you have executed this before, please use `make clean` first)
-/lab2/c_programs$ make test1
-
-# run all four tests(you don't have to run `make clean` before execute this because it is integrated)
-/lab2/c_programs$ make
+/lab2/c_programs$ make test1 # only run the test1 automaticallly
+/lab2/c_programs$ make all   # run all tests automaticallly
+/lab2/c_programs$ make clean # delete all output files
 ```
 
 Please submit the programs under `/lab2/c_programs` for auto-grading.
@@ -184,6 +178,7 @@ while the program in `simple0.dynamic.ll` won’t be for this lab.
 You can use `diff`[^1] to verify this:
 
 ```sh
+# The -g parameter in clang will output debugging information. When using diff, only focus on the consistency of the code content.
 /lab2/test$ diff simple0.static.ll simple0.ll
 1c1
 < ; ModuleID = 'simple0.ll'
@@ -252,6 +247,13 @@ After completing `DynamicAnalysisPass`, executing `simple0` should create two fi
 5, 3
 # simple0.binops
 Division on Line 4, Column 13 with first operand=3 and second operand=2
+```
+
+you can let the provided Makefile automatically do this for you:
+
+```sh
+/lab2/test$ make all   # run all simples automaticallly
+/lab2/test$ make clean # delete all output files
 ```
 
 ### Lab Instructions
