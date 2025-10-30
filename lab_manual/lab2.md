@@ -98,8 +98,8 @@ Note that you can use `diff --strip-trailing-cr` or `diff -w` (`-w` ignores diff
 Alternatively you can let the provided Makefile automatically do this for you:
 
 ```sh
-/lab2/c_programs$ make test1 # only run the test1 automaticallly
-/lab2/c_programs$ make all   # run all tests automaticallly
+/lab2/c_programs$ make test1 # only run the test1 automatically
+/lab2/c_programs$ make all   # run all tests automatically
 /lab2/c_programs$ make clean # delete all output files
 ```
 
