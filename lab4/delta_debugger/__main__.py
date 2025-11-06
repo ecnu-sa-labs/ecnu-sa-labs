@@ -17,11 +17,11 @@ def exist_check(file):
 
 
 def main() -> int:
-    if len(argv) < 3:
-        print(f"usage: {argv[0]} [target] [crashing input file]")
+    if len(sys.argv) < 3:
+        print(f"usage: {sys.argv[0]} [target] [crashing input file]")
         return 1
     
-    target, input_file = argv[1], argv[2]
+    target, input_file = sys.argv[1], sys.argv[2]
 
     if not Path(target).exists():
         print(f"{target} not found", sys.stderr)
@@ -58,4 +58,4 @@ if __name__ == "__main__":
     """
     usage: delta-debug [target] [crashing input file]
     """
-    sys.exit(main(*sys.argv[1:]))
+    sys.exit(main())                                                                                                                                           
