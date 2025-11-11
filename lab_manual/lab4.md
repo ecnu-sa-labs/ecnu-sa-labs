@@ -224,7 +224,7 @@ def test_positive_numbers(a):
 
 Hypothesis also offers a feature called shrink. When a property test fails, Hypothesis attempts to find a smaller input data set to make it easier to understand why the test failed.
 
-## Lab Instructions
+## Lab Introduction
 
 ### Project Structure
 
@@ -328,7 +328,7 @@ E   assert False
 
 The aforementioned report explains that test_find_valid in `test1.py` uncovered a bug, triggered by the assertion: `is_valid(BST((1, 0), BST((0, 0), NIL, NIL), BST((0, 0), NIL, NIL)))`. The minimal test case triggering the bug is: `test_find_valid(key=0, bst=build_bst_from_tuples([(1, 0), (0, 0)]))`.This information will better assist you in understanding and writing about nature.
 
-## Instructions
+## Lab Instructions
 
 ### Validity Properties
 
