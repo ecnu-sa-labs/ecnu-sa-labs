@@ -27,7 +27,8 @@ A binary search tree is either an empty tree or a binary tree satisfying the fol
 
 Characteristics of a binary search tree: Left subtree < root < right subtree. The in-order traversal sequence of a binary search tree is an increasing sequence. For example, consider a binary search tree whose in-order traversal sequence is shown in the diagram below.
 
-![bst-example](.\images\lab4-bst-example.png)
+<img src="../images/lab4-bst-example"
+  style="height: auto; width: 100%">
 
 The fundamental operations of a binary search tree include `insert`, `delete`, `find`, `union`. Its data structure is implemented in `/lab4/src/BST.py`. Should you require clarification on its implementation principles, please refer to [Binary Search Trees & Balanced Trees - OI Wiki](https://oi-wiki.org/ds/bst/).
 
@@ -566,7 +567,8 @@ def to_list(self) -> List[Tuple[K,V]]:
 
 Taking the `insert` operation as an example:
 
-![model-based-property-example](.\images\lab4-model-based-property-example.png)
+<img src="../images/lab4-model-based-property-example.png"
+  style="height: auto; width: 100%">
 
 Inserting data into a BST should yield a set equivalent to inserting data into an abstract data.
 
