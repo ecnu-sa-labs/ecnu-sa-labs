@@ -146,7 +146,7 @@ def union(bst1: "BST[K,V]", bst2: "BST[K,V]") -> "BST[K,V]":
     return result
 ```
 
-### Prerequisite knowledge: hypothesis
+### Hypothesis
 
 Hypothesis is a Python testing library based on property-based testing. It verifies general properties of code by automatically generating test data, rather than relying solely on specific test cases.
 
