@@ -58,7 +58,7 @@ def test_delete_metamorph_by_insert(key1: int, key2: int, value: int, bst: BST[i
     expected = ...
     assert equivalent(deleted, expected)
 
-# TODO: To verify the outcome of the delete operation, one may establish a relationship by adding an insert.
+# TODO: To verify the outcome of the union operation, one may establish a relationship by adding an insert.
 # NOTE: Please note that we have not introduced bugs into the union, but the metamorphic properties of this union are prone to errors in implementation. Correct properties will not detect bugs.
 @given (keys_strategy, st.integers(), trees_strategy, trees_strategy)
 def test_union_metamorph_by_insert(key: int, value: int, bst1: BST[int,int], bst2: BST[int,int]) -> None:
