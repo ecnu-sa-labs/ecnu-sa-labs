@@ -194,7 +194,7 @@ We can gather additional information about a program’s execution and
 use it as _feedback_ to our fuzzer.
 The following figure shows at a high level what this process looks like:
 
-<img src="/images/feedback.png"
+<img src="../images/feedback.png"
   alt="Feedback-Directed Fuzzing"
   style="width: 45vw;min-width: 600px;margin: 10px auto 20px; display: block;">
 
