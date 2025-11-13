@@ -1,10 +1,17 @@
 #include <stdio.h>
 
 void f() {
-  int x = getchar();
-  int y = 2;
-  if (x > 10) {
-    y = 0;
+  int in = getchar();
+  unsigned int a = 10;
+  unsigned int b = 2;
+
+  if (in > 0) {
+    b = 0;
+  } else if (in == 0) {
+    b = 2 - b;
+  } else {
+    b = -2 + b;
   }
-  int z = x / y; // divide-by-zero after branch
+
+  int out = a / b;
 }

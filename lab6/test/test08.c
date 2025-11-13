@@ -2,15 +2,15 @@
 
 void f() {
   int in = getchar();
-  unsigned int a = 10;
-  unsigned int b = 2;
+  int a = 10;
+  int b = 2;
 
   if (in > 0) {
-    b = 0;
+    b = 100 + b;
   } else if (in == 0) {
-    b = 2 - b;
+    b = 1;
   } else {
-    b = -2 + b;
+    b = a + b;
   }
 
   int out = a / b;

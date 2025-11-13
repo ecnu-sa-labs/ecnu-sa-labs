@@ -1,8 +1,10 @@
-int f() {
-  int x = 0;
-  int y = 1;
-  if (x != 0) {
-    int z = y / x; // unreachable
+#include <stdio.h>
+
+void f() {
+  int x = getchar();
+  int y = 2;
+  if (x > 10) {
+    y = 0;
   }
-  return 0;
+  int z = x / y;
 }

@@ -4,20 +4,14 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/usr/include/llvm-14/llvm",
-                "/usr/include/c++/7",
-                "/usr/include/c++/7/backward",
-                "/usr/include",
-                "/usr/lib/llvm-14/lib/clang/14.0.6/include",
-                "${workspaceFolder}/include",
-                "/usr/include/llvm-14",
-                "/usr/include/llvm-c-14"
+                "/usr/include/llvm-8",
+                "/usr/include/llvm-c-8"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/clang++",
-            "cStandard": "c11",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "gcc-x64"
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "linux-clang-x64"
         }
     ],
     "version": 4

@@ -1,17 +1,8 @@
-#include <stdio.h>
-
 void f() {
-  int in = getchar();
-  unsigned int a = 10;
-  unsigned int b = 2;
-
-  if (in > 0) {
-    b = in + b;
-  } else if (in == 0) {
-    b = 0;
-  } else {
-    b = in - b;
+  int i;
+  int sum = 0;
+  for (i = 0; i < 10; i++) {
+    sum += 1;
   }
-
-  int out = a / b;
+  int z = i / sum;
 }

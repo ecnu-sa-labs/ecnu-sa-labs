@@ -1,8 +1,8 @@
-void f() {
+int f() {
   int x = 0;
-  int y = 2;
-  int z;
-  if (x < 1) {
-    z = y / x; // divide-by-zero within branch
+  int y = 1;
+  if (x != 0) {
+    int z = y / x;
   }
+  return 0;
 }

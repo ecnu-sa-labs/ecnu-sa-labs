@@ -1,8 +1,8 @@
-int main() {
-  int a = 0;
-  int b = 0;
-  int c = a == b;
-  int d = b / c;
-  int e = d / d; // divide by zero
-  return 0;
+void f() {
+  int x = 0;
+  int y = 1;
+  int z;
+  if (x < 1) {
+    z = y / x;
+  }
 }
