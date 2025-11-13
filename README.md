@@ -41,8 +41,8 @@ Before preceding the labs, you need to setup the lab environment. Checkout this 
 | [lab1](lab_manual/lab1.md)   | Introduction to Software Analysis | 1-2h           |                                   |
 | [lab2](lab_manual/lab2.md)   | The LLVM Framework                | ~6h            |                                   |
 | [lab3](lab_manual/lab3.md)   | Random Testing / Fuzzing          | ~6h            |                                   |
-|                              | Property-based Testing            |                | [Kea2](https://github.com/ecnusse/Kea2) |
-| [lab4](lab_manual/lab4.md)   | Delta Debugging                   |                |                                   |
+| [lab4](lab_manual/lab4.md)   | Property-based Testing            |                | [Kea2](https://github.com/ecnusse/Kea2) |
+|                              | Delta Debugging                   |                |                                   |
 | [exercise](exercise/exercise_data_flow_analysis.pdf)   | Dataflow Analysis                   |                |                                   |
 | [lab5](lab_manual/lab5.md)   | Dataflow Analysis                 |                |                                   |
 | [lab6](lab_manual/lab6.md)   | Pointer Analysis                  |                |                                   |
