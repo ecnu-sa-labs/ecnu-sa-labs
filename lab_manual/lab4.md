@@ -17,18 +17,18 @@ Please ensure that the Python environment contains the packages `pytest` and `hy
 
 ### Binary Search Tree (BST)
 
-A binary search tree (BST), also known as a binary search tree or binary search tree, is a special type of binary tree useful for both searching and sorting.
+A binary search tree (BST), is a special type of binary tree used for both searching and sorting.
 
 A binary search tree is either an empty tree or a binary tree satisfying the following properties:
 
-+ If its left subtree is non-empty (i.e., a non-empty tree), then all nodes in the left subtree have values less than the root's value;
++ If its left subtree is non-empty, then all nodes in the left subtree have values less than the root's value;
 + If its right subtree is non-empty, then all nodes in the right subtree have values greater than the root's value;
 + Both its left and right subtrees are themselves binary search trees.
 
 Characteristics of a binary search tree: Left subtree < root < right subtree. The in-order traversal sequence of a binary search tree is an increasing sequence. For example, consider a binary search tree whose in-order traversal sequence is shown in the diagram below.
 
 <img src="../images/lab4-bst-example.png"
-  style="height: auto; width: 100%">
+  style="height: auto; width: 50%">
 
 The fundamental operations of a binary search tree include `insert`, `delete`, `find`, `union`. Its data structure is implemented in `/lab4/src/BST.py`. Should you require clarification on its implementation principles, please refer to [Binary Search Trees & Balanced Trees - OI Wiki](https://oi-wiki.org/ds/bst/).
 
@@ -568,7 +568,7 @@ def to_list(self) -> List[Tuple[K,V]]:
 Taking the `insert` operation as an example:
 
 <img src="../images/lab4-model-based-property-example.png"
-  style="height: auto; width: 100%">
+  style="height: auto; width: 50%">
 
 Inserting data into a BST should yield a set equivalent to inserting data into an abstract data.
 
