@@ -21,7 +21,7 @@ all:
 
 ## Run test1.py (Validity Testing)
 test1:
-	@echo "🔬 Run Validity Testing (test1.py)..."
+	@echo "Run Validity Testing (test1.py)..."
 	@$(PYTEST) test1.py -q --tb=no || true
 
 ## Run test2.py (Postconditions Testing)
