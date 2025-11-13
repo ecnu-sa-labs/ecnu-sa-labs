@@ -15,7 +15,6 @@
 #include <string>
 
 #include "Domain.h"
-#include "PointerAnalysis.h"
 
 namespace dataflow {
 
@@ -29,31 +28,30 @@ struct DivZeroAnalysis : public FunctionPass {
   SetVector<Instruction *> ErrorInsts;
 
   /**
-   * This function is called for each function F in the input C program
-   * that the compiler encounters during a pass.
+   * This function is called for each function F in input C program
+   * that compiler encounters during a pass.
    * You do not need to modify this function.
    */
   bool runOnFunction(Function &F) override;
 
 protected:
   /**
-   * This function creates a transfer function that updates the Out Memory based
-   * on In Memory and the instruction type/parameters.
+   * This function creates a transfer function that updates Out Memory based
+   * on In Memory and instruction type/parameters.
    */
-  void transfer(Instruction *I, const Memory *In, Memory &NOut,
-                PointerAnalysis *PA, SetVector<Value *> PointerSet);
+  void transfer(Instruction *I, const Memory *In, Memory &NOut);
 
   /**
-   * @brief This function implements the chaotic iteration algorithm using
+   * @brief This function implements chaotic iteration algorithm using
    * flowIn(), transfer(), and flowOut().
    *
-   * @param F The function to be analyzed.
+   * @param F Function to be analyzed.
    */
-  void doAnalysis(Function &F, PointerAnalysis *PA);
+  void doAnalysis(Function &F);
 
   /**
-   * @brief Flow the abstract domains from all predecessors of Inst into the In
-   * Memory object for Inst.
+   * @brief Flow abstract domains from all predecessors of Inst into
+   * InMemory object for Inst.
    *
    * @param Inst Instruction to flow In Memory for.
    * @param InMem InMemory object of Inst to populate.
@@ -61,22 +59,22 @@ protected:
   void flowIn(Instruction *Inst, Memory *InMem);
 
   /**
-   * @brief Merge the previous Out Memory of Inst with the current Out Memory
-   * for each instruction to update the OutMap and WorkSet as needed.
+   * @brief Merge previous Out Memory of Inst with current Out Memory
+   * for each instruction to update OutMap and WorkSet as needed.
    *
    * @param Inst Instruction to flow Out Memory for.
    * @param Pre Previous OutMemory of Inst.
    * @param Post Current OutMemory of Inst.
-   * @param WorkSet WorkSet
+   * @param WorkSet WorkSet.
    */
   void flowOut(Instruction *Inst, Memory *Pre, Memory *Post,
                SetVector<Instruction *> &WorkSet);
 
   /**
-   * Can the Instruction Inst incurr a divide by zero error?
+   * Can Instruction Inst incurr a divide by zero error?
    *
    * @param Inst Instruction to check.
-   * @return true if the instruction can incur a divide by zero error.
+   * @return true if instruction can incur a divide by zero error.
    */
   bool check(Instruction *Inst);
 

@@ -1,280 +1,379 @@
-## Dynamic Taint Analysis
+## Pointer Analysis
 
-Writing a dynamic taint analysis tool for C/C++ programs as an LLVM pass to detect `ControlFlowHijack` and `InjectionAttack` problems in the programs.
+Writing a “division-by-zero” static analysis for C programs as an LLVM pass that handles pointer aliasing and dynamically allocated memory.
 
-### Objective
-In this lab, you will build a dynamic taint analysis tool on the IR intermediate representation. By implementing taint sources, taint propagation strategies, and taint sinks, you will be able to trace the propagation of taints within the program, thereby detecting potential security issues.
+### Objective 
+
+The goal of this lab is to extend the static **divide-by-zero** sanitizer in Lab 6 to perform its analysis in the presence of pointers.
+You will combine the dataflow analysis from the previous lab with a flow-insensitive pointer analysis, resulting in a more comprehensive overall static analysis.
 
 ### Setup
-The code for Lab7 is located under `/lab7/`.
 
-- Open the lab7 folder in VS Code, using the 'Open Folder' option in VS Code.
-- Make sure the Docker is running on your machine.
-- Open the VS Code Command Palette by pressing F1; search and select Reopen in Container.
-- This will set up the development environment for this lab in VS Code.
-- Inside the development environment the skeleton code for Lab 6_2 will be located under /lab7.
-- Afterwards, if VS Code prompts you to select a kit for the lab then pick Clang 8.
+The skeleton code for Lab 6 is located under `/lab6`.
+We will frequently refer to the top level directory for Lab 6 as `lab6` when describing file locations.
+This lab is built upon your work from Lab 5, so you can reuse most of your content from the `/lab5/src` directory.
 
-#### lab7's project structure:
+#### Step 1.
 
-```
-- lib
-  |
-  -- runtime.cpp: Runtime functions to handle runtime taint propagation, such as `StoreInstProcess`, etc., that you will inject using your pass.
+The following commands set up the lab, using the CMake/Makefile pattern seen before.
 
-- src
-  |
-  -- DynTaintAnalysisPass.cpp: Contains the overall instrumentation logic for functions and instructions, calling different instrumentation functions for different types of instructions/functions.
-  |
-  -- Instrument.cpp: Instrumentation functions for each type of instruction or function, which insert calls to the runtime functions at the current instruction location.
-  |
-  -- Utils.cpp: Some helper functions, such as `getOperandsString`, etc.
+```sh
+/lab6$ mkdir build && cd build
+/lab6$ cmake ..
+/lab6$ make
 ```
 
-#### Step 1
-The following commands set up the lab, using the CMake/Makefile pattern.
-```
-/lab7$ mkdir -p build && cd build
-/lab7/build$ cmake ..
-/lab7/build$ make
+Among the files generated, you should see `DivZeroPass.so` in the `build` directory, similar to the previous lab.
+In this lab you will modify `src/ChaoticIteration.cpp`, `DivZeroAnalysis.cpp`, and `Transfer.cpp`.
+Most of these changes can be copied over from the previous lab and then be modified to suit the new requirements.
+
+We are now ready to run our bare-bones lab on a sample input C program.
+
+#### Step 2.
+
+Before running the pass, the LLVM IR code must be generated.
+
+```sh
+/lab6/test$ clang -emit-llvm -S -fno-discard-value-names -Xclang -disable-O0-optnone -c test13.c -o test13.ll
+/lab6/test$ opt -load ../build/DivZeroPass.so -DivZero test13.ll
 ```
 
-You should see several files created in the lab7/build directory. A LLVM pass named `DynTaintAnalysisPass.so` will be generated as the result of linking `DynTaintAnalysisPass.cpp` and `Instrument.cpp` under `lab7/src`, and a runtime library called `libruntime.so`, corresponding to `lab7/lib/runtime.cpp`. These are all source files that you will modify later. If you recall the project build steps of lab2, the steps here are almost identical to the part where it uses a dynamic analysis pass.
+The first line (`clang`) generates LLVM IR code from the input C program `test13.c`.
+The next line (`opt`) runs your pass over the compiled LLVM IR code.
 
-#### Step 2
-Generate LLVM IR as you did in previous lab.
-```
-/lab7$ cd test
-/lab7/test$ clang -emit-llvm -S -fno-discard-value-names -c -o InjectionAttack.ll InjectionAttack.cpp -g
-/lab7/test$ clang -emit-llvm -S -fno-discard-value-names -c -o ControlFlowHijack.ll ControlFlowHijack.cpp -g
-```
+In prior lab, we used an intermediate step with the argument `-mem2reg` which promoted every
+[AllocaInst][LLVM AllocaInst] to a register, allowing your analyzer to ignore handling pointers in this lab.
+However, in this lab we no longer do that so you will extend your previous code to handle pointers.
 
-#### Step 3
-Use opt to run the provided DynTaintAnalysisPass pass on the compiled C++ program. This step generates an instrumented program with runtime function calls.
-```
-/lab7/test$ opt -load ../build/DynTaintAnalysisPass.so -DynTaintAnalysisPass -S InjectionAttack.ll -o InjectionAttack.dynamic.ll
-/lab7/test$ opt -load ../build/DynTaintAnalysisPass.so -DynTaintAnalysisPass -S ControlFlowHijack.ll -o ControlFlowHijack.dynamic.ll
-```
+Upon successful completion of this lab, the output should be as follows:
 
-#### Step 4
-Next, compile the instrumented program and link it with the runtime library to produce a standalone executable:
-```
-/lab7/test$ clang -o InjectionAttack -L../build -lruntime InjectionAttack.dynamic.ll
-/lab7/test$ clang -o ControlFlowHijack -L../build -lruntime ControlFlowHijack.dynamic.ll
+```sh
+/lab6/test$ opt -load ../build/DivZeroPass.so -DivZero test13.ll
+Running DivZero on f
+Potential Instructions by DivZero:
+    %div = sdiv i32 1, %2
 ```
 
-#### Step 5
-Finally run the executable. When you complete all the source files, they should work like this:
-```
-/lab7/test$ ./InjectionAttack
-Filename:example.txt ; ls -al
-tainted var address: 0x7ffc369a6c90
-That's the address in:%arraydecay
-Taint propagated from 0x7ffc369a6c90 to 0x7ffc369a6c90
-From :%filename to :%arraydecay3 
-Taint propagated from 0x7ffc369a6c90 to 0x7ffc369a7090
-From :%arraydecay3 to :%arraydecay2 
-Taint propagated from 0x7ffc369a7090 to 0x7ffc369a7090
-From :%cmd to :%arraydecay5 
-Taint detected in sensitive position: 0x7ffc369a7090!
-That's the address in:%arraydecay5
-This is an example txt file!total 264
-drwxrwxrwx 1 root root   512 Nov 30 08:02 .
-drwxrwxrwx 1 root root   512 Nov 26 12:10 ..
--rwxr-xr-x 1 root root 19616 Nov 30 08:02 ControlFlowHijack
--rwxrwxrwx 1 root root   605 Nov 26 12:08 ControlFlowHijack.cpp
--rw-r--r-- 1 root root 60332 Nov 30 08:02 ControlFlowHijack.dynamic.ll
--rw-r--r-- 1 root root 49436 Nov 30 08:02 ControlFlowHijack.ll
--rwxr-xr-x 1 root root 18968 Nov 30 08:02 InjectionAttack
--rwxrwxrwx 1 root root   420 Nov 26 12:08 InjectionAttack.cpp
--rw-r--r-- 1 root root 53797 Nov 30 08:02 InjectionAttack.dynamic.ll
--rw-r--r-- 1 root root 50311 Nov 30 08:02 InjectionAttack.ll
--rwxrwxrwx 1 root root   346 Nov 26 12:08 Makefile
--rw-r--r-- 1 root root    28 Nov 30 08:00 example.txt
-```
+### Format of Input Programs
 
-```
-/lab7/test$ ./ControlFlowHijack
-input:AAAAAAAAA
-tainted var : %call1
-Taint propagated from %call1 to 0x7ffca89e706c
-From :%call1 to :%ch 
-Taint propagated from 0x7ffca89e706c to %7
-From :%ch to :%7 
-Taint propagated from %7 to %conv
-From :%7 to :%conv 
-Taint propagated from %conv to 0x7ffca89e7080
-From :%conv to :%9 
-tainted var : %call1
+The input format of this lab is the same as that of Lab 6 except now you will handle pointers:
 
-...
-
-Taint propagated from %call1 to 0x7ffca89e706c
-From :%call1 to :%ch 
-Taint propagated from 0x7ffca89e7088 to %16
-From :%data to :%16 
-Taint propagated from %16 , 32 to %add
-From :%16 , 32 to :%add 
-Taint propagated from %add to 0x7ffca89e707c
-From :%add to :%secret_value 
-Taint propagated from 0x7ffca89e707c to %19
-From :%secret_value to :%19 
-Taint detected in sensitive position: %19!
-You've discovered the secret value!
-```
+* You *can* ignore precisely handling values other than integers but your LLVM pass must not raise a segmentation fault when encountered with other kinds of values.
+* You *must* handle assignments, arithmetic operations (+, -, *, /), comparison operations (<, <=, >, >=, ==, !=), and branches.
+* You *do not* have to handle XOR, OR, AND, and Shift operations precisely but your program must not raise a segmentation fault in these cases.
+* Input programs *can* have if-statements and loops.
+* User inputs are *only* introduced via the set of functions where the provided `isInput` function returns `True`.
+* You *can ignore* other call instructions to other functions.
 
 ### Lab Instructions
-#### Program being analyzed
-We provide two programs to be analyzed:`InjectionAttack.cpp` and `ControlFlowHijack.cpp`.
 
-In `InjectionAttack.cpp`, when the user enters the required filename argument to `/bin/cat`, additional commands can be run unchecked if some additional content is added. For example, if a user inputs `example.txt ; ls -al`, the command string becomes: `/bin/cat example.txt ; ls -al`. The first command (`/bin/cat example.txt`) is executed to display the contents of `example.txt`, and then the second command (`ls -al`) is executed without any restrictions. This allows an attacker to execute arbitrary commands on the system, leading to potential unauthorized access or manipulation of files.
-```
-char cmd[2048] = "/bin/cat ";
-char filename[1024];
-printf("Filename:");
-scanf (" %1023[^\n]", filename); // The attacker can inject a shell escape here
-strcat(cmd, filename);
-system(cmd); // Warning: Untrusted data is passed to a system call
-```
-Example Attack:
-```
-/lab7/test$ ./InjectionAttack
-Filename:example.txt ; ls -al
-This is an example txt file.total 32
-drwxrwxrwx 1 root root   512 Nov 26 09:22 .
-drwxrwxrwx 1 root root   512 Nov 26 08:45 ..
--rwxr-xr-x 1 root root  8416 Nov 26 09:21 ControlFlowHijack
--rw-r--r-- 1 root root   728 Nov 26 08:48 ControlFlowHijack.cpp
--rwxr-xr-x 1 root root 12584 Nov 26 09:21 InjectionAttack
--rw-r--r-- 1 root root   420 Nov 25 16:22 InjectionAttack.cpp
--rwxrwxrwx 1 root root   346 Nov 26 08:47 Makefile
--rw-r--r-- 1 root root    28 Nov 26 09:22 example.txt
--rw-r--r-- 1 root root     0 Nov 26 09:22 otherfile.secret
-```
+In this lab, you will extend the **divide-by-zero** analysis that you implemented in Lab 6 to analyze and catch potential **divide-by-zero** errors in the presence of aliased memory locations.
 
-In `ControlFlowHijack.cpp`, when user/hacker write to `mem.buffer` without checking the buffer size, it overwrites what follows; in this case, to successfully hijack the control flow, the user must input exactly 9 characters, with the 9th character being 'A'. This overwrites mem.data with the value 65, resulting in secret_value being calculated as 97. So the user's input can **accidentally** affect the control flow of the program, causing control flow Hijacking(Normally, `secret_value` will not be equal to 97).
-```
-struct Memory{
-        char buffer[8]; 
-        int data = 0; 
-};
+During lecture, you learned that introducing aliasing into a language makes reasoning about a program's behavior more difficult,
+and requires some form of pointer analysis.
+You will use a **flow-insensitive pointer analysis**
+--- where we abstract away control flow and build a global **points-to graph**
+--- to help your sanitizer analyze more meaningful programs.
 
-bool check_secret(int secret){
-        return secret == 97;
-}
+### Part 1: Function Arguments/Call Instructions
 
-int main() {
-    Memory mem;
-    int secret_value=0;
-    
-    //To simulate unsafe gets
-    char* ptr = mem.buffer;
-    int ch;
-    while ((ch = getchar()) != '\n') {
-        *ptr++ = ch; 
-    }
-    *ptr = '\0';
-    
-    secret_value=mem.data+32;
-    // check secret_value
-    if (check_secret(secret_value)) {
-        printf("You've discovered the secret value!\n");
-    } else {
-        printf("Secret value: %d\n", secret_value);
+#### Step 1.
+
+Recall that in previous lab, all of the test programs were basic functions that accepted no arguments.
+
+For example:
+
+```c
+void f() {
+    int x = 0;
+    int y = 2;
+    int z;
+    if(x < 1) {
+        z = y / x; // divide-by-zero within branch
     }
 }
 ```
-Example Attack:
+
+The function `f()` has no arguments in its signature.
+Realistically, functions can accept any number of variables,
+and even of different types (but for this lab, consider all arguments as `int`’s).
+
+So in `doAnalysis`, you will need to handle functions with arguments and set up their domains accordingly.
+
+#### Step 2.
+
+Familiarize yourself with the `doAnalysis()` routine that acts as the entrypoint to your **divide-by-zero** LLVM pass.
+In last lab, you implemented the chaotic iteration algorithm here.
+For Lab 6, the function signature for `doAnalysis()` has now changed slightly to include a **PointerAnalysis** object.
+We will go over this in Part 2.
+
+```cpp
+/**
+ * @brief This function implements the chaotic iteration algorithm using
+ * flowIn(), transfer(), and flowOut().
+ *
+ * @param F The function to be analyzed.
+ */
+void DivZeroAnalysis::doAnalysis(Function &F, PointerAnalysis *PA)
 ```
-/lab7/test$ ./ControlFlowHijack
-input:AAAAAAAAA
-You've discovered the secret value!
+
+#### Step 3.
+
+Given an arbitrary function `F` passed into your `doAnalysis()` routine, find the arguments of the function call and instantiate abstract domain values for each argument.
+Note that the object `F` here is of type `Function`, which can be used to find all the arguments available.
+
+Furthermore, once you’ve initialized these starting argument abstract values,
+pass these values into your existing implementation of the **divide-by-zero** pass
+such that these variables get propagated throughout the entire **reaching definitions analysis**.
+
+#### Step 4.
+
+In addition to handling arguments of the function `F` being analyzed,
+we also want to cover other function calls made within the program.
+
+We’ve seen this before with this function:
+
+```c
+void main() {
+    int x = getchar();
+    int y = 5 / x;
+    return 0;
+}
 ```
 
+In the above example, `getchar()` is an external function call made without arguments that returns an `int`.
+Update your analysis to handle arbitrary `CallInst` instructions, but only if the return type is an `int`.
 
-#### Dynamic Taint Analysis
-Taint analysis consists of three components: `taint source`/`taint propagation strategy`/`taint sink`
+### Part 2: Store/Load Instructions
 
-- taintsource
+#### Step 1.
 
-    Taint sources are those input points in a program that can introduce untrusted or insecure data. These input points could be user input, file reading, network data, etc. 
+As mentioned above, there’s a change made to the former doAnalysis() function:
 
-    Tips: In our two examples, only user input was used as the taint source, but in real applications, file reading and network data transferred are more common.
+```cpp
+void DivZeroAnalysis::doAnalysis(Function &F, PointerAnalysis *PA)
+```
 
-- taint propagation strategy
+In addition, we have modified the signature of the `transfer` function used in Lab 6:
 
-    This part can be simply summarized as: If the source operand is tainted, then the taint should be passed to the target operand.
-    
-    For example, `%b = load i32, ptr %a, align 4` loads a data of type i32 from an address in `%a` to `%b`, the source operand is `%a`, the destination operand is `%b`, then when %a is tainted, %b needs to be tainted.
+```cpp
+void DivZeroAnalysis::transfer(Instruction *I, const Memory *In, Memory *NOut,
+                               PointerAnalysis *PA, SetVector<Value *> PointerSet)
+```
 
-    In addition to normal instructions, some function calls also do taint propagation, in our case `strcat` concatenates two strings, if one of the strings is tainted, then taint also needs to be propagated to the concatenated result.
+Please make sure when reusing code from the previous assignment that you copy your implementation details and function contents, but **leave the function signatures intact!**.
 
-- taint sink
+These arguments are necessary as we explore pointer aliasing.
 
-    When a sensitive program location/sensitive program behavior is reached, a taint sink is added to check whether a particular variable is tainted.
-    
-    In our two examples, the argument variables of system/check_secret need to be checked to see if they are tainted before the system/check_secret is called.
+To help understand how the code is different from lab6 and how its tied together,
+consider the following snippet from `DivZeroAnalysis::runOnFunction()`:
+
+```cpp
+bool DivZeroAnalysis::runOnFunction(Function &F) {
+  outs() << "Running " << getAnalysisName() << " on " << F.getName() << "\n";
+
+  // more code here...
+  PointerAnalysis *PA = new PointerAnalysis(F);
+  doAnalysis(F, PA);
+  // more code here...
+}
+```
+
+And the following snippet from `DivZeroAnalysis::doAnalysis()`:
+
+```cpp
+void DivZeroAnalysis::doAnalysis(Function &F, PointerAnalysis *PA) {
+    for(inst_iterator I = inst_begin(F), E = inst_end(F); I != E, ++I) {
+        WorkSet.insert(&(*I));
+        PointerSet.insert(&(*I));
+    }
+    // more code here...
+    transfer(I, In, NOut, PA, PointerSet);
+    // more code here...
+}
+```
+
+And, note that the transfer function now gets PointerAnalysis and a PointerSet as inputs.
+Keep this in mind when reusing your code from Lab 6.
+
+#### Step 2.
+
+At a high level, you will modify the `transfer()` function in `Transfer.cpp` to perform a more sophisticated **divide-by-zero** analysis by keeping track of pointers.
+
+The code for `PointerAnalysis` is in `src/PointerAnalysis.cpp` and it includes the implementation of various methods needed to use the pointer aliasing.
+After the Pointer analysis is run of `F`, the `PointerAnalysis *PA` object will contain
+the result of the pointer analysis run on the function,
+and `PointerSet` will contain all pointers from the Function.
+
+We will discuss in more detail what this `PointerAnalysis` class does in the following sections,
+but read through the docstrings and the code and make sense of what is being done in each of the methods provided.
+
+##### Modeling LLVM alloca, store, and load.
+
+Here we provide an interface for working with pointers in LLVM.
+
+You may use this as is fallback, but you are also free free to model references in LLVM as you wish.
+
+For this lab, we have disabled the `mem2reg` pass used in Lab 6.
+As such, LLVM will create a memory cell for every C variable.
+As a result you will not see any **phi-nodes**, and you will not necessarily need the code segments
+in which you implemented for handling them in Lab 6.
+
+Consider the following code:
+
+<table>
+<tbody>
+<tr valign="top">
+<td>
+<pre><code>
+int f() {
+  int a = 0;
+  int *c = &a;
+  int x = 1 / *c;
+  return x;
+}
+</code></pre>
+</td>
+<td>
+<pre><code>
+I1: %a = alloca i32, align 4
+I2: %c = alloca i32*, align 4
+I3: %x = alloca i32, align 4
+I4: store i32 0, i32* %a, align 4
+I5: store i32* %a, i32** %c, align 8
+I6: %0 = load i32*, i32** %c, align 8
+I7: %1 = load i32, i32* %0, align 4
+I8: %div = sdiv i32 1, %1
+I9: store i32 %div, i32* %x, align 4
+I10: %2 = load i32, i32* %x, align 4
+I11: ret i32 %2
+</code></pre>
+</td>
+<td>
+<pre><code>
+M[variable(I1)] = 0
+M[variable(I2)] = variable(I1)
+M[variable(I6)] = M[variable(I2)]
+...
+...
+...
+...
+...
+...
+</code></pre>
+</td>
+</tr>
+</tbody>
+</table>
 
 
+As in Lab 6, the `variable()` method is still used to encode the variable of an instruction.
 
-#### Features of our tool
-Different taint analysis tools have different features of data structures and taint processing methods.Here, we declare some features of our tool:
+##### Building the Points-To Graph.
 
-- Taint granularity
+The `PointerAnalysis` class builds a points-to graph that you will use in your `transfer` function.
+`PointsToInfo` represents a mapping from variables to a `PointsToSet`,
+which represents the set of allocation sites a variable may point to.
 
-    The taint granularity of this tool is a mixture of variables and bytes: for non-pointer variables, we track them at the granularity of variables, and for pointer variables, track them at the granularity of bytes.
+To help model the memory location that corresponds to a variable `%a` (i.e., `variable(I1)`),
+we provide a function `address`,
+which you can use to encode the memory address (`address(I1)`) of a variable when building the `PointsToSet`.
 
-- Taint color
+Instruction `I2` will be similarly analyzed.
 
-    In taint tracking, taint color is an attribute used to identify and distinguish different taints. From the color of the taint, one can infer its source, type, or state. However, in our implementation, we do not track the source or state of the taints; we simply differentiate between two states: tainted or not (i.e., only black and white).
+At `I5`, the memory location allocated at `I2` (i.e., `address(I2)`)
+will store the memory location allocated at `I1` (i.e., `address(I1)`).
 
-- Taint Data Structure
+Additionally, the field `PointsTo` represents the complete points-to graph that will be constructed.
 
-    We use sets to store taint information. Combining the two features mentioned above, in `runtime.cpp`, you will find two sets `taintedPtrVars` and `taintedVars`. For a none-pointer type variable, if its name is in `taintedVars`, the variable is considered tainted; For a pointer type variable, if its runtime-address is in `taintedPtrVars`, it indicates that the variable is tainted.
-    
-    A more sophisticated tool might use data structures such as shadow memory, which is simplified here.
+The implementation for the `PointerAnalysis` constructor that will go through all the instructions for a given `Function F` and populate `PointsTo` has been provided to you as part of the skeleton code in this assignment.
 
-- Supported Instructions
+Additionally, we have also provided an `alias()` method which returns true if two pointers may be aliases to one another.
 
-    This tool does not support all instruction types, but only a subset of them, including TruncInst, GEPInst, StoreInst, LoadInst, BinaryOperator. To create a more comprehensive and universal tool, it will be necessary to accommodate all instruction types.
+#### Step 3.
 
-- Different treatment for pointer and non-pointer types
+Using the `PointerAnalysis` object, augment your `transfer()` function in `Transfer.cpp` to take into account pointer aliasing during its analysis.
+This should be done by adding code to handle `StoreInst` and `LoadInst` instructions in the `transfer` function.
 
-    The **necessity** of this differentiation: **At the IR level**, we **can't** get the location of a non-pointer variable in memory, while at the binary (assembly) level, we can tell by instruction which register/memory the value is in.
+##### LoadInst
 
-    Before distinguishing between pointer and non-pointer types, we need to know the pointer/non-pointer type of each instruction operand. This is the type of operand for each instruction:
+We can rely on the existing variables defined within the `In` memory to know the abstract domain
+should be assigned for the new variable introduced by a load instruction.
 
-    |Instruction|Format|DestType|SrcType|
-    |:-:|:-:|:-:|:-:|
-    |TruncInst|`%dest` = trunc **i32** `%src` to **i8**|int|int|
-    |GetElementPtrInst|`%dest` = getelementptr **inbounds i8**, **ptr** `%src`, i32 1|ptr|ptr|
-    |StoreInst|store **ptr/i8** `%src`, **ptr** `%dest`, align 8|ptr|ptr/int|
-    |LoadInst|`%dest` = load **ptr/i8**, **ptr** `%src`, align 8|ptr/int|ptr|
-    |BinaryOperator|`%dest` = add nsw **i32** `%src1`, **i32** `%src2`|int|int|
-    
-    Therefore, there are two versions of the function that handle the taint propagation of the StoreInst: `StoreInstProcess` and `StoreInstProcessPtr`.Similarly, when setting the taint source (taint sink), there will also be two versions: `TaintVal` (`CheckVal`) and `TaintPtrVal` (`CheckPtrVal`).
+For example, given a load instruction as follows:
 
-    For LoadInst, since its source operand must be a pointer, the address of the source operand can determine whether pollution is needed, so there is only one Ptr version.
+```llvm
+%2 = load i32, i32* %1, align 4
+```
 
-#### TODO List:
-In terms of code/technical implementation, dynamic taint analysis requires the following three steps:   
-`1.`Develop the instrumentation logic and package it as an LLVM pass;  
-`2.`Use the pass to instrument the IR file of the target program, inserting calls to runtime functions;  
-`3.`Compile the modified IR file into an executable and run it.
+This is loading the value of the pointer at `%1` into a new variable `%2` of type `i32`.
+So the abstract domain for `%2` should be the same as the abstract domain for `%1`.
 
-So in this lab, we need to complete the instrumentation logic as well as  the run time function being inserted, you will have the following TODO list:
+With the addition of pointers, we can also have:
 
-- Add corresponding instrumentation function calls for various instructions and taint source-related functions (scanf, getchar) in the main run function `runOnFunction` of `DynTaintAnalysisPass.cpp`. These instrumentation functions are used to insert runtime functions at specific locations.
-- Complete the instrumentation functions for `Trunc` and `Load` instructions in `Instrument.cpp`.
-- Complete the runtime analysis functions for `Store`and `BinaryOperator` instructions in `runtime.cpp`.
+```llvm
+%1 = load i32*, i32** %d, align 8
+```
 
-#### Relating to instrumentation
-The instrumentation method in this lab is similar to the dynamic analysis pass of lab2. if you forgot some of the details, review [Instrumentation Pass](https://github.com/ecnu-sa-labs/ecnu-sa-labs/blob/ff8658063073a4aa46afa6552bd18c281b477baf/lab_manual/lab2.md#instrumentation-pass) and [Inserting Instructions into LLVM code](https://github.com/ecnu-sa-labs/ecnu-sa-labs/blob/ff8658063073a4aa46afa6552bd18c281b477baf/lab_manual/lab2.md#inserting-instructions-into-llvm-code) in **lab2's tutorial**.
+This is loading the value of the pointer at `%d` (which itself is a pointer) into a new variable `%1` of type `i32*`.
+
+**Note** the extra `*` characters in the load instruction’s type (`load i32*`) compared to the previous example.
+You can retrieve this load instruction’s type using `getType()`,
+and further check the type using methods like `isIntegerTy()` or `isPointerTy()`.
+
+##### StoreInst
+
+Store instruction can either add new variables or overwrite existing variables into our memory maps.
+
+For example, given a store instruction as follows:
+
+```llvm
+store i32, 0, i32* %a, align 4
+```
+
+This is storing the value of `0` into variable `%a`.
+
+You should be familiar with retrieving these operands using `getOperand()`, but you can also use `getValueOperand()` and `getPointerOperand()` methods respectively.
+With the addition of pointers, we can also have:
+
+```llvm
+store i32* %a, i32** %c, align 4
+```
+
+Now we’re storing the pointer at `%a` into variable `%c`, which is a pointer to a pointer.
+We can again use type information from `getType()` on each of these operands to determine whether pointer-aliasing may apply.
+
+This clearly complicates our abstract domain analysis - if some further instruction updates the value of `%a`, we not only need to update the abstract value of `%c`, but also consider updating the abstract value of other pointers that point to `%a`.
+This also applies to changes made to `%c` which is what happens in the `test13.c` example.
+
+```c
+int f() {
+    int a = 1;
+    int *c = &a;
+    int *d = &a;
+    *c = 0;
+}
+```
+
+To resolve these cases, we can rely on the points-to graph constructed in `PointerAnalysis`.
+
+We’ll need to iterate through the provided `PointerSet`:
+if we come across some instance where there exists a may-alias (`PA->isAlias()` returns `true`),
+this essentially means there’s an edge that connects the pointer values between two variables.
+Once we know what connections exist,
+we will need to get each abstract value,
+join them all together via `Domain::join()`,
+then proceed to update the current assignment as well as **all** may-aliased assignments with this abstract value.
+This ensures that all pointer references are in-sync and will converge upon a precise abstract value in our analysis.
 
 ### Submission
-Once you are done with the lab, submit your code by commiting and pushing the changes under lab7/. Specifically, you need to submit the changes to `src/DynTaintAnalysisPass.cpp`, `src/Instrument.cpp` and `lib/runtime.cpp`
+
+Once you are done with the lab, submit your code by commiting and pushing the changes under `lab6/`. Specifically, you need to submit the changes to `src/ChaoticIteration.cpp`, `src/DivZeroAnalysis.cpp` and `src/Transfer.cpp`.
+
+```sh
+lab6$ git add src/ChaoticIteration.cpp src/DivZeroAnalysis.cpp src/Transfer.cpp
+lab6$ git commit -m "your commit message here"
+lab6$ git push
 ```
-   lab7$ git add src/DynTaintAnalysisPass.cpp src/Instrument.cpp lib/runtime.cpp
-   lab7$ git commit -m "your commit message here"
-   lab7$ git push
-```
+
+[LLVM AllocaInst]: https://llvm.org/doxygen/classllvm_1_1AllocaInst.html

@@ -10,7 +10,6 @@ V getOrDefault(const Map *M, const K &Key, DefaultConstructor Default) {
   const auto It = M->find(Key);
   if (It == M->end())
     return Default();
-
   return It->second;
 }
 
@@ -32,15 +31,6 @@ std::string variable(const Value *Val) {
     RetVal += " ";
   }
   return RetVal;
-}
-
-std::string address(const Value *Val) {
-  std::string Code;
-  raw_string_ostream SS(Code);
-  Val->print(SS);
-  Code.erase(0, Code.find_first_not_of(WHITESPACES));
-  Code = "@(" + Code + ")";
-  return Code;
 }
 
 Domain::Element extractFromValue(const Value *Val) {
@@ -71,7 +61,6 @@ void printInstructionTransfer(Instruction *Inst, const Memory *InMem,
                               const Memory *OutMem) {
   auto InState = getOrExtract(InMem, Inst);
   auto OutState = getOrExtract(OutMem, Inst);
-
   errs() << variable(Inst) << ":\t[ " << *InState << " --> " << *OutState
          << " ]\n";
 }

@@ -1,528 +1,280 @@
-<!-- TOC --><a name="dynamic-symbolic-execution"></a>
-# Dynamic Symbolic Execution
+## Dynamic Taint Analysis
 
-<!-- TOC start -->
+Writing a dynamic taint analysis tool for C/C++ programs as an LLVM pass to detect `ControlFlowHijack` and `InjectionAttack` problems in the programs.
 
-- [Dynamic Symbolic Execution](#dynamic-symbolic-execution)
-   * [1. Objectives](#1-objectives)
-   * [2. Getting Stared](#2-getting-stared)
-      + [2.1 Motivating Example](#21-motivating-example)
-      + [2.2 Limitation](#22-limitation)
-      + [2.3 Setup](#23-setup)
-    * [3. Understanding the Workflow of `miniklee`](#3-understanding-the-workflow-of-miniklee)
-   * [4. Task 1 Implementing the Process of Symbolization](#4-task-1-implementing-the-process-of-symbolization)
-      + [4.1 Functions You Need to Know](#41-functions-you-need-to-know)
-      + [4.2 Tips](#42-tips)
-      + [4.3 Proof of Concept (POC)](#43-proof-of-concept-poc)
-   * [5. Task 2 Interpreting the semantics of `Add` and `Sub`](#5-task-2-interpreting-the-semantics-of-add-and-sub)
-      + [5.1 Functions You Need to Know](#51-functions-you-need-to-know)
-      + [5.2 Tips](#52-tips)
-      + [5.3 Proof of Concept (POC)](#53-proof-of-concept-poc)
-   * [6. Task 3 Interpreting the semantics of `Br`](#6-task-3-interpreting-the-semantics-of-br)
-      + [6.1 Functions You Need to Know](#61-functions-you-need-to-know)
-      + [6.2 Tips](#62-tips)
-      + [6.3 Proof of Concept (POC)](#63-proof-of-concept-poc)
-   * [7. Submission](#7-submission)
+### Objective
+In this lab, you will build a dynamic taint analysis tool on the IR intermediate representation. By implementing taint sources, taint propagation strategies, and taint sinks, you will be able to trace the propagation of taints within the program, thereby detecting potential security issues.
 
+### Setup
+The code for Lab7 is located under `/lab7/`.
 
-<a name="0-attention"></a>
-## 0. Attention
+- Open the lab7 folder in VS Code, using the 'Open Folder' option in VS Code.
+- Make sure the Docker is running on your machine.
+- Open the VS Code Command Palette by pressing F1; search and select Reopen in Container.
+- This will set up the development environment for this lab in VS Code.
+- Inside the development environment the skeleton code for Lab 6_2 will be located under /lab7.
+- Afterwards, if VS Code prompts you to select a kit for the lab then pick Clang 8.
 
-> Due to the different virtualization mechanisms of Windows and our older Docker image, please note the following adjustments
+#### lab7's project structure:
 
-**Change to use WSL2 if you are using Windows.**
-
-Open PowerShell, download WSL2, and execute the following command:
-
-``` bash
-wsl --install -d Ubuntu
 ```
-(Optional) In PowerShell, set Ubuntu as the default OS:
+- lib
+  |
+  -- runtime.cpp: Runtime functions to handle runtime taint propagation, such as `StoreInstProcess`, etc., that you will inject using your pass.
 
-``` bash
-wsl --set-default Ubuntu
-```
-Open WSL2, download your repository, and open it with VSCode (using the Windows version of VSCode, no need to download it separately):
-
-``` bash
-lab8: code .
-```
-Make sure VSCode has the Docker and Dev Container extensions installed, then simply reopen the container.
-
-Additionally, a potential issue is that the LLVM version in our current container is outdated and not suitable for running MiniKLEE. To address this, I added a hot patch to download the appropriate LLVM version **automically** from the network when the container starts. However, for some students with **poor network**, you'd better switch to a domestic mirror, such as Aliyun or Tsinghua mirrors. After switching the mirror, re-download the corresponding LLVM version. You can either restart the container to download it **automatically** or **download it manually**:
-
-``` bash
-lab8$ rm llvm.sh                        # Remove the current llvm.sh
-lab8$ wget https://apt.llvm.org/llvm.sh # Download llvm.sh from the network
-lab8$ chmod +x llvm.sh                  # Grant execute permission
-lab8$ ./llvm.sh 14 all                  # Execute to download LLVM version 14
+- src
+  |
+  -- DynTaintAnalysisPass.cpp: Contains the overall instrumentation logic for functions and instructions, calling different instrumentation functions for different types of instructions/functions.
+  |
+  -- Instrument.cpp: Instrumentation functions for each type of instruction or function, which insert calls to the runtime functions at the current instruction location.
+  |
+  -- Utils.cpp: Some helper functions, such as `getOperandsString`, etc.
 ```
 
-> I apologize for the rushed lab preparation and any inconvenience it may have caused.
-
-
-<a name="1-objectives"></a>
-## 1. Objectives
-
-In this lab, you’ll implement a dynamic symbolic execution (DSE) engine `miniklee`, including:
-
-1. Implementing the process of symbolization
-2. Implementing an execution-generated testing (EGT) symbolic execution framework.
-	1. Interpreting the semantics of `Add` and `Sub`
-	2. Interpreting the semantics of `Br`
-
-<!-- TOC --><a name="2-getting-stared"></a>
-## 2. Getting Stared
-
-<!-- TOC --><a name="21-motivating-example"></a>
-### 2.1 Motivating Example
-
-We've provided the executable `refminiklee` (in `./`) for a quick look at symbolic execution.
-
-Our motivating example is as follow. Let the `__builtin_trap()` (line 9) be the assumed bug. The program starts by making the variable `a` symbolic. It, then encounters an `if` branch (`if (a + 2 == 100 - 10)`). When the value of `a` is set to 88, the assumed bug can be exploited.
-
-``` c
-   1 #include "Symbolic.h"
-   2 
-   3 int main() {
-   4     int a;
-   5     make_symbolic(&a, sizeof(a), "a");
-   6 
-   7     if (a + 2 == 100 - 10) {
-   8         // Trap, a must be 88
-   9         __builtin_trap();
-  10     } else {
-  11         // Should reach, a can be assigned all values that are not 88
-  12     }
-  13 
-  14     return 0;
-  15 }
+#### Step 1
+The following commands set up the lab, using the CMake/Makefile pattern.
+```
+/lab7$ mkdir -p build && cd build
+/lab7/build$ cmake ..
+/lab7/build$ make
 ```
 
-The `refminiklee` works as follows:
-1. It updates (line 5) the variable `a` as symbolic in virtual machine memory
-2. Next,it checks the if branch (line 7) and encodes the branch statement into constraint (`a + 2 == 100 - 10`), then sends it with previous path constraints  (none in this example) to a constraint solver
-3. Next, the solver determines the feasibility of the constraint(s) to `true branch and false branch are both ok`
-4. `miniklee` then forks states, and updates the new state to state pool
-5. For the state pass true branch, `miniklee` generates one test case (with `error` as a suffix) with `a  =  88`, as for false branch, it generates one test case (`normal` as a suffix) with random value that are not 88.
+You should see several files created in the lab7/build directory. A LLVM pass named `DynTaintAnalysisPass.so` will be generated as the result of linking `DynTaintAnalysisPass.cpp` and `Instrument.cpp` under `lab7/src`, and a runtime library called `libruntime.so`, corresponding to `lab7/lib/runtime.cpp`. These are all source files that you will modify later. If you recall the project build steps of lab2, the steps here are almost identical to the part where it uses a dynamic analysis pass.
 
-**The following shows how to symbolic explore the example above using `refminiklee`**:
-
-1. Compile the program under test to LLVM IR **without any optimization**
-
-``` bash
-$ clang -emit-llvm -g -O0 -S ./test/example.c -o ./test/example.ll -I./include
+#### Step 2
+Generate LLVM IR as you did in previous lab.
+```
+/lab7$ cd test
+/lab7/test$ clang -emit-llvm -S -fno-discard-value-names -c -o InjectionAttack.ll InjectionAttack.cpp -g
+/lab7/test$ clang -emit-llvm -S -fno-discard-value-names -c -o ControlFlowHijack.ll ControlFlowHijack.cpp -g
 ```
 
-2. Use `refminiklee` to do symbolic execution on the generated LLVM IR (`./test/example.ll`)
-
-``` bash
-$ ./refminiklee ./test/example.ll
-LLVM IR file loaded successfully
-State 1: Alloca
-State 1: Alloca
-State 1 Store
-State 1 Mk Sym
-State 1 Load
-State 1 Add
-State 1 ICMP_EQ comparison
-State 1 Br
-Assigning 88 
-Test case written successfully (result_1/test_case_1.error)
-State 2 Br
-State 2 Ret
-Assigning -1634890980 
-Test case written successfully (result_1/test_case_2.normal)
+#### Step 3
+Use opt to run the provided DynTaintAnalysisPass pass on the compiled C++ program. This step generates an instrumented program with runtime function calls.
+```
+/lab7/test$ opt -load ../build/DynTaintAnalysisPass.so -DynTaintAnalysisPass -S InjectionAttack.ll -o InjectionAttack.dynamic.ll
+/lab7/test$ opt -load ../build/DynTaintAnalysisPass.so -DynTaintAnalysisPass -S ControlFlowHijack.ll -o ControlFlowHijack.dynamic.ll
 ```
 
-3. Examine the generated test cases
-
-``` bash
-$ cat result_1/test_case_1.error
-a, 88
-$ cat result_1/test_case_2.normal
-a, -1634890980
+#### Step 4
+Next, compile the instrumented program and link it with the runtime library to produce a standalone executable:
+```
+/lab7/test$ clang -o InjectionAttack -L../build -lruntime InjectionAttack.dynamic.ll
+/lab7/test$ clang -o ControlFlowHijack -L../build -lruntime ControlFlowHijack.dynamic.ll
 ```
 
-The value of `test_case_2.normal` is randomly generated as long as it is not 88.
-
-<!-- TOC --><a name="22-limitation"></a>
-### 2.2 Limitation
-
-To simpilfy, input programs in this lab are assumed to have **only sub-features of the C language** as follows:
-- All values are signed integers of 32 bits (i.e., no floating points, pointers, structures, enums, arrays, etc)
-- Programs under test contain only  main function, which means no function calls
-- Condition involving symbolic variables are either equal or not equal
-- Operations only involved:
-	- [Alloca](https://llvm.org/doxygen/classllvm_1_1AllocaInst.html): An instruction to allocate memory on the stack
-	- [Load](https://llvm.org/doxygen/classllvm_1_1LoadInst.html): An instruction for reading from memory
-	- [Store](https://llvm.org/doxygen/classllvm_1_1StoreInst.html): An instruction for storing to memory
-	- [Ret](https://llvm.org/doxygen/classllvm_1_1ReturnInst.html): An instruction for returning a value and transferring control flow
-	- [Eq](https://llvm.org/doxygen/classllvm_1_1ICmpInst.html): An instruction for comparing its operands (if equal) according to the predicate
-	- [SLT](https://llvm.org/doxygen/classllvm_1_1ICmpInst.html): An instruction for comparing its operands (if less) according to the predicate
-	- [Br](https://llvm.org/doxygen/classllvm_1_1BranchInst.html): An conditional or unconditional branch instruction
-	- [Call](https://llvm.org/doxygen/classllvm_1_1CallInst.html): An instruction for abstracting a target machine's calling convention
-	- [Add](https://codebrowser.dev/llvm/llvm/include/llvm/IR/Instruction.def.html#147): An instruction for performing an integer addition of two operands and producing their sum
-	- [Sub](https://codebrowser.dev/llvm/llvm/include/llvm/IR/Instruction.def.html#149): An instruction for performing an integer subtraction, subtracting the second operand from the first, and produces the result
-
-<!-- TOC --><a name="23-setup"></a>
-### 2.3 Setup
-
-To build your own `miniklee`, simply type `make` in `lab8` directory:
-
-``` bash
-$ make
+#### Step 5
+Finally run the executable. When you complete all the source files, they should work like this:
+```
+/lab7/test$ ./InjectionAttack
+Filename:example.txt ; ls -al
+tainted var address: 0x7ffc369a6c90
+That's the address in:%arraydecay
+Taint propagated from 0x7ffc369a6c90 to 0x7ffc369a6c90
+From :%filename to :%arraydecay3 
+Taint propagated from 0x7ffc369a6c90 to 0x7ffc369a7090
+From :%arraydecay3 to :%arraydecay2 
+Taint propagated from 0x7ffc369a7090 to 0x7ffc369a7090
+From :%cmd to :%arraydecay5 
+Taint detected in sensitive position: 0x7ffc369a7090!
+That's the address in:%arraydecay5
+This is an example txt file!total 264
+drwxrwxrwx 1 root root   512 Nov 30 08:02 .
+drwxrwxrwx 1 root root   512 Nov 26 12:10 ..
+-rwxr-xr-x 1 root root 19616 Nov 30 08:02 ControlFlowHijack
+-rwxrwxrwx 1 root root   605 Nov 26 12:08 ControlFlowHijack.cpp
+-rw-r--r-- 1 root root 60332 Nov 30 08:02 ControlFlowHijack.dynamic.ll
+-rw-r--r-- 1 root root 49436 Nov 30 08:02 ControlFlowHijack.ll
+-rwxr-xr-x 1 root root 18968 Nov 30 08:02 InjectionAttack
+-rwxrwxrwx 1 root root   420 Nov 26 12:08 InjectionAttack.cpp
+-rw-r--r-- 1 root root 53797 Nov 30 08:02 InjectionAttack.dynamic.ll
+-rw-r--r-- 1 root root 50311 Nov 30 08:02 InjectionAttack.ll
+-rwxrwxrwx 1 root root   346 Nov 26 12:08 Makefile
+-rw-r--r-- 1 root root    28 Nov 30 08:00 example.txt
 ```
 
-Then you get your current version `miniklee` in current directory,  which can only now test naive test cases (e.g., `test/sequential.c`):
+```
+/lab7/test$ ./ControlFlowHijack
+input:AAAAAAAAA
+tainted var : %call1
+Taint propagated from %call1 to 0x7ffca89e706c
+From :%call1 to :%ch 
+Taint propagated from 0x7ffca89e706c to %7
+From :%ch to :%7 
+Taint propagated from %7 to %conv
+From :%7 to :%conv 
+Taint propagated from %conv to 0x7ffca89e7080
+From :%conv to :%9 
+tainted var : %call1
 
-``` bash
-$ clang -emit-llvm -g -O0 -S -I./include test/sequential.c  -o test/sequential.ll
-$ ./miniklee test/sequential.ll
-LLVM IR file loaded successfully
-State 1: Alloca
-State 1: Alloca
-State 1: Alloca
-State 1 Store
-State 1 Store
-State 1 Store
-Assigning -2082133583 
-Test case written successfully (result_1/test_case_1.error)
+...
+
+Taint propagated from %call1 to 0x7ffca89e706c
+From :%call1 to :%ch 
+Taint propagated from 0x7ffca89e7088 to %16
+From :%data to :%16 
+Taint propagated from %16 , 32 to %add
+From :%16 , 32 to :%add 
+Taint propagated from %add to 0x7ffca89e707c
+From :%add to :%secret_value 
+Taint propagated from 0x7ffca89e707c to %19
+From :%secret_value to :%19 
+Taint detected in sensitive position: %19!
+You've discovered the secret value!
 ```
 
-You can observe a test case being generated (e.g., `-2082133583`, a randomly generated value) in the terminal logs. However, there is no assigned value in `result_1/test_case_1.error` because there are no symbolic variables in `sequential.c`. In other words, `sequential.c` doesn't receive any input. 
+### Lab Instructions
+#### Program being analyzed
+We provide two programs to be analyzed:`InjectionAttack.cpp` and `ControlFlowHijack.cpp`.
 
-Your first task is to make variables symbolic (in Section 4).
-
-<!-- TOC --><a name="3-understanding-the-workflow-of-miniklee"></a>
-
-## 3. Understanding the Workflow of `miniklee`
-
-- `src/main.cpp`
-
-The main function receives an LLVM IR file and parses it, then, it transfers control flow to symbolic executor. 
-
-- `src/Executor.cpp:runFunctionAsMain`
-
-After preparations, the `miniklee` performs symbolic execution in the function `runFunctionAsMain`:
-
-1. It begins with an initial state and uses a state pool (`states`) for storage.
-2. In the main loop, if the state pool is not empty, it continues:
-   1. Select a state for execution.
-   2. Fetch the next instruction to execute.
-   3. Execute the instruction and perform analysis.
-   4. Update the state by adding new states and removing dead ones.
-3. When a state reaches termination, it generates a test case for that state.
-
-- `src/Executor.cpp:executeInstruction`
-
-Focusing on instruction execution, this part primarily involves a large `switch-case` statement. It identifies and interprets the fetched instruction. For example:  
-- Interpreting a `Ret` instruction terminates the current state.  
-	- `src/Executor.cpp:terminateState`
-		- Generate test case for current state
-		- Remove the state that is about to end
-- Interpreting a `Br` instruction transfers control to the next basic block.  
-	- `src/Executor.cpp:fork`
-		- Invoke a solver to determine the feasibility of  current branch condition
-		- Fork states according to the result of solver
-- Interpreting a `Add` instruction performs integer addition of two operands.  
-
-
-<!-- TOC --><a name="4-task-1-implementing-the-process-of-symbolization"></a>
-## 4. Task 1 Implementing the Process of Symbolization
-
-As explained in the Section 3, the `miniklee` interprets each instruction according to the corresponding semantics. With interpretation in hand, we can design how we interpret the semantics of the symbolization and implement it.
-
-**Implement the `src/Executor.cpp:executeMakeSymbolic` function. We’ve provided code skeletons marked with “Task 1: Your Code Here”**
-
-<!-- TOC --><a name="41-functions-you-need-to-know"></a>
-### 4.1 Functions You Need to Know
-
-- `include/Symbolic.h:make_symbolic`
-
-We have already provided the function declaration for symbolization in `include/Symbolic.h`:
-
-```c++
-void make_symbolic(int32_t *sym, size_t nbytes, const char *name);
+In `InjectionAttack.cpp`, when the user enters the required filename argument to `/bin/cat`, additional commands can be run unchecked if some additional content is added. For example, if a user inputs `example.txt ; ls -al`, the command string becomes: `/bin/cat example.txt ; ls -al`. The first command (`/bin/cat example.txt`) is executed to display the contents of `example.txt`, and then the second command (`ls -al`) is executed without any restrictions. This allows an attacker to execute arbitrary commands on the system, leading to potential unauthorized access or manipulation of files.
+```
+char cmd[2048] = "/bin/cat ";
+char filename[1024];
+printf("Filename:");
+scanf (" %1023[^\n]", filename); // The attacker can inject a shell escape here
+strcat(cmd, filename);
+system(cmd); // Warning: Untrusted data is passed to a system call
+```
+Example Attack:
+```
+/lab7/test$ ./InjectionAttack
+Filename:example.txt ; ls -al
+This is an example txt file.total 32
+drwxrwxrwx 1 root root   512 Nov 26 09:22 .
+drwxrwxrwx 1 root root   512 Nov 26 08:45 ..
+-rwxr-xr-x 1 root root  8416 Nov 26 09:21 ControlFlowHijack
+-rw-r--r-- 1 root root   728 Nov 26 08:48 ControlFlowHijack.cpp
+-rwxr-xr-x 1 root root 12584 Nov 26 09:21 InjectionAttack
+-rw-r--r-- 1 root root   420 Nov 25 16:22 InjectionAttack.cpp
+-rwxrwxrwx 1 root root   346 Nov 26 08:47 Makefile
+-rw-r--r-- 1 root root    28 Nov 26 09:22 example.txt
+-rw-r--r-- 1 root root     0 Nov 26 09:22 otherfile.secret
 ```
 
-The `make_symbolic` function receives three arguments:
-1) Address of variable to be symbolized
-2) Number of bytes of the variable
-3) Name given to the variable.
-
-We can use it in our programs under test like the following code snippet. Actually, the KLEE symbolic executor also use this method to mark a variable as symbolic (KLEE official documentation [Marking input as symbolic](https://klee-se.org/tutorials/testing-function/)).
-
-``` c++
-1: int a;
-2: make_symbolic(&a, sizeof(a), "a"); // Variable a now should be symbolized
-3: if (a + 2 == 100 - 10) { ...  }
+In `ControlFlowHijack.cpp`, when user/hacker write to `mem.buffer` without checking the buffer size, it overwrites what follows; in this case, to successfully hijack the control flow, the user must input exactly 9 characters, with the 9th character being 'A'. This overwrites mem.data with the value 65, resulting in secret_value being calculated as 97. So the user's input can **accidentally** affect the control flow of the program, causing control flow Hijacking(Normally, `secret_value` will not be equal to 97).
 ```
+struct Memory{
+        char buffer[8]; 
+        int data = 0; 
+};
 
-- `src/Executor.cpp:executeInstruction`
-
-Please focuse on the `Call` instruction case: when `miniklee` executes the `make_symbolic` statement (line 2 in Snippet 1), it identifies and processes symbolization.
-
-- `src/Executor.cpp:needsSymbolization`
-
-Identify whether the current call is `make_symbolic` function.
-
-- `src/Executor.cpp:processMakeSymbolic`
-
-Parse the arguments of `make_symbolic` and proceed to make them symbolic.
-
-<!-- TOC --><a name="42-tips"></a>
-### 4.2 Tips
-
-**Tip 1 Read the friendly code**
-- May helpful to read the code interpretation of `Load` and `Store` instructions (`src/Executor.cpp:executeInstruction`) to understand the storage system of `miniklee` (**Especially the function `include/Executor.h:executeMemoryOperation`**)
-- May helpful to read the code interpretation of modeling instructions (`include/Expr.h`) to understand the representation of each data in symbolic execution.
-
- **Tip 2 Deep understanding of the representation of programs**
-
- We represent programs from different perspectives, for example:
- - **Source code**
-   This is concrete syntax of programs, whose strength is easy to read, however, it's difficult to transform, analyze and optimize. Below is an example for calculating the factorial of the number stored in `value` (in this case, `8`).
- ``` c++
- int value = 8;
- int result = 1;
- for (int i = 1; i <= value; ++i) {
-     result *= i;
- }
- std::cout << result << std::endl;
- ```
-
- - **Abstract Syntax Tree**
- ```
-       program
-             |
-         block
-      /      |     \
-  alloc load store ...
- ```
-
-   The [abstract syntax tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree) (AST) representation is beneficial for compilers as it simplifies parsing and analysis. For interpreters, it is particularly useful—processing a tree recursively allows easy evaluation of blocks by interpreting each statement while updating the program's environment.   The main drawback of ASTs is the diverse behavior of their node types. Writing compiler analyses requires constantly handling the semantic differences between these node types, which can be cumbersome. Alternative representations exist that are more suitable for implementing complex compiler optimizations. These approaches make the representation more regular, simplifying the process.
-
- - **Instruction** (Especially the LLVM IR)
-   The LLVM IR is of form static [single-assignment](https://en.wikipedia.org/wiki/Static_single-assignment_form) (SSA), which is already explained in the [LLVM IR Lecture](https://tingsu.github.io/files/courses/slides/lec-2-llvm-framework-primer.pdf).  We like the instruction representation for its regularity. To do anything useful with it, however, we need to extract higher-level representations (**`miniklee` is what goes through at the basic block and instruction level**):
-   - [Control flow graph](https://en.wikipedia.org/wiki/Control-flow_graph) (CFG).
-   - [Basic blocks](https://en.wikipedia.org/wiki/Basic_block).
-   - Terminators (jmp and br, here).
-   - Derive the algorithm for forming basic blocks.
-   - Successors & predecessors.
-   - Derive the algorithm for forming a CFG of basic blocks.
-
-   We appreciate LLVM IR, particularly for its SSA (Static Single Assignment) property: each variable has a single static assignment globally. However, this does not imply dynamic single assignment, as the same statement can execute multiple times.  To summarize, in LLVM IR code:
-   - definitions == variables
-   - instructions == values
-   - arguments == data flow graph edges
-
-**Tip 3 "Too long didn't read; I just want to lie flat."**
-
-It’s okay to feel that way. Take it step by step—you’re doing great! 💪. 
-
-Let's break the steps of symbolization into the following:
-1. Represent the symblic value using the provided type `SymbolicExpr`
-2. Store the created symblic value into symblic memory, using `executeMemoryOperation`
-
-The answer is below::
-
-``` c++
-void Executor::executeMakeSymbolic(ExecutionState& state,
-                                   Instruction *symAddress,
-                                   std::string name) {
-    // Register the variable (Instruction type) to be symbolic
-    executeMemoryOperation(state, true, symAddress, 
-                           SymbolicExpr::create(name), 0);
+bool check_secret(int secret){
+        return secret == 97;
 }
-```
 
-
-<!-- TOC --><a name="43-proof-of-concept-poc"></a>
-### 4.3 Proof of Concept (POC)
-
-After implementing task 1, run the test case `test/symbolic.c` to verify  your changes. This test introduces symbolic variables, allowing you to observe how the symbolic execution engine processes them. Check the generated test input to ensure the symbolic inputs are recognized and correctly handled.
-
-Expected results:
-
-``` bash
-$ make clean
-$ make
-... compiling logs omitted ...
-$ clang -emit-llvm -g -O0 -S -I./include test/symbolic.c  -o test/symbolic.ll
-$ ./miniklee test/symbolic.ll
-LLVM IR file loaded successfully
-State 1: Alloca
-State 1: Alloca
-State 1 Store
-State 1 Mk Sym
-Assigning -399613364
-Test case written successfully (result_1/test_case_1.error)
-```
-Now you can see there is an assigned value (`-399613364` is randomly generated here) in `result_1/test_case_1.error` for the symbolic value `a` (assumed as the program input).
-
-<!-- TOC --><a name="5-task-2-interpreting-the-semantics-of-add-and-sub"></a>
-## 5. Task 2 Interpreting the semantics of `Add` and `Sub`
-
-As explained in the Section 3, the `miniklee` interprets each instruction according to the corresponding semantics. With interpretation in hand, we can design how we interpret the semantics of the `Add` and `Sub` instructions and implement them.
-
-**Implement the semantic interpretation for `Add` and `Sub` (`src/Executor.cpp:executeInstruction`). We’ve provided code skeletons marked with “Task 2: Your Code Here.”**
-
-<!-- TOC --><a name="51-functions-you-need-to-know"></a>
-### 5.1 Functions You Need to Know
-
-- `src/Executor.cpp:executeInstruction`
-
-Please focus on the `Add` and `Sub` instruction cases, when `miniklee` executes the `Add`  or `Sub` statement, it identifies and processes the instruction.
-
-<!-- TOC --><a name="52-tips"></a>
-### 5.2 Tips
-
-**Tip 1: "Too long didn't read; I just want to lie flat."**
-
-Read the friendly source code of KLEE to get inspired.
-- [KLEE code dealing with `Add`](https://github.com/klee/klee/blob/master/lib/Core/Executor.cpp#L2582)
-- [KLEE code dealing with `Sub`](https://github.com/klee/klee/blob/master/lib/Core/Executor.cpp#L2589)
-
-<!-- TOC --><a name="53-proof-of-concept-poc"></a>
-### 5.3 Proof of Concept (POC)
-
-After implementing task 2, run the test case `test/example.c` to verify your changes. This test introduces `add` operation, `sub` operation and  branch condition, allowing you to observe how the `miniklee` processes them.
-
-The content of `example.c`
-
-``` c++
-#include "Symbolic.h"
 int main() {
-    int a;
-    make_symbolic(&a, sizeof(a), "a");
-
-    if (a + 2 == 100 - 10) {
-        // Trap, a must be 88
-        __builtin_trap();
-    } else {
-        // Should reach, a can be assigned all values that are not 88
-    }
+    Memory mem;
+    int secret_value=0;
     
-    return 0;
+    //To simulate unsafe gets
+    char* ptr = mem.buffer;
+    int ch;
+    while ((ch = getchar()) != '\n') {
+        *ptr++ = ch; 
+    }
+    *ptr = '\0';
+    
+    secret_value=mem.data+32;
+    // check secret_value
+    if (check_secret(secret_value)) {
+        printf("You've discovered the secret value!\n");
+    } else {
+        printf("Secret value: %d\n", secret_value);
+    }
 }
 ```
-
-Run the test
-
-``` bash
-$ make clean
-$ make
-... compiling logs omitted ...
-$  clang -emit-llvm -g -O0 -S ./test/example.c -o ./test/example.ll -I./include
-$ ./miniklee test/example.ll
-LLVM IR file loaded successfully
-State 1: Alloca
-State 1: Alloca
-State 1 Store
-State 1 Mk Sym
-State 1 Load
-State 1 Add
-State 1 ICMP_EQ comparison
-State 1 Br
-Assigning -732525800 
-Test case written successfully (result_1/test_case_1.error)
+Example Attack:
+```
+/lab7/test$ ./ControlFlowHijack
+input:AAAAAAAAA
+You've discovered the secret value!
 ```
 
-It looks good. But there is something wrong: the `miniklee` explores the true branch and assigns a value (`-732525800 ` is randomly generated here) to the symbolic variable `a` that does not trigger the crash (the value should be `88`). 
 
-**Why? This happens because the branch instruction is not handled properly.** In current version, when `miniklee` encoutering a branch instruction, it simply beleves the condition is true and explores the true branch (read the source code of switch-case dealing with `Br` instruction in `src/Executor/cpp:executeInstruction`).
+#### Dynamic Taint Analysis
+Taint analysis consists of three components: `taint source`/`taint propagation strategy`/`taint sink`
 
-Your task 3 is to handle it properly.
+- taintsource
 
-<!-- TOC --><a name="6-task-3-interpreting-the-semantics-of-br"></a>
-## 6. Task 3 Interpreting the semantics of `Br`
+    Taint sources are those input points in a program that can introduce untrusted or insecure data. These input points could be user input, file reading, network data, etc. 
 
-**Implement the semantic interpretation for `Br` (`src/Executor.cpp:executeInstruction` and `src/Executor.cpp:fork`). We’ve provided code skeletons marked with “Task 3: Your Code Here”.**
+    Tips: In our two examples, only user input was used as the taint source, but in real applications, file reading and network data transferred are more common.
 
-Branch processing is central to the Execution-Generated Testing (EGT) symbolic executor. Before proceeding, let's review [its background](https://dl.acm.org/doi/10.1145/2408776.2408795).
+- taint propagation strategy
 
-Currently there are two types of symbolic execution:
+    This part can be simply summarized as: If the source operand is tainted, then the taint should be passed to the target operand.
+    
+    For example, `%b = load i32, ptr %a, align 4` loads a data of type i32 from an address in `%a` to `%b`, the source operand is `%a`, the destination operand is `%b`, then when %a is tainted, %b needs to be tainted.
 
-- **Concolic Testing**: Starting execution with random inputs, and after execution, constructing a new path condition pc₁ using the path condition pc₀ of the current path (by negating the last condition) and solving pc₁ to get a new input I₁ to explore the new path, and repeating the process. As in [CREST](https://www.burn.im/crest/) and [DART](https://dl.acm.org/doi/10.1145/1064978.1065036)
-_Our previous experiment falls into this type, as does [MIT 6.858: Computer System Security Lab 3: Symbolic Execution](https://css.csail.mit.edu/6.858/2022/labs/lab3.html)._
+    In addition to normal instructions, some function calls also do taint propagation, in our case `strcat` concatenates two strings, if one of the strings is tainted, then taint also needs to be propagated to the concatenated result.
 
-- **Execution-Generated Testing (EGT)**: Fork symbolic execution at each conditional branch (if both directions are feasible), maintain multiple partial paths, and coordinate their execution simultaneously. As in [EXE](https://dl.acm.org/doi/10.1145/1455518.1455522), [SPF](https://dl.acm.org/doi/10.1145/1858996.1859035), and [KLEE](https://dl.acm.org/doi/10.5555/1855741.1855756).
-_This is the type of `miniklee` implementation._
+- taint sink
 
-As explained above, EGT executors fork their executions at each conditional branch if both directions are feasible. You task is to implement the `fork` function used for interpreting `Br` instruction.
+    When a sensitive program location/sensitive program behavior is reached, a taint sink is added to check whether a particular variable is tainted.
+    
+    In our two examples, the argument variables of system/check_secret need to be checked to see if they are tainted before the system/check_secret is called.
 
-<!-- TOC --><a name="61-functions-you-need-to-know"></a>
-### 6.1 Functions You Need to Know
 
-- `src/Executor.cpp:executeInstruction`
 
-- `src/Executor.cpp:transferToBasicBlock`
+#### Features of our tool
+Different taint analysis tools have different features of data structures and taint processing methods.Here, we declare some features of our tool:
 
-Update the program counter to transfer the execution state to the start of the specified basic block.  
+- Taint granularity
 
-- `src/Executor.cpp:getInstructionValue`
+    The taint granularity of this tool is a mixture of variables and bytes: for non-pointer variables, we track them at the granularity of variables, and for pointer variables, track them at the granularity of bytes.
 
-Get the symbolic value of the definition of coresponding instruction.
+- Taint color
 
-<!-- TOC --><a name="62-tips"></a>
-### 6.2 Tips
+    In taint tracking, taint color is an attribute used to identify and distinguish different taints. From the color of the taint, one can infer its source, type, or state. However, in our implementation, we do not track the source or state of the taints; we simply differentiate between two states: tainted or not (i.e., only black and white).
 
- **Tip 1: Understanding the workflow of executing `Br` in `miniklee`**
- 
- When the executor processes the `Br` instruction, it first casts it to the corresponding `Br` type ([Lecture The LLVM Framework, p.37](https://tingsu.github.io/files/courses/slides/lec-2-llvm-framework-primer.pdf)). It then uses the API ([isUnconditional of BranchInstr](https://llvm.org/doxygen/classllvm_1_1BranchInst.html#a7e4be8b16fbd68c9045a388904044e01)) to determine if the branch is unconditional or conditional and handles each case as follows:
- 
- - **Unconditional**: Transfers the execution state to the next basic block.
- - **Conditional**: Extracts the condition and sends it to the solver to check feasibility:
-   - **True branch feasible**: Transfers to the basic block for the true branch.
-   - **False branch feasible**: Transfers to the basic block for the false branch.
-   - **Both branches feasible**: Forks new states for each branch, transfers control to their respective basic blocks, and adds the forked states to the state pool.  
- 
- 
- **Tip 2: Understanding the workflow of the `fork` function**
- 
- To make the lab-doing life less painful, we have already provided a skeleton for the `fork` function (`src/Executor.cpp:fork`), the `fork` works as follow:
- 
- - **Invoke solver to determine the feasibility of branch**: It first invokes the solver to check if there is a valid assignment for the given query (true and false branches under the path constraints) where the condition evaluates to true. To be clear, if the true branch is feasible, we say the `trueBranch` is set to true; otherwise, false. Similarly, if the false branch is feasible, `falseBranch` is set to true; otherwise, false. You can implement this part as follows:
+- Taint Data Structure
 
-``` c++
-    // Invoke solver to determinie the feasibility of the condition
-    bool trueBranch = solver->evaluate(
-        Query(current.constraints, condition)
-    );
-    bool falseBranch = solver->evaluate(
-        Query(current.constraints, NotExpr::create(condition))
-    );
+    We use sets to store taint information. Combining the two features mentioned above, in `runtime.cpp`, you will find two sets `taintedPtrVars` and `taintedVars`. For a none-pointer type variable, if its name is in `taintedVars`, the variable is considered tainted; For a pointer type variable, if its runtime-address is in `taintedPtrVars`, it indicates that the variable is tainted.
+    
+    A more sophisticated tool might use data structures such as shadow memory, which is simplified here.
+
+- Supported Instructions
+
+    This tool does not support all instruction types, but only a subset of them, including TruncInst, GEPInst, StoreInst, LoadInst, BinaryOperator. To create a more comprehensive and universal tool, it will be necessary to accommodate all instruction types.
+
+- Different treatment for pointer and non-pointer types
+
+    The **necessity** of this differentiation: **At the IR level**, we **can't** get the location of a non-pointer variable in memory, while at the binary (assembly) level, we can tell by instruction which register/memory the value is in.
+
+    Before distinguishing between pointer and non-pointer types, we need to know the pointer/non-pointer type of each instruction operand. This is the type of operand for each instruction:
+
+    |Instruction|Format|DestType|SrcType|
+    |:-:|:-:|:-:|:-:|
+    |TruncInst|`%dest` = trunc **i32** `%src` to **i8**|int|int|
+    |GetElementPtrInst|`%dest` = getelementptr **inbounds i8**, **ptr** `%src`, i32 1|ptr|ptr|
+    |StoreInst|store **ptr/i8** `%src`, **ptr** `%dest`, align 8|ptr|ptr/int|
+    |LoadInst|`%dest` = load **ptr/i8**, **ptr** `%src`, align 8|ptr/int|ptr|
+    |BinaryOperator|`%dest` = add nsw **i32** `%src1`, **i32** `%src2`|int|int|
+    
+    Therefore, there are two versions of the function that handle the taint propagation of the StoreInst: `StoreInstProcess` and `StoreInstProcessPtr`.Similarly, when setting the taint source (taint sink), there will also be two versions: `TaintVal` (`CheckVal`) and `TaintPtrVal` (`CheckPtrVal`).
+
+    For LoadInst, since its source operand must be a pointer, the address of the source operand can determine whether pollution is needed, so there is only one Ptr version.
+
+#### TODO List:
+In terms of code/technical implementation, dynamic taint analysis requires the following three steps:   
+`1.`Develop the instrumentation logic and package it as an LLVM pass;  
+`2.`Use the pass to instrument the IR file of the target program, inserting calls to runtime functions;  
+`3.`Compile the modified IR file into an executable and run it.
+
+So in this lab, we need to complete the instrumentation logic as well as  the run time function being inserted, you will have the following TODO list:
+
+- Add corresponding instrumentation function calls for various instructions and taint source-related functions (scanf, getchar) in the main run function `runOnFunction` of `DynTaintAnalysisPass.cpp`. These instrumentation functions are used to insert runtime functions at specific locations.
+- Complete the instrumentation functions for `Trunc` and `Load` instructions in `Instrument.cpp`.
+- Complete the runtime analysis functions for `Store`and `BinaryOperator` instructions in `runtime.cpp`.
+
+#### Relating to instrumentation
+The instrumentation method in this lab is similar to the dynamic analysis pass of lab2. if you forgot some of the details, review [Instrumentation Pass](https://github.com/ecnu-sa-labs/ecnu-sa-labs/blob/ff8658063073a4aa46afa6552bd18c281b477baf/lab_manual/lab2.md#instrumentation-pass) and [Inserting Instructions into LLVM code](https://github.com/ecnu-sa-labs/ecnu-sa-labs/blob/ff8658063073a4aa46afa6552bd18c281b477baf/lab_manual/lab2.md#inserting-instructions-into-llvm-code) in **lab2's tutorial**.
+
+### Submission
+Once you are done with the lab, submit your code by commiting and pushing the changes under lab7/. Specifically, you need to submit the changes to `src/DynTaintAnalysisPass.cpp`, `src/Instrument.cpp` and `lib/runtime.cpp`
 ```
-
- - **Perform actions based on the solver's results.**
-   - **`trueBranch` is considered true, `falseBranch` is considered false**
-     - Just return current state as the first position of `StatePair`
-   - **`falseBranch` is considered true, `trueBranch` is considered false**
-     - Just return current state as the second position of `StatePair`
-   - **Both `trueBranch` and `falseBranch` are considered true**
-     - Clone the current state (_may helpful to read the API provided by `ExecutionState` in `src/ExecutionState.cpp`_)
-     - Add the new cloned state to the state pool (_pushing back to the global variable `addedStates` is fine; do not directly manipulate the state pool `states`._)  
-     - Add current condition to current state (state passing true branch), and the negated condition to cloned state (state passing false branch)
-     - Return the two states within a `StatePair`
-
-**Tip 3: "Too long didn't read; I just want to lie flat."**
-
-Read the friendly source code of KLEE to get inspired.
-- [KLEE code dealing with `Br`](https://github.com/klee/klee/blob/master/lib/Core/Executor.cpp#L2218)
-- [KLEE code fork function](https://github.com/klee/klee/blob/master/lib/Core/Executor.cpp#L1039)
-
-<!-- TOC --><a name="63-proof-of-concept-poc"></a>
-### 6.3 Proof of Concept (POC)
-After implementing task 3, run the test case `test/example.c` to verify your changes. You should now see the same results of running `refminiklee` (except for the randomly generated value). Please self-check according to the [2.1 Motivating Example](#21-motivating-example).
-
-<!-- TOC --><a name="7-submission"></a>
-## 7. Submission
-
-Once you are done with the lab, submit your code by commiting and pushing the changes under lab8/. Specifically, you need to submit the changes to `src/Executor.cpp`
-
-``` bash
-   lab8$ git add src/Executor.cpp
-   lab8$ git commit -m "your commit message here"
-   lab8$ git push
+   lab7$ git add src/DynTaintAnalysisPass.cpp src/Instrument.cpp lib/runtime.cpp
+   lab7$ git commit -m "your commit message here"
+   lab7$ git push
 ```

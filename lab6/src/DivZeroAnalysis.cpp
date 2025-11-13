@@ -1,3 +1,8 @@
+/**
+ * @file DivZeroAnalysis.cpp
+ * @brief Main driver for Static Analyzer.
+ */
+
 #include "DivZeroAnalysis.h"
 #include "Utils.h"
 
@@ -10,13 +15,13 @@ namespace dataflow {
 /**
  * PART 1
  * 1. Implement "check" that checks if a given instruction is erroneous or not.
- * 2. Implement "transfer" that computes the semantics of each instruction.
+ * 2. Implement "transfer" that computes semantics of each instruction.
  *    This means that you have to complete "eval" function, too.
  *
  * PART 2
  * 1. Implement "doAnalysis" that stores your results in "InMap" and "OutMap".
- * 2. Implement "flowIn" that joins the memory set of all incoming flows.
- * 3. Implement "flowOut" that flows the memory set to all outgoing flows.
+ * 2. Implement "flowIn" that joins memory set of all incoming flows.
+ * 3. Implement "flowOut" that flows memory set to all outgoing flows.
  * 4. Implement "join" to union two Memory objects, accounting for Domain value.
  * 5. Implement "equal" to compare two Memory objects.
  */
@@ -34,10 +39,14 @@ bool DivZeroAnalysis::check(Instruction *Inst) {
   return false;
 }
 
+/**
+ * @brief Main function for DivZeroAnalysis.cpp.
+ *
+ * @param F Function on which to perform dataflow analysis.
+ */
 bool DivZeroAnalysis::runOnFunction(Function &F) {
   outs() << "Running " << getAnalysisName() << " on " << F.getName() << "\n";
 
-  // Initializing InMap and OutMap.
   for (inst_iterator Iter = inst_begin(F), End = inst_end(F); Iter != End;
        ++Iter) {
     auto Inst = &(*Iter);
@@ -45,9 +54,7 @@ bool DivZeroAnalysis::runOnFunction(Function &F) {
     OutMap[Inst] = new Memory;
   }
 
-  // The chaotic iteration algorithm is implemented inside doAnalysis().
-  auto PA = new PointerAnalysis(F);
-  doAnalysis(F, PA);
+  doAnalysis(F);
 
   // Check each instruction in function F for potential divide-by-zero error.
   for (inst_iterator Iter = inst_begin(F), End = inst_end(F); Iter != End;
@@ -67,6 +74,7 @@ bool DivZeroAnalysis::runOnFunction(Function &F) {
     delete InMap[&(*Iter)];
     delete OutMap[&(*Iter)];
   }
+
   return false;
 }
 

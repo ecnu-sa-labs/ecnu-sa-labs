@@ -1,0 +1,18 @@
+# Ignore all object files
+*.o
+
+# Ignore all IR files
+*.ll
+
+# Ignore all directories starting with "result"
+result*/
+
+# Ignore the executable
+miniklee
+
+# Add refminiklee in lab branch
+!refminiklee
+
+# Ignore the settings file
+settings.json
+

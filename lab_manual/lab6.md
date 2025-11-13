@@ -1,379 +1,519 @@
-## Pointer Analysis
+## Building A Static Analyzer (Dataflow Analysis)
 
-Writing a “division-by-zero” static analysis for C programs as an LLVM pass that handles pointer aliasing and dynamically allocated memory.
+Building a "division-by-zero" static analysis for a subset of the C language that includes branches and loops.
 
 ### Objective 
 
-The goal of this lab is to extend the static **divide-by-zero** sanitizer in Lab 6 to perform its analysis in the presence of pointers.
-You will combine the dataflow analysis from the previous lab with a flow-insensitive pointer analysis, resulting in a more comprehensive overall static analysis.
+In this lab, you will build a static analyzer that detects potential divide-by-zero erros in C programs at compile-time.
+You will accomplish this by writing an LLVM pass.
+Since developing a static analyzer for a full-fledged language like C is a non-trivial endeavor, this lab will be split up into two parts. 
+
+##### PART 1
+
+1. Implement `DivZeroAnalysis::check` that checks if a given instruction could lead to an error.
+2. Implement `DivZeroAnalysis::transfer` found in `src/Transfer.cpp`.
+3. Implement the `eval` functions in `src/Transfer.cpp` by completing the provided function stubs.
+ 
+##### PART 2
+
+For the second part of this lab you will implement various functions in `src/ChaoticIteration`.
+
+1. Implement `doAnalysis` function that performs the chaotic iteration algorithm for your analysis.
+2. Implement `flowIn` function that joins the out memory of all incoming flows.
+3. Implement `flowOut` function that updates out memory and queues all outgoing flows to `WorkSet` as necessary.
+4. Implement `join` function that takes the union of two Memory objects, accounting for Domain values.
+5. Implement `equal` function that checks if two Memory objects are equal, accounting for Domain values.
 
 ### Setup
 
-The skeleton code for Lab 6 is located under `/lab6`.
-We will frequently refer to the top level directory for Lab 6 as `lab6` when describing file locations.
-This lab is built upon your work from Lab 5, so you can reuse most of your content from the `/lab5/src` directory.
+The skeleton code for Lab5 is located under `lab5/`.
 
-#### Step 1.
+##### Step 1.
 
-The following commands set up the lab, using the CMake/Makefile pattern seen before.
+The following commands set up the lab, using the [Cmake][Cmake ref]/[Makefile][Make ref] pattern seen before.
+
+One thing to note is the use of the `-DUSE_REFERENCE=ON` flag:
+this lab comprises two parts and this flag will allow you to focus on the features needed for Part 1 independently of Part 2.
 
 ```sh
-/lab6$ mkdir build && cd build
-/lab6$ cmake ..
-/lab6$ make
+/lab5$ mkdir build && cd build
+/lab5/build$ cmake -DUSE_REFERENCE=ON ..
+/lab5/build$ make
 ```
 
-Among the files generated, you should see `DivZeroPass.so` in the `build` directory, similar to the previous lab.
-In this lab you will modify `src/ChaoticIteration.cpp`, `DivZeroAnalysis.cpp`, and `Transfer.cpp`.
-Most of these changes can be copied over from the previous lab and then be modified to suit the new requirements.
+Among the files generated, you should now see `DivZeroPass.so` in the `lab5/build` directory.
 
 We are now ready to run our bare-bones lab on a sample input C program.
 
-#### Step 2.
+##### Step 2
 
-Before running the pass, the LLVM IR code must be generated.
+Before running the pass on a test program, we need to generate the LLVM IR code for it.
+
+The `clang` command generates LLVM IR program from the input C program `test04.c`.
+
+The `opt` command optimizes that LLVM IR program and generates an equivalent LLVM IR program that is simpler to process for the analyzer you will be building in this lab.
+In particular, the `-mem2reg` option promotes every [AllocaInst][LLVM AllocaInst] to a register, allowing your analyzer to ignore handling pointers in this lab.
 
 ```sh
-/lab6/test$ clang -emit-llvm -S -fno-discard-value-names -Xclang -disable-O0-optnone -c test13.c -o test13.ll
-/lab6/test$ opt -load ../build/DivZeroPass.so -DivZero test13.ll
+/lab5/test$ clang -emit-llvm -S -fno-discard-value-names -Xclang -disable-O0-optnone -c -o test04.ll test04.c
+/lab5/test$ opt -mem2reg -S test04.ll -o test04.opt.ll
 ```
 
-The first line (`clang`) generates LLVM IR code from the input C program `test13.c`.
-The next line (`opt`) runs your pass over the compiled LLVM IR code.
+##### Step 3
 
-In prior lab, we used an intermediate step with the argument `-mem2reg` which promoted every
-[AllocaInst][LLVM AllocaInst] to a register, allowing your analyzer to ignore handling pointers in this lab.
-However, in this lab we no longer do that so you will extend your previous code to handle pointers.
+Similar to former labs, you will implement your analyzer as an LLVM pass, called `DivZeroPass`.
 
-Upon successful completion of this lab, the output should be as follows:
+**If you haven't completed the code, running the following command will result in a segmentation fault, which is OK. Complete the code and then run the test again.**
+
+Then you will use the `opt` command to run this pass on the optimized LLVM IR program as follows:
 
 ```sh
-/lab6/test$ opt -load ../build/DivZeroPass.so -DivZero test13.ll
+/lab5/test$ opt -load ../build/DivZeroPass.so -DivZero -disable-output test04.opt.ll > test04.out 2> test04.err
+```
+
+Upon successful completion of this lab, the output in `test/test04.out` should be as follows:
+
+```
 Running DivZero on f
 Potential Instructions by DivZero:
-    %div = sdiv i32 1, %2
+  %div1 = sdiv i32 %div, %div
 ```
+
+The debug output of your program (printed using `errs()`) will be available in the `test/test04.err` file.
 
 ### Format of Input Programs
 
-The input format of this lab is the same as that of Lab 6 except now you will handle pointers:
+To reduce the complexity of the lab we restrict the set of instructions that your analysis must handle.
+We assume that the input programs for this lab may only use the following subset of the C language:
 
-* You *can* ignore precisely handling values other than integers but your LLVM pass must not raise a segmentation fault when encountered with other kinds of values.
-* You *must* handle assignments, arithmetic operations (+, -, *, /), comparison operations (<, <=, >, >=, ==, !=), and branches.
-* You *do not* have to handle XOR, OR, AND, and Shift operations precisely but your program must not raise a segmentation fault in these cases.
-* Input programs *can* have if-statements and loops.
-* User inputs are *only* introduced via the set of functions where the provided `isInput` function returns `True`.
-* You *can ignore* other call instructions to other functions.
+* All values are integers (i.e. no floating points, pointers, structures, enums, arrays, etc).
+  You can ignore other types of values.
+* The program may have assignments, signed and unsigned arithmetic operations (+, -, *, /), and comparison operations (<, <=, >, >=, ==, !=).
+  All the other instructions are considered to be nop.
+* The program may have if-statements and loops.
+* User inputs are only introduced via the set of functions where the provided `isInput` function returns `True`.
+  You can ignore other call instructions to other functions.
+
 
 ### Lab Instructions
 
-In this lab, you will extend the **divide-by-zero** analysis that you implemented in Lab 6 to analyze and catch potential **divide-by-zero** errors in the presence of aliased memory locations.
+A full-fledged static analyzer has three components: 
+1. An abstract domain
+2. Transfer functions for individual instructions that evaluates the instruction using abstract domains.
+3. Combining analysis results of individual instructions to obtain analysis results for entire functions or programs.
 
-During lecture, you learned that introducing aliasing into a language makes reasoning about a program's behavior more difficult,
-and requires some form of pointer analysis.
-You will use a **flow-insensitive pointer analysis**
---- where we abstract away control flow and build a global **points-to graph**
---- to help your sanitizer analyze more meaningful programs.
 
-### Part 1: Function Arguments/Call Instructions
+In part 1 of the lab, we will focus only on implementing item 2,
+and only for the limited subset of instructions as described above.
 
-#### Step 1.
+More concretely, your task is to implement how the analysis evaluates different LLVM IR instructions
+on abstract values from a provided abstract domain, defined in `Domain.h`.
 
-Recall that in previous lab, all of the test programs were basic functions that accepted no arguments.
+In part 2 of the lab, we will focus on implementing item 3, to combine the results of individual
+transfer functions to get an intra-procedural, flow-sensitive, path-insensitive Divide-by-Zero analysis.
 
-For example:
+We have provided a framework to build your division-by-zero static analyzer.
+The framework is composed of files `Domain.cpp`, `Transfer.cpp`, `ChaoticIteration.cpp` and `DivZeroAnalysis.cpp` under `lab5/src/`.
 
-```c
-void f() {
-    int x = 0;
-    int y = 2;
-    int z;
-    if(x < 1) {
-        z = y / x; // divide-by-zero within branch
-    }
-}
+Additionally, you have been provided with `src/Utils.cpp` which defines a few useful functions:
+
++ `variable` takes a `Value` and returns string.
+    This string is used as the key in the Memory maps stored in `InMap` and `OutMap`.
++ `getOrExtract` takes a `Memory` and a `Value` and returns the `Domain` corresponding to `Value` in `Memory`, if not found then
+    it tries to extract the `Domain` from the instruction itself.
++ `printMemory`, `printInstructionTransfer` and `printMap` will print various debug information to `stderr`.
+
+##### **Part 1: The Check and Transfer Functions**
+
+
+##### Step 1
+
+Refresh your understanding about program abstractions by reading the article on [A Menagerie of Program Abstractions][Menagerie Link]. 
+
+Once you have a good understanding of abstract domains, study the `Domain` class to understand the abstract domain that we have defined for you to use in this lab.
+The files `include/Domain.h` and `src/Domain.cpp` include the abstract values and operations on them.
+These operations will perform an abstract evaluation **without running the program**.
+As described in the article, we have defined abstract operators for addition, subtraction, multiplication and division.
+
+An important part of this analysis is realizing that you are never actually running the program.
+This means that when you go to evaluate an instrution such as:
+
+```llvm
+%cmp = icmp slt i32 %x, %y
 ```
+ 
+The Domain of `%cmp` is not determined by the runtime values of `%x` and `%y` but by the evaluation of their individual Domains with respect to the comparison instruction.
+So, more concretely, if the Domain of `%x` is `Domain::Zero` and the Domain of `%y` is `Domain::Zero`, since the less than comparison would be considered **[False When Equal][LLVM CmpInst]**, the resulting Domain would be `Domain::Zero`.
 
-The function `f()` has no arguments in its signature.
-Realistically, functions can accept any number of variables,
-and even of different types (but for this lab, consider all arguments as `int`’s).
 
-So in `doAnalysis`, you will need to handle functions with arguments and set up their domains accordingly.
 
-#### Step 2.
+##### Step 2
 
-Familiarize yourself with the `doAnalysis()` routine that acts as the entrypoint to your **divide-by-zero** LLVM pass.
-In last lab, you implemented the chaotic iteration algorithm here.
-For Lab 6, the function signature for `doAnalysis()` has now changed slightly to include a **PointerAnalysis** object.
-We will go over this in Part 2.
-
-```cpp
-/**
- * @brief This function implements the chaotic iteration algorithm using
- * flowIn(), transfer(), and flowOut().
- *
- * @param F The function to be analyzed.
- */
-void DivZeroAnalysis::doAnalysis(Function &F, PointerAnalysis *PA)
-```
-
-#### Step 3.
-
-Given an arbitrary function `F` passed into your `doAnalysis()` routine, find the arguments of the function call and instantiate abstract domain values for each argument.
-Note that the object `F` here is of type `Function`, which can be used to find all the arguments available.
-
-Furthermore, once you’ve initialized these starting argument abstract values,
-pass these values into your existing implementation of the **divide-by-zero** pass
-such that these variables get propagated throughout the entire **reaching definitions analysis**.
-
-#### Step 4.
-
-In addition to handling arguments of the function `F` being analyzed,
-we also want to cover other function calls made within the program.
-
-We’ve seen this before with this function:
-
-```c
-void main() {
-    int x = getchar();
-    int y = 5 / x;
-    return 0;
-}
-```
-
-In the above example, `getchar()` is an external function call made without arguments that returns an `int`.
-Update your analysis to handle arbitrary `CallInst` instructions, but only if the return type is an `int`.
-
-### Part 2: Store/Load Instructions
-
-#### Step 1.
-
-As mentioned above, there’s a change made to the former doAnalysis() function:
-
-```cpp
-void DivZeroAnalysis::doAnalysis(Function &F, PointerAnalysis *PA)
-```
-
-In addition, we have modified the signature of the `transfer` function used in Lab 6:
-
-```cpp
-void DivZeroAnalysis::transfer(Instruction *I, const Memory *In, Memory *NOut,
-                               PointerAnalysis *PA, SetVector<Value *> PointerSet)
-```
-
-Please make sure when reusing code from the previous assignment that you copy your implementation details and function contents, but **leave the function signatures intact!**.
-
-These arguments are necessary as we explore pointer aliasing.
-
-To help understand how the code is different from lab6 and how its tied together,
-consider the following snippet from `DivZeroAnalysis::runOnFunction()`:
-
+Inspect `DivZeroAnalysis::runOnFunction` to understand how, at a high-level, the compiler pass performs the analysis:
 ```cpp
 bool DivZeroAnalysis::runOnFunction(Function &F) {
   outs() << "Running " << getAnalysisName() << " on " << F.getName() << "\n";
 
-  // more code here...
-  PointerAnalysis *PA = new PointerAnalysis(F);
-  doAnalysis(F, PA);
-  // more code here...
-}
-```
+  // Initializing InMap and OutMap.
+  for (inst_iterator Iter = inst_begin(F), E = inst_end(F); Iter != E; ++Iter) {
+    auto Inst = &(*Iter);
+    InMap[Inst] = new Memory;
+    OutMap[Inst] = new Memory;
+  }
 
-And the following snippet from `DivZeroAnalysis::doAnalysis()`:
+  // The chaotic iteration algorithm is implemented inside doAnalysis().
+  doAnalysis(F);
+
+  // Check for Errors in the Function;
+  ...
+}
+``` 
+The procedure `runOnFunction` is called for each function in the input C program that the compiler encounters during a pass.
+Each instruction `I` is used as the key to initialize a new `Memory` object in the global `InMap` and `OutMap` hash maps.
+These maps are described in more detail in the next step, but for now you can think of them as storing the abstract values of each variable before and after an instruction.
+For example, the abstract state might store facts like "**at the point before instruction i, the variable x is positive**".
+Since `InMap` and `OutMap` are global, feel free to use them directly in your code.  
+
+
+Once the **In** and **Out** Maps are initialized, `runOnFunction` calls `doAnalysis`: a function that you will implement in Part 2 to perform the chaotic iteration algorithm.
+For Part 1, you can assume that it simply calls `transfer` using the appropriate `InMap` and `OutMap` maps.
+
+So, at a high level, `runOnFunction` will:
+1. Initialize the **In** and **Out** maps.
+2. Fill them using a chaotic iteration algorithm.
+3. Find potential divide by zero errors by using the `InMap` entries for each divide instruction to check whether the divisor may be zero.
+
+##### Step 3
+
+Understand the memory abstraction in the provided framework. 
+
+For each `Instruction`, `DivZeroAnalysis::InMap` and `DivZeroAnalysis::OutMap` store the **abstract state** before and after the instruction, respectively.
+
+An abstract state is a mapping from LLVM variables to abstract values; in particular, we have defined `Memory` as a `std::map<std::string, Domain *>`. 
+
+Since we refer to variables as `std::string`, we have provided an auxiliary function named `variable` that encodes an LLVM `Value` into our internal string representation for variables.
+
+Note that an `Instruction` is also a `Value`. 
+
+For example, consider the following LLVM program. We have shown the abstract state, denoted **M**, before and after each instruction:
+
+|  ID   | Instruction                    | Before Instruction | After Instruction  |
+| :---: | :----------------------------- | :----------------- | :----------------- |
+| `I1`  | `%x = call i32 (...) @input()` | `{  }`             | `{ %x: T }`        |
+| `I2`  | `%y = add i32 %x, 1`           | `{ %x: T }`        | `{ %x: T, %y: T }` |
+
+In the first instruction `I1`, we assign an input integer to variable `%x`.
+
+In the abstract state, we use an abstract value **T** (also known as "top" or `MaybeZero`) since the value is unknown at compile time. 
+
+Instruction `I2` updates the abstract value of `%y` that is computed using the abstract add operation (denoted `+`) on the abstract value of `%x`.
+
+Note that, in the LLVM framework, the object for an assignment instruction (e.g., call, binary operator, icmp, etc.) also represents the variable it defines (i.e. its left-hand side). 
+
+Therefore you will use the objects for instructions `I1` and `I2` to refer to variables `%x` and `%y`, respectively, in your implementation.
+
+For example, `variable(I1)` will refer to `%x`.
+
+##### Step 4
+
+Now that we understand how the pass performs the analysis and how we will store each abstract state, we can begin implementation. 
+
+First, you will implement a function `DivZeroAnalysis::transfer`, found in `src/Transfer.cpp`, to populate the `OutMap` for each instruction. 
+In particular, given an instruction and its incoming abstract state (`const Memory *In`), `transfer` should populate the outgoing abstract state (`Memory *NOut`) which is derived from the appropriate implementation of `eval`.
+
+The `Instruction` class represents the parent class of all types of instructions. 
+There are [many subclasses][LLVM Instruction Class] of `Instruction`. 
+In order to populate the `OutMap`, each type of instruction should be handled differently.
+
+Recall for this lab you should handle:
+1. [Binary Operators][LLVM BinOps] (add, mul, sub, etc)
+2. [CastInst][LLVM CastInst]
+3. [CmpInst][LLVM CmpInst] (icmp, eq, ne, slt, sgt, sge, etc)
+4. user input via `getchar()` - recall from above that this is handled using `isInput()` from `src/Transfer.cpp`.
+
+LLVM provides [several template functions][LLVM template functions] to check the type of an instruction.
+We will focus on `dyn_cast<>` for now.
+In this example, we check if the `Instruction` `I` is a BinaryOperator.
 
 ```cpp
-void DivZeroAnalysis::doAnalysis(Function &F, PointerAnalysis *PA) {
-    for(inst_iterator I = inst_begin(F), E = inst_end(F); I != E, ++I) {
-        WorkSet.insert(&(*I));
-        PointerSet.insert(&(*I));
-    }
-    // more code here...
-    transfer(I, In, NOut, PA, PointerSet);
-    // more code here...
+if (BinaryOperator *BO = dyn_cast<BinaryOperator>(I)) {
+  // I is a BinaryOperator, do something
 }
 ```
+At runtime, `dyn_cast` will return `I` *casted* to a `BinaryOperator` if possible, and null otherwise.
 
-And, note that the transfer function now gets PointerAnalysis and a PointerSet as inputs.
-Keep this in mind when reusing your code from Lab 6.
+At this point, your `eval(...)` implementation will take the instruction and determine how this instructions Domain is affected by the operation.
+For example, 
 
-#### Step 2.
+```llvm
+%add = add nsw i32 %x, %y
+```
+Assuming `%x` has a domain of `Domain::Zero` and `%y` has a domain of `Domain::NonZero`, Since `%y` can take any value that is not zero (positive or negative) the resulting domain for `%add` will be determined by the addition of `Zero` to a `NonZero` value.
+Consequently, the domain for `%add` is determined to be `Domain::NonZero`.
+In this way, the `DivZeroAnalysis::transfer` function updates the `OutMap` for the associated action of a given `Instruction`.
 
-At a high level, you will modify the `transfer()` function in `Transfer.cpp` to perform a more sophisticated **divide-by-zero** analysis by keeping track of pointers.
+The `eval` function for `PhiNode` has been implemented for you and offers an example of how to use the utility function `getOrExtract` as well as `Domain::join`.
 
-The code for `PointerAnalysis` is in `src/PointerAnalysis.cpp` and it includes the implementation of various methods needed to use the pointer aliasing.
-After the Pointer analysis is run of `F`, the `PointerAnalysis *PA` object will contain
-the result of the pointer analysis run on the function,
-and `PointerSet` will contain all pointers from the Function.
+**Working with LLVM PHI Nodes.**
+For optimization purposes, compilers often implement their intermediate representation in **static single assignment** (SSA) form and LLVM IR is no different.
+In SSA form, a variable is assigned and updated at exactly one code point.
+If a variable in the source code has multiple assignments, these assignments are split into seperate variables in the LLVM IR and then **merged** back together.
+We call this merge point a **phi node**.
 
-We will discuss in more detail what this `PointerAnalysis` class does in the following sections,
-but read through the docstrings and the code and make sense of what is being done in each of the methods provided.
 
-##### Modeling LLVM alloca, store, and load.
-
-Here we provide an interface for working with pointers in LLVM.
-
-You may use this as is fallback, but you are also free free to model references in LLVM as you wish.
-
-For this lab, we have disabled the `mem2reg` pass used in Lab 6.
-As such, LLVM will create a memory cell for every C variable.
-As a result you will not see any **phi-nodes**, and you will not necessarily need the code segments
-in which you implemented for handling them in Lab 6.
-
-Consider the following code:
+To illustrate phi nodes, consider the following code:
 
 <table>
-<tbody>
-<tr valign="top">
-<td>
-<pre><code>
+  <tbody>
+    <tr valign="top">
+      <td>
+        <pre><code>
 int f() {
-  int a = 0;
-  int *c = &a;
-  int x = 1 / *c;
+  int y = input();
+  int x = 0;
+  if (y < 1) {
+  # then
+    x++;
+  } else {
+    x--;
+  }
+  # end
   return x;
 }
-</code></pre>
-</td>
-<td>
-<pre><code>
-I1: %a = alloca i32, align 4
-I2: %c = alloca i32*, align 4
-I3: %x = alloca i32, align 4
-I4: store i32 0, i32* %a, align 4
-I5: store i32* %a, i32** %c, align 8
-I6: %0 = load i32*, i32** %c, align 8
-I7: %1 = load i32, i32* %0, align 4
-I8: %div = sdiv i32 1, %1
-I9: store i32 %div, i32* %x, align 4
-I10: %2 = load i32, i32* %x, align 4
-I11: ret i32 %2
-</code></pre>
-</td>
-<td>
-<pre><code>
-M[variable(I1)] = 0
-M[variable(I2)] = variable(I1)
-M[variable(I6)] = M[variable(I2)]
-...
-...
-...
-...
-...
-...
-</code></pre>
-</td>
-</tr>
-</tbody>
+      </code></pre>
+      </td>
+      <td>
+      <pre><code>
+entry:
+  %call = call i32 (...) @input()
+  %cmp = icmp slt i32 %call, 1
+  br i1 %cmp, label %then, label %else
+       <br></br>
+then:                      ; preds = %entry
+  %inc = add nsw i32 0, 1  ; equates to x++ to the left
+  br label %if.end
+       <br></br>
+else:                      ; preds = %entry
+  %dec = add nsw i32 0, -1 ; equates to x-- to the left
+  br label %end
+       <br></br>
+end:                       ; preds = %else, %then
+  %x = phi i32 [%inc, %then ], [%dec, %else ]
+  ret i32 %x
+        </code></pre>
+      </td>
+    </tr>
+  </tbody>
 </table>
 
 
-As in Lab 6, the `variable()` method is still used to encode the variable of an instruction.
 
-##### Building the Points-To Graph.
+Depending on the value of `y`, we either take the left branch and execute `x++`, or the right branch and execute `x--`. 
+In the corresponding LLVM IR, this update on `x` is split into two variables `%inc` and `%dec`. 
+`%x` is assigned after the branch executes with the `phi` instruction; abstractly, `phi i32 [ %inc, %then ], [ %dec, %else ]` says assign `%inc` to `%x` if the then branch is taken, or `%dec` to `%x` if the else branch was taken.
 
-The `PointerAnalysis` class builds a points-to graph that you will use in your `transfer` function.
-`PointsToInfo` represents a mapping from variables to a `PointsToSet`,
-which represents the set of allocation sites a variable may point to.
 
-To help model the memory location that corresponds to a variable `%a` (i.e., `variable(I1)`),
-we provide a function `address`,
-which you can use to encode the memory address (`address(I1)`) of a variable when building the `PointsToSet`.
+Here is a piece of sample code to help you address phi nodes, as the specifics are beyond this course; however, feel free to read up more on SSA if these kinds of compiler details pique your interest.
 
-Instruction `I2` will be similarly analyzed.
+```cpp
+Domain *eval(PHINode *Phi, const Memory *InMem) {
+  if (auto ConstantVal = Phi->hasConstantValue()) {
+    return new Domain(extractFromValue(ConstantVal));
+  }
 
-At `I5`, the memory location allocated at `I2` (i.e., `address(I2)`)
-will store the memory location allocated at `I1` (i.e., `address(I1)`).
+  Domain *Joined = new Domain(Domain::Uninit);
 
-Additionally, the field `PointsTo` represents the complete points-to graph that will be constructed.
-
-The implementation for the `PointerAnalysis` constructor that will go through all the instructions for a given `Function F` and populate `PointsTo` has been provided to you as part of the skeleton code in this assignment.
-
-Additionally, we have also provided an `alias()` method which returns true if two pointers may be aliases to one another.
-
-#### Step 3.
-
-Using the `PointerAnalysis` object, augment your `transfer()` function in `Transfer.cpp` to take into account pointer aliasing during its analysis.
-This should be done by adding code to handle `StoreInst` and `LoadInst` instructions in the `transfer` function.
-
-##### LoadInst
-
-We can rely on the existing variables defined within the `In` memory to know the abstract domain
-should be assigned for the new variable introduced by a load instruction.
-
-For example, given a load instruction as follows:
-
-```llvm
-%2 = load i32, i32* %1, align 4
-```
-
-This is loading the value of the pointer at `%1` into a new variable `%2` of type `i32`.
-So the abstract domain for `%2` should be the same as the abstract domain for `%1`.
-
-With the addition of pointers, we can also have:
-
-```llvm
-%1 = load i32*, i32** %d, align 8
-```
-
-This is loading the value of the pointer at `%d` (which itself is a pointer) into a new variable `%1` of type `i32*`.
-
-**Note** the extra `*` characters in the load instruction’s type (`load i32*`) compared to the previous example.
-You can retrieve this load instruction’s type using `getType()`,
-and further check the type using methods like `isIntegerTy()` or `isPointerTy()`.
-
-##### StoreInst
-
-Store instruction can either add new variables or overwrite existing variables into our memory maps.
-
-For example, given a store instruction as follows:
-
-```llvm
-store i32, 0, i32* %a, align 4
-```
-
-This is storing the value of `0` into variable `%a`.
-
-You should be familiar with retrieving these operands using `getOperand()`, but you can also use `getValueOperand()` and `getPointerOperand()` methods respectively.
-With the addition of pointers, we can also have:
-
-```llvm
-store i32* %a, i32** %c, align 4
-```
-
-Now we’re storing the pointer at `%a` into variable `%c`, which is a pointer to a pointer.
-We can again use type information from `getType()` on each of these operands to determine whether pointer-aliasing may apply.
-
-This clearly complicates our abstract domain analysis - if some further instruction updates the value of `%a`, we not only need to update the abstract value of `%c`, but also consider updating the abstract value of other pointers that point to `%a`.
-This also applies to changes made to `%c` which is what happens in the `test13.c` example.
-
-```c
-int f() {
-    int a = 1;
-    int *c = &a;
-    int *d = &a;
-    *c = 0;
+  for (unsigned int i = 0; i < Phi->getNumIncomingValues(); i++) {
+    auto Dom = getOrExtract(InMem, Phi->getIncomingValue(i));
+    Joined = Domain::join(Joined, Dom);
+  }
+  return Joined;
 }
 ```
 
-To resolve these cases, we can rely on the points-to graph constructed in `PointerAnalysis`.
+##### Step 5
 
-We’ll need to iterate through the provided `PointerSet`:
-if we come across some instance where there exists a may-alias (`PA->isAlias()` returns `true`),
-this essentially means there’s an edge that connects the pointer values between two variables.
-Once we know what connections exist,
-we will need to get each abstract value,
-join them all together via `Domain::join()`,
-then proceed to update the current assignment as well as **all** may-aliased assignments with this abstract value.
-This ensures that all pointer references are in-sync and will converge upon a precise abstract value in our analysis.
+Implement the `DivZeroAnalysis::check` function found in `src/DivZeroAnalysis.cpp`.
+This function checks an `Instruction` to determine if a division-by-zero is **possible**.
+Any Instruction that is a **signed** or **unsigned** division instruction with a divisor whose `Domain` is either `Domain::Zero` or `Domain::MaybeZero` would be considered a potential divide-by-zero.
+You should use `DivZeroAnalysis::InMap` to decide if there is an error or not.
+
+
+To test your `check` and `transfer` functions, we have provided a reference `doAnalysis` binary. 
+In part 2, you will need to implement the `doAnalysis` function yourself, but for now you may test with our binary solution in order to make sure the functions you have implemented thus far are working correctly.
+Follow these steps to compile using the reference binary:
+
+```sh
+/lab5/build$ rm CMakeCache.txt
+/lab5/build$ cmake -DUSE_REFERENCE=ON ..
+/lab5/build$ make
+```
+
+As we demonstrated in the Setup section, run your analyzer on the test files using `opt`:
+
+```sh
+/lab5/test$ opt -load ../build/DivZeroPass.so -DivZero -disable-output test04.opt.ll
+```
+
+If there is a divide-by-zero error in the program, your output should be as follows:
+
+```sh
+Running DivZero on f
+Instructions that potentially divide by zero:
+  %div = sdiv i32 1, 0
+```
+
+
+##### Part 2 : Putting it all together - dataflow analysis
+
+Now that you have code to populate in and out maps and use them to check for divide-by-zero errors, your next step is to implement the chaotic iteration algorithm in function `doAnalysis` found in `src/ChaoticIteration.cpp`.
+
+First, review the dataflow analysis lecture content. 
+In particular, study the reaching definition analysis and the chaotic iteration algorithm.
+Informally, a dataflow analysis creates and populates an **IN** set and an **OUT** set for each node in the program’s control flow graph. 
+The **flowIn** and **flowOut** operations are repeated until the algorithm has reached a fixed point.
+ 
+More formally, the `doAnalysis` function should maintain a `WorkSet` that holds nodes that "need more work.”
+When the `WorkSet` is empty, the algorithm has reached a fixed point.
+For each instruction in the `WorkSet` your function do the following:
+
+1. Perform the **flowIn** operation by joining all **OUT** sets of incoming flows and saving the result in the **IN** set for the current instruction.
+Here, you will use the entries from the `InMap` and `OutMap` that you populated in Part 1 as the **IN** and **OUT** sets.
+2. Apply the `transfer` function that you implemented in Part 1 to populate the **OUT** set for the current instruction.
+3. Perform the **flowOut** operation by updating the `WorkSet` accordingly.
+The current instruction’s successors should be added only if the **OUT** set was changed by the `transfer` function.
+
+
+Here is an example of how the `WorkSet` needs to be loaded with instructions as well as introducing the [llvm::SetVector][LLVM SetVector] container, feel free to use this code as part of your implementation:
+
+```cpp
+void DivZeroAnalysis::doAnalysis(Function &F) {
+  SetVector<Instruction *> WorkSet;
+  for(inst_iterator I = inst_begin(F), E = inst_end(F); I != E; ++I) {
+    WorkSet.insert(&(*I));
+  }
+  // ...
+}
+```
+
+For this lab, we do not need to maintain an explicit control flow graph; LLVM already maintains one in its internals. 
+In order for you to focus on the dataflow portion of this assignment, we have provided two auxiliary functions `getSuccessors` and `getPredecessors` (defined in `include/DivZeroAnalysis.h`) that lookup and return the successors and predecessors for a given LLVM `Instruction`.
+
+You will next implement the various parts of the chaotic iteration algorithm.
+
+##### Step 1
+
+In `flowIn`, you will perform the first step of the reaching definitions analysis by taking the union of all **OUT** variables from all predecessors of `I`. 
+You may find the `getPredecessors` method in `src/ChaoticIteration.cpp` to be helpful here. 
+This should be done in the following function that is templated for you below:
+
+* `void DivZeroAnalysis:flowIn(Instruction *I, Memory *In)`
+
+Given an `Instruction` `I` and its **IN** set of variables, Memory `In`, you will need to union the **IN** with the **OUT** of every predecessor of `I`. 
+In order to take the union of two memory states, you will need to implement the join function templated below:
+
+* `Memory* join (Memory *M1, Memory *M2)`
+
+Within this function, you will also need to consider the `Domain` values when merging these `Memory` objects.
+Refer to the abstract domain on why this is necessary. 
+Recall that a `join` operation for combining two abstract values is defined in the `Domain` class.
+
+##### Step 2
+
+Call the `transfer` function that you implemented in Part 1 to populate the **OUT** set for the current instruction.
+
+##### Step 3
+
+In `flowOut`, you will determine whether or not a given instruction needs to be analyzed again. 
+This should be done in the following function that is templated for you below:
+
+* `void DivZeroAnalysis::flowOut(Instruction *I, Memory *Pre, Memory *Post, SetVector<Instruction *> &WorkSet)`
+
+Given an `Instruction` `I`, you will analyze the **pre-transfer** Memory `Pre` and the **post-transfer** Memory `Post`. 
+If there exists a change between the memory values after the `transfer` is applied, you will need to submit the instruction `I` for additional analysis. 
+To determine if the memory has changed during the `transfer` function, you will implement the function `equal`:
+
+* `bool equal(Memory *M1, Memory * M2)`
+
+In this function, you will again consider the `Domain` values when determining whether two `Memory` objects are equal. 
+Recall that an `equal` operation to evaluate equality between two abstract values is defined in the `Domain` class.
+
+Lastly, in `flowOut` be sure that you update the `OutMap` for instruction `I` to include values in `Post`.
+
+##### Step 4
+
+Recall in Part 1, a reference `doAnalysis` could be used to verify your `check` and `transfer` implementations. 
+Now that you’re writing your own version of `doAnalysis`, you may need to rebuild the pass without the reference. 
+Follow these steps to compile using your implementation:
+
+```sh
+/lab5/build$ rm CMakeCache.txt
+/lab5/build$ cmake ..
+/lab5/build$ make
+```
+
+Upon completing the above steps, your analysis should produce 2 output files.
+1. `test.out`, where test is the program you are testing, is a condensed version of the results with just the instruction that has a potential divide-by-zero operation.
+2. `test.err` is a complete report including any instructions with potential divide-by-zero operations as well as the final state of the `InMap` and `OutMap` for each instruction being reviewed.
+
+Your output will be formatted like this:
+
+```
+Dataflow Analysis Results:
+Instruction:   %cmp = icmp ne i32 0, 0
+In set: 
+
+Out set: 
+    [ %cmp     |-> Zero      ]
+
+Instruction:   br i1 %cmp, label %if.then, label %if.end
+In set: 
+    [ %cmp     |-> Zero      ]
+Out set: 
+    [ %cmp     |-> Zero      ]
+
+Instruction:   %div = sdiv i32 1, 0
+In set: 
+    [ %cmp     |-> Zero      ]
+Out set: 
+    [ %cmp     |-> Zero      ]
+    [ %div     |-> Uninit    ]
+
+Instruction:   br label %if.end
+In set: 
+    [ %cmp     |-> Zero      ]
+    [ %div     |-> Uninit    ]
+Out set: 
+    [ %cmp     |-> Zero      ]
+    [ %div     |-> Uninit    ]
+
+Instruction:   ret i32 0
+In set: 
+    [ %cmp     |-> Zero      ]
+    [ %div     |-> Uninit    ]
+Out set: 
+    [ %cmp     |-> Zero      ]
+    [ %div     |-> Uninit    ]
+```
+
 
 ### Submission
 
-Once you are done with the lab, submit your code by commiting and pushing the changes under `lab6/`. Specifically, you need to submit the changes to `src/ChaoticIteration.cpp`, `src/DivZeroAnalysis.cpp` and `src/Transfer.cpp`.
+Once you are done with the lab, submit your code by commiting and pushing the changes under `lab5/`. Specifically, you need to submit the changes to `src/ChaoticIteration.cpp`, `src/DivZeroAnalysis.cpp` and `src/Transfer.cpp`.
 
 ```sh
-lab6$ git add src/ChaoticIteration.cpp src/DivZeroAnalysis.cpp src/Transfer.cpp
-lab6$ git commit -m "your commit message here"
-lab6$ git push
+lab5$ git add src/ChaoticIteration.cpp src/DivZeroAnalysis.cpp src/Transfer.cpp
+lab5$ git commit -m "your commit message here"
+lab5$ git push
 ```
 
+[LLVM template functions]: http://releases.llvm.org/8.0.0/docs/ProgrammersManual.html#the-isa-cast-and-dyn-cast-templates
+[LLVM CmpInst]: https://llvm.org/doxygen/classllvm_1_1CmpInst.html
+[LLVM CastInst]: https://llvm.org/doxygen/classllvm_1_1CastInst.html
+[LLVM BinOps]: https://llvm.org/doxygen/classllvm_1_1BinaryOperator.html
+[LLVM Instruction class]: http://releases.llvm.org/8.0.0/docs/ProgrammersManual.html#the-instruction-class
 [LLVM AllocaInst]: https://llvm.org/doxygen/classllvm_1_1AllocaInst.html
+[LLVM SetVector]: https://llvm.org/doxygen/classllvm_1_1SetVector.html
+[CMake Ref]: https://en.wikipedia.org/wiki/CMake
+[Make Ref]: https://www.gnu.org/software/make/manual/html_node/Simple-Makefile.html#Simple-Makefile
+[Menagerie Link]: https://drive.google.com/open?id=1uhCWzfBxsaBQQ6NyMTY64Y6x_qRR1YQwiTpWT0_N2Xc

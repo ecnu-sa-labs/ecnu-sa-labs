@@ -42,12 +42,12 @@ Before preceding the labs, you need to setup the lab environment. Checkout this 
 | [lab2](lab_manual/lab2.md)   | The LLVM Framework                | ~6h            |                                   |
 | [lab3](lab_manual/lab3.md)   | Random Testing / Fuzzing          | ~6h            |                                   |
 | [lab4](lab_manual/lab4.md)   | Property-based Testing            |                | [Kea2](https://github.com/ecnusse/Kea2) |
-|                              | Delta Debugging                   |                |                                   |
+| [lab5](lab_manual/lab5.md)   | Delta Debugging                   |                |                                   |
 | [exercise](exercise/exercise_data_flow_analysis.pdf)   | Dataflow Analysis                   |                |                                   |
-| [lab5](lab_manual/lab5.md)   | Dataflow Analysis                 |                |                                   |
-| [lab6](lab_manual/lab6.md)   | Pointer Analysis                  |                |                                   |
-| [lab7](lab_manual/lab7.md)   | Taint Analysis    |                | [BinPRE](https://github.com/ecnusse/BinPRE) |
-| [lab8](lab_manual/lab8.md)   | Symbolic Execution (MiniKLEE)       |                | [SmartRocket TestGrid]()          |
+| [lab6](lab_manual/lab6.md)   | Dataflow Analysis                 |                |                                   |
+| [lab7](lab_manual/lab7.md)   | Pointer Analysis                  |                |                                   |
+| [lab8](lab_manual/lab8.md)   | Taint Analysis    |                | [BinPRE](https://github.com/ecnusse/BinPRE) |
+| [lab9](lab_manual/lab9.md)   | Symbolic Execution (MiniKLEE)       |                | [SmartRocket TestGrid]()          |
 
 <br>
 

@@ -1,17 +1,11 @@
 #include <stdio.h>
 
 void f() {
-  int in = getchar();
-  int a = 10;
-  int b = 2;
-
-  if (in > 0) {
-    b = 100 + b;
-  } else if (in == 0) {
-    b = 1;
-  } else {
-    b = a + b;
+  int i = getchar();
+  int sum = 0;
+  while (sum < 50) {
+    sum += i;
   }
-
-  int out = a / b;
+  int y = sum - 55;
+  int z = i / y;
 }
