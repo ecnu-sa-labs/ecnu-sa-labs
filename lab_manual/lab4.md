@@ -17,18 +17,20 @@ Please ensure that the Python environment contains the packages `pytest` and `hy
 
 ### Binary Search Tree (BST)
 
-A binary search tree (BST), also known as a binary search tree or binary search tree, is a special type of binary tree useful for both searching and sorting.
+A binary search tree (BST), is a special type of binary tree used for both searching and sorting.
 
 A binary search tree is either an empty tree or a binary tree satisfying the following properties:
 
-+ If its left subtree is non-empty (i.e., a non-empty tree), then all nodes in the left subtree have values less than the root's value;
++ If its left subtree is non-empty, then all nodes in the left subtree have values less than the root's value;
 + If its right subtree is non-empty, then all nodes in the right subtree have values greater than the root's value;
 + Both its left and right subtrees are themselves binary search trees.
 
 Characteristics of a binary search tree: Left subtree < root < right subtree. The in-order traversal sequence of a binary search tree is an increasing sequence. For example, consider a binary search tree whose in-order traversal sequence is shown in the diagram below.
 
+<div align="center">
 <img src="../images/lab4-bst-example.png"
-  style="height: auto; width: 100%">
+  style="height: auto; width: 50%">
+</div>
 
 The fundamental operations of a binary search tree include `insert`, `delete`, `find`, `union`. Its data structure is implemented in `/lab4/src/BST.py`. Should you require clarification on its implementation principles, please refer to [Binary Search Trees & Balanced Trees - OI Wiki](https://oi-wiki.org/ds/bst/).
 
@@ -36,7 +38,7 @@ The following section will cover operations related to binary search trees. Shou
 
 #### find
 
-Find the weight of the node with $key2$ in the tree rooted at root node $(key1, value1)$.
+Find the value of the node with $key2$ in the tree rooted at the root node $(key1, value1)$.
 
 + If root is empty, directly return `NIL`.
 + If  $𝑘𝑒𝑦1 > 𝑘𝑒𝑦2$ , search the left subtree of root.
@@ -58,7 +60,7 @@ def find(self, key: K) -> Optional[V]:
 
 #### insert
 
-Insert a node $(key2, value2)$ into a binary search tree rooted at node $(key1, value1)$, Where $𝑘𝑒𝑦$ denotes the key for comparison and $𝑣𝑎𝑙𝑢𝑒$ represents the corresponding weight. The classification is as follows:
+Insert a node $(key2, value2)$ into a binary search tree rooted at node $(key1, value1)$, Where $key$ denotes the key for comparison and $value$ represents the corresponding value. The classification is as follows:
 
 + If root is empty, directly return the new node $(key2, value2)$.
 + If  $𝑘𝑒𝑦1 > 𝑘𝑒𝑦2$ , insert the node $(𝑘𝑒𝑦, 𝑣𝑎𝑙𝑢𝑒)$ into the left subtree of root.
@@ -100,11 +102,11 @@ def _insert_branch(self, branch: "BST[K,V]") -> "BST[K,V]":
 
 Delete a node with key 𝑘𝑒𝑦 from a binary search tree rooted at node root. Following the same search sequence as insertion, first locate the node with $key$ within the binary search tree. The classification and discussion proceed as follows:
 
-- If the root dont't have any child, then delete it.
+- If the root doesn't have any children, then delete it.
 
 + If the root has only one child, return that child.
 
-+ If the root has two non-empty child nodes, **replace it with the minimum value of its right subtree (the leftmost node in the right subtree), append its left subtree**, and then remove it.
++ If the root has two non-empty child nodes, **replace it with the minimum value node of its right subtree (the leftmost node in the right subtree), and append its left subtree**, and then remove it.
 
 ```python
     def delete(self, key:K) -> "BST[K,V]":
@@ -135,7 +137,7 @@ Delete a node with key 𝑘𝑒𝑦 from a binary search tree rooted at node roo
 
 #### union
 
-It should be noted that since keys are unique within the binary tree, **nodes with identical keys will have their values updated**. In this experiment, the merge operation corresponds to `union(bst1, bst2)`. For keys that match, the value from `bst1` will overwrite that of `bst2`.
+It should be noted that since keys are unique in the binary tree, **nodes with identical keys will have their values updated**. In this experiment, the merge operation corresponds to `union(bst1, bst2)`. For matching keys, the value from `bst1` will overwrite that of `bst2`.
 
 ```python
 def union(bst1: "BST[K,V]", bst2: "BST[K,V]") -> "BST[K,V]":
@@ -161,7 +163,7 @@ def test_addition():
 from hypothesis import given, strategies as st
 @given(st.integers(), st.integers())
 def test_addition_commutative(a, b):
-    assert a + b == b + a  # 验证交换律
+    assert a + b == b + a  # Verify the commutative law
 ```
 
 #### Strategies
@@ -169,19 +171,19 @@ def test_addition_commutative(a, b):
 Strategies form the core of Hypothesis, serving to generate test data:
 
 ```python
-# 基本类型
-st.integers()           # 整数
-st.floats()             # 浮点数  
-st.text()               # 文本
-st.booleans()           # 布尔值
+# Basic Type
+st.integers()           # integer
+st.floats()             # floating-point number  
+st.text()               # Text
+st.booleans()           # Boolean value
 
-# 复杂类型
-st.lists(st.integers()) # 整数列表
-st.dictionaries(st.text(), st.integers())  # 字典
-st.tuples(st.integers(), st.text())        # 元组
+# Complex type
+st.lists(st.integers()) # List of integers
+st.dictionaries(st.text(), st.integers())  # Dictionary
+st.tuples(st.integers(), st.text())        # Tuple
 
-# 自定义策略
-st.one_of(st.integers(), st.text())        # 多种类型之一
+# Custom policy
+st.one_of(st.integers(), st.text())        # One of several types
 ```
 
 In this experiment, the following strategies have been designed for you:
@@ -209,7 +211,7 @@ trees_strategy = st.lists(
 
 #### Assumptions
 
-In property testing, assumptions may be employed to constrain the range or attributes of input data. Should an assumption prove unsatisfied, Hypothesis will automatically generate non-compliant input data for testing. Assumptions are typically declared using the `assume()` function.
+In property testing, assumptions may be employed to constrain the range or attributes of input data. If an assumption is unsatisfied, Hypothesis will automatically generate other input data that satisfies the assumption for testing. Assumptions are typically declared using the `assume()` function.
 
 ```python
 from hypothesis import given, assume
@@ -254,7 +256,7 @@ Hypothesis also offers a feature called shrink. When a property test fails, Hypo
 
 ### Traget
 
-1. TODO1:  Write **Validity Properties** tests for find and delete respectively to identify tow bugs in `\bugs\bug1.py`:
+1. TODO1:  Write **Validity Properties** tests for find and union respectively to identify two bugs in `\bugs\bug1.py`:
 
    + BUG(1) In `find`: During the search, the right subtree will be mistakenly treated as the left subtree.
 
@@ -303,7 +305,7 @@ You can execute all files from test1.py to test4.py and clear the cache using th
 
 The execution results will be displayed in the terminal, and a test report will be generated in `/lab4/tests/report`. This report contains detailed assert information and minimised test cases for failure.
 
-It is worth noting that the hypothesis includes built-in **sharding operations**, which simplify complex examples. For this experiment, the objective is to minimise the number of nodes while maximising the proximity of values to zero. Consequently, **the majority of failed examples are 0, -1, 1, and NIL**.
+It is worth noting that the hypothesis includes built-in **sharding operations**, which simplify complex examples. For this experiment, the objective is to minimise the number of nodes while maximising the proximity of values to zero. Consequently, **most failed examples involve 0, -1, 1, and NIL**.
 
 ```tex
 File and Function: test1.py::test_find_valid
@@ -417,7 +419,7 @@ lab4\tests$ pytest -v test1.py --tb=short # More detailed output
 You should obtain the following result and get the assert information and sharking test seed in `lab4\report\test1`:
 
 ```tex
-🔬 运行属性测试 (test1.py)...
+Run Validity Testing (test1.py)...
 ...FF
 FAILED test1.py::test_find_valid - assert False
 FAILED test1.py::test_union_valid - assert False
@@ -475,7 +477,7 @@ You should obtain the following result and get the assert information and sharki
 Note: no bug has been introduced in the find function; the incorrect find determination is due to an error in the delete operation.
 
 ```bash
-🔄 运行变形测试 (test2.py)...
+Run Postconditions Testing (test2.py)...
 .F.FF                                                                                       
 FAILED test2.py::test_find_post_absent - assert 0 is None
 FAILED test2.py::test_delete_post - assert 0 == None
@@ -540,7 +542,7 @@ lab4\tests$ pytest -v test3.py --tb=short # More detailed output
 You should obtain the following result and get the assert information and sharking test seed in `lab4\report\test3`:
 
 ```tex
-🎯 运行复杂变形测试 (test3.py)...
+Run Metamorphic Testing (test3.py)...
 .F.                                                                                         
 FAILED test3.py::test_delete_metamorph_by_insert - assert False
 1 failed, 2 passed in 2.62s
@@ -567,8 +569,10 @@ def to_list(self) -> List[Tuple[K,V]]:
 
 Taking the `insert` operation as an example:
 
+<div align="center">
 <img src="../images/lab4-model-based-property-example.png"
-  style="height: auto; width: 100%">
+  style="height: auto; width: 50%">
+</div>
 
 Inserting data into a BST should yield a set equivalent to inserting data into an abstract data.
 
@@ -609,7 +613,7 @@ lab4\tests$ pytest -v test4.py --tb=short # More detailed output
 You should obtain the following result and get the assert information and sharking test seed in `lab4\report\test4`:
 
 ```bash
-📊 运行基于模型测试 (test4.py)...
+Run Model-based Properties Testing (test4.py)...
 ..FF                                                                                      
 FAILED test4.py::test_delete_model - assert {(0, 0), (1, 0)} == {(1, 0)}
 FAILED test4.py::test_union_model - assert {(0, 1)} == {(0, 0)}
