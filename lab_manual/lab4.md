@@ -9,7 +9,7 @@ In this experiment, you shall apply your knowledge of **Metamorphic Testing and 
 Please ensure that the Python environment contains the packages `pytest` and `hypothesis` listed in `lab4\requirements.txt`. If they are not present, you can install them using the following command: 
 
 ```bash
-/lab4$ pip list | grep -e pytest -e hypothesis # Check whether pytest and hypothesis are exit
+/lab4$ pip list | grep -e pytest -e hypothesis # Check whether pytest and hypothesis are already installed
 /lab4$ pip install -r requirements.txt  	    # Install the required packages
 ```
 
