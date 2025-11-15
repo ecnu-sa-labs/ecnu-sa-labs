@@ -1,6 +1,6 @@
 # Setting up course lab environment
 
-Our labs use VScode and Docker containers to build a flexible, consistent and ready-to-use development environment. You can view the picture below to understand the architecture of our lab environment (a.k.a VS Code's remote development mode). Conceptually, your host machine runs VS Code, and the VS code connects to the remote machine running in a docker container. In this way, you can edits the files in the remote machine via VS Code on your host machine, and run all the labs on the remote machine. In the docker container, we have already setup everything for you. 
+Our labs use VScode and Docker containers to build a flexible, consistent and ready-to-use development environment. You can view the picture below to understand the architecture of our lab environment (a.k.a VS Code's remote development mode). Conceptually, your local OS runs VS Code, and the VS code connects to the remote OS running in a docker container. In this way, you can edits the files in the remote OS via VS Code on your local OS, and run all the labs on the remote OS. In the docker container, we have already setup everything (all necessary tools and dependencies) for you. Note that the docker runs on your local OS.
 
 ![](../images/principle_of_vscode_remote_development.png)
 
@@ -9,7 +9,7 @@ Our labs use VScode and Docker containers to build a flexible, consistent and re
 
 - Ubuntu 22.04, LLVM 19
 
-:star: You host machine needs to have at least 15GB disk space and 8GB memory to run the docker container.
+:star: You local machine needs to have at least 15GB disk space and 8GB memory to run the docker container.
 
 ### What you need to install?
 
@@ -19,7 +19,7 @@ Our labs use VScode and Docker containers to build a flexible, consistent and re
 ### Instructions for setting up lab environment
 
 #### Step 1. 
-For this course, we will use Docker containers with VS Code to ensure everyone uses a consistent development environment for the labs. Thus, you need to install <a href="https://www.docker.com/">docker</a> on your host machine[^1].
+For this course, we will use Docker containers with VS Code to ensure everyone uses a consistent development environment for the labs. Thus, you need to install <a href="https://www.docker.com/">docker</a> on your local machine[^1].
 
 
 ![](../images/course-vm-d.jpg)
@@ -34,7 +34,7 @@ Within VS Code, we also recommend you to install `GitHub Repositories` from `Ext
 ![alt text](../images/github_repositories.png)
 
 #### Step 3. 
-Clone the repository of our respository ([ecnu-sa-labs](https://github.com/ecnu-sa-labs/ecnu-sa-labs)) on your host machine.
+Clone the repository of our respository ([ecnu-sa-labs](https://github.com/ecnu-sa-labs/ecnu-sa-labs)) on your local machine.
 In this repository, we provide the labs in the folders like `lab1`, `lab2`, etc.
 In each lab, we provide a configuration file `.devcontainer/devcontainer.json`[^2] that instructs VS Code to set up a development environment using an appropriate docker image and various other configuration options. 
 
@@ -71,9 +71,11 @@ In VS Code, go to `File`, select `New Window`, find and select the lab folder (e
 ![](../images/course-vm-lab1-folder.jpg)
 
 
-Open the Command Palette[^3] in VS Code, and search and select `Dev Containers:Rebuild and Reopen in Container` to setup the lab environment (i.e., building and opeing the container and connecting your host machine to the container which contains the lab). This process may take a few minutes.
+Open the Command Palette[^3] in VS Code, and search and select `Dev Containers:Rebuild and Reopen in Container` to setup the lab environment (i.e., building and opening the container and connecting your local machine to the container which contains the lab). This process may take a few minutes. Because it needs to download our docker image.
 
-:star: Note: If you have encountered some errors when building and opeing the container, one alternative way is to directly pull the <a href="https://hub.docker.com/r/ecnusa/ecnu-sa-labs">ecnu-sa-lab image</a> from <a href="https://hub.docker.com/">docker hub</a>. If you cannot access the docker page, please refer to <a href="https://pan.baidu.com/s/1B7W2EeSUts_k2lzoTnJhDg?pwd=yebz">this link</a> and download the docker image. After decompression, use `docker load -i <path to image tar file> ` to load the image before building in container. ([TODO])
+:star: Note: If you have encountered some errors when building and opening the container, one alternative way is to directly pull the <a href="https://hub.docker.com/r/ecnusa/ecnu-sa-labs">ecnusa/ecnu-sa-labs</a> image from <a href="https://hub.docker.com/">docker hub</a> by executing `docker pull ecnusa/ecnu-sa-labs` in a terminal.
+
+:star: If you cannot access the docker page, please refer to <a href="https://pan.baidu.com/s/1B7W2EeSUts_k2lzoTnJhDg?pwd=yebz">this link</a> and download the docker image. After decompression, use `docker load -i <path to image tar file> ` to load the image before building in container.
 
 ![](../images/course-vm-lab1-rebuild-and-reopen-container.jpg)
 
@@ -85,10 +87,10 @@ To check whether you have successfully open the lab in the container, you can ru
 
 ![](../images/course-vm-lab1-clang.jpg)
 
-If you close the lab in this new window (i.e., your host machine was disconnected from the container), and hope to resume working on the lab.
+If you close the lab in this new window (i.e., your local machine was disconnected from the container), and hope to resume working on the lab.
 You can open the lab folder in VS Code again, open the Command Paletteand, and search and select `Reopen in Container`. 
 
-:star: Note: Any changes you have made in the lab folder (in the container) will be available in your ecnu-sa-labs folder (in your host machine).
+:star: Note: Any changes you have made in the lab folder (in the container) will be available in your ecnu-sa-labs folder (on your local machine).
 
 
 [^1]: Note: for windows users, please select `Download for Windows-AMD64`; For Mac users, please select `Download for Mac`. If you don't have direct access to <a href="https://www.docker.com/">docker</a>, please refer to <a href="https://pan.quark.cn/s/6fc0c0d8ccf6">this link</a> for download.

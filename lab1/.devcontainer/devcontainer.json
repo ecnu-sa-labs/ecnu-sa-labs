@@ -2,7 +2,7 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.224.2/containers/cpp
 
 {
-	"name": "ECNUA SA Lab Container",
+	"name": "ECNU SA Lab Container",
 	"image": "ecnusa/ecnu-sa-labs:latest",
 	"runArgs": [
 		"--cap-add=SYS_PTRACE",
