@@ -359,6 +359,32 @@ FAILED simple_test.py::test_union_of_two_bsts_contains_keys_of_both - AssertionE
 
 ## Lab Instructions
 
+### Project Structure
+
+```tex
+.
+|-- bugs
+|   |-- __init__.py
+|   |-- bug1.py # Bugs has been inserted into both find and union for detection by test1.
+|   |-- bug2.py # Bugs has been inserted into both the delete and union for detection by test2.
+|   |-- bug3.py # Bug has been introduced in the delete function for detection by test3.
+|   `-- bug4.py # Bugs has been inserted into both the delete and union operations for detection by test4.
+|-- requirements.txt
+|-- src
+|   |-- BST.py # Correct implementation of the BST data structure
+|   |-- BSTUtils.py # Related utility functions
+|   `-- __init__.py
+`-- tests
+    |-- conftest.py # Runtime Environment Configuration and Test Report Generation
+    |-- hypothesis.ini # Hypothesis configuration
+    |-- makefile # Run the scripts, including all, clean, test1, test2, test3, test4
+    |-- simple_test.py # simple test for BST
+    |-- test1.py # TODO: Write Validity Properties tests for find and delete.
+    |-- test2.py # TODO: Write Postcondition Properties tests for delete and union.
+    |-- test3.py # TODO: Write Metamorphic Properties tests for delete and union.
+    `-- test4.py # TODO: Write Model-based Properties tests for delete and union.
+```
+
 ### Bugs
 
 | TODO      | Property Type            | Target Methods    | Bugs to Identify     | Bug Description                                              |
