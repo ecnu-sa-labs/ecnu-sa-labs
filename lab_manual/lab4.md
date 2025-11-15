@@ -18,40 +18,34 @@ Please install the Python packages `pytest` and `hypothesis`:
 
 ### Binary Search Tree (BST)
 
-A binary search tree (BST), is a special type of binary tree used for both searching and sorting.
+A binary search tree (BST) is a specialized form of a binary tree, designed to support efficient searching and sorting operations. It is defined as being either empty or a binary tree satisfying these properties:
 
-A binary search tree is either an empty tree or a binary tree satisfying the following properties:
+1. Any non-empty left subtree must have all keys less than the root's key.
+2. Any non-empty right subtree must have all keys greater than the root's key.
+3. Both subtrees must also be binary search trees.
 
-+ If its left subtree is non-empty, then all nodes in the left subtree have keys less than the root's key;
-+ If its right subtree is non-empty, then all nodes in the right subtree have keys greater than the root's key;
-+ Both its left and right subtrees are  binary search trees.
-
-The key characteristic of a BST can be summarized as: `left subtree < root < right subtree`. This ordering guarantees that an in-order traversal—which visits nodes in the order left, root, right—produces a sequence of keys in strictly ascending order, as shown in the following example.
+This structure ensures the invariant: `left subtree < root < right subtree`. Consequently, an in-order traversal—visiting nodes in the order of left, root, right—will always yield a sequence of keys in strictly ascending order, as illustrated in the following example.
 
 <div align="center">
 <img src="../images/lab4-bst-example1.png"
   style="height: auto; width: 50%">
 </div>
+The binary search tree (BST) implementation for this lab supports core operations such as `insert`, `delete`, `find`, and `union`. The complete code is located in `/lab4/src/BST.py`. Background theory on BSTs can be found at [Binary Search Trees & Balanced Trees - OI Wiki](https://oi-wiki.org/ds/bst/).
 
-The fundamental operations of a binary search tree include `insert`, `delete`, `find`, `union`. Its data structure is implemented in `/lab4/src/BST.py`. Should you require clarification on its implementation principles, please refer to [Binary Search Trees & Balanced Trees - OI Wiki](https://oi-wiki.org/ds/bst/).
-
-The following section will cover operations related to binary search trees. Should you be thoroughly familiar with these concepts, you may skip ahead; however, please review the source code in `/lab4/src/BST.py` to ensure you can write the properties appropriately. **You should pay attention to the `NOTE` sections in the source code and the bolded parts of the following operations**, as these pertain to the structure of the binary search tree in this experiment.
+The following section will cover operations related to binary search trees. **Please pay close attention to the `NOTE` comments in the code and the bolded text in the operation descriptions below**, as they highlight key details specific to the BST implementation in this experiment.
 
 #### find
 
-Search for a node with the given `key` in the Binary Search Tree.
+Searches for a node with the specified key in the Binary Search Tree.
 
-1. Search Phase:
+1. Search Phase: Compare the target key (`key`) with the current node's key (`self.key`) to determine the search direction.
+   - If `self.key > key`: Proceed to search recursively in the left subtree (which contains keys smaller than the current node's key).
+   - If `self.key < key`: Proceed to search recursively in the right subtree (which contains keys larger than the current node's key).
+2. Termination Conditions: The search concludes under one of the following scenarios:
+   - Key Not Found: A leaf node is reached, indicating the key is not present in the search path. The function returns `None`.
+   - Key Found: The current node's key matches the target key. The function returns the associated value.
 
-   - If `current.key > target.key`: Search recursively in the left subtree (where smaller keys reside)
-
-   - If `current.key < target.key`: Search recursively in the right subtree (where larger keys reside)
-
-2. Termination Cases:
-
-   - Case 1 leaf node reached: Key not found in the search path, return `None`
-
-   - Case 2 key match found: Current node's key equals target key, return the corresponding value
+This recursive process efficiently narrows down the search to one subtree at each step, leveraging the BST ordering property.
 
 ```python
 def find(self, key: K) -> Optional[V]:
@@ -83,17 +77,15 @@ def find(self, key: K) -> Optional[V]:
 
 #### insert
 
-Insert a new key-value pair into the Binary Search Tree.
+Inserts a new key-value pair into the Binary Search Tree, following the principle of **"the last insertion wins"** for duplicate keys.
 
-Wrapper Method: `insert` creates a new branch and calls the internal recursive method
+1. Wrapper Call: The public `insert` method creates a new branch node and initiates the recursive insertion process.
+2. Recursive Insertion: The internal `_insert_branch` method navigates the tree to find the correct insertion point while preserving the BST structure (`self.key` represents the key of the current node, while `branch.key` represents the key of the inserted branch node).
+   - If `self.key > branch.key`: Proceed to the left subtree for insertion.
+   - If `self.key < branch.key`: Proceed to the right subtree for insertion.
+   - If `self.key == branch.key`: **Update the existing node's value with the new value**.
 
-Recursive Insertion: `_insert_branch` handles the actual insertion logic while maintaining BST properties
-
-- If `current.key > branch.key`: Insert into left subtree.
-- If `current.key < branch.key`: Insert into right subtree.
-- If `current.key == branch.key`: **Update the existing key with the new value**.
-
-**The insertion principle in this experiment is "the last insertion wins"**
+**Principle:** This implementation follows the **"last insertion wins"** rule, where inserting a key that already exists will overwrite the previous value.
 
 ```python
 def insert(self, key: K, value: V) -> "BST[K,V]":
@@ -142,29 +134,21 @@ def _insert_branch(self, branch: "BST[K,V]") -> "BST[K,V]":
 
 #### delete
 
-Delete the node with the given key from the Binary Search Tree.
+Removes the node with the specified key from the Binary Search Tree while maintaining the BST structure.
 
-1. Search Phase:
 
-   + If `current.key > target.key`: Search and delete recursively in the left subtree
 
-   - If `current.key < target.key`: Search and delete recursively in the right subtree
-
-2. Deletion Cases:
-
-   - Case 1: No left child: Replace node with its right child
-
-   - Case 2: No right child: Replace node with its left child
-
-   - Case 3: Two children: Use the right child as replacement and insert left child into right subtree
-
-3. Two-Child Deletion Strategy:
-
-   - The right child takes the position of the deleted node
-
-   - The entire left subtree is inserted into the right subtree
-
-   - This maintains BST properties since all left subtree values < right subtree values
+1. Search Phase: Locate the target node by recursively traversing the tree(`self.key` represents the key of the current node, while `branch.key` represents the key of the target node).
+   - If `self.key > key`: Proceed to the left subtree
+   - If `self.key < key`: Proceed to the right subtree
+2. Deletion Phase: Once the target node is found, handle based on its child configuration:
+   - Case 1: No left child - Replace the node with its right child
+   - Case 2: No right child - Replace the node with its left child
+   - Case 3: Two children - Employ the following replacement strategy:
+3. Two-Child Handling:
+   - Promote the **right child** to replace the deleted node
+   - **Insert the entire left subtree** into the promoted right subtree
+   - This preserves BST properties since all left subtree values are less than those in the right subtree
 
 ```python
     def delete(self, key:K) -> "BST[K,V]":
@@ -214,18 +198,11 @@ Delete the node with the given key from the Binary Search Tree.
 
 #### union
 
-Compute the union of two Binary Search Trees.
+This operation generates a new Binary Search Tree containing the union of elements from two input BSTs (`bst1` and `bst2`). **The implementation ensures that for any duplicate keys, the value from `bst1` is preserved**.
 
-1. Initialization:
-   - Start with `bst2` as the base result tree
-   - This provides all elements from the second tree as a foundation
-2. Merge Process:
-   - Convert `bst1` to a list using `to_list()` method
-   - Iterate through each key-value pair in `bst1`
-   - Insert each pair into the result tree using the `insert` method
-3. Conflict Resolution:
-   - When the same key exists in both trees, the value from `bst1` **replaces** the value from `bst2`
-   - **This follows the specified precedence rule: bst1 values take priority**
+- Base Construction: The algorithm begins by duplicating `bst2` to form the initial result set, establishing all elements from the second tree as the foundation.
+- Sequential Merge: The first tree (`bst1`) is flattened into a list via in-order traversal (`to_list()`), then processed iteratively. Each key-value pair is inserted into the result tree using the standard insertion mechanism.
+- Precedence Handling: Since `bst1`'s elements are inserted after `bst2`'s base elements, and our insertion implements **"last write wins"**, values from `bst1` effectively replace those from `bst2` for overlapping keys.
 
 ```python
 @staticmethod
@@ -251,7 +228,7 @@ def union(bst1: "BST[K,V]", bst2: "BST[K,V]") -> "BST[K,V]":
 
 ### Hypothesis
 
-Hypothesis is a Python testing library based on property-based testing. It verifies general properties of code by automatically generating test data, rather than relying solely on specific single test cases.
+Hypothesis is a Python library that implements property-based testing. This approach verifies the correctness of code by checking it against general rules or invariants, using a wide array of automatically generated test cases, rather than relying solely on specific single test cases.
 
 ```python
 # Traditional testing
@@ -276,7 +253,7 @@ def test_sort_property(input_list):
 
 #### Strategies
 
-Strategies form the core of Hypothesis, serving to generate test data:
+Strategies are the core component of Hypothesis, responsible for automatically generating test data.
 
 ```python
 # Basic Type
@@ -296,9 +273,9 @@ st.one_of(st.integers(), st.text())        # One of several types
 
 In this experiment, the following strategies have been designed for you:
 
-+ Keys: `keys_strategy`, predominantly selected from the range [-25, 25] to ensure test keys predominantly appear in the tree, primarily testing core functionality; with a minor probability of selecting random integers to account for edge cases.
-+ Values: `st.integers()`, utilising random integers.
-+ BST: `trees_strategy`, executes insert operations using the generated [Key, Value] pairs to construct the tree, with node count constrained between [0,50] and ensuring key uniqueness.
++ Keys (`keys_strategy`): Primarily samples from the range [-25, 25] to ensure most test keys appear in the tree, focusing on core functionality. With low probability, it also selects random integers to test edge cases.
++ Values( `st.integers()`): Generate random integer values.
++ BST(`trees_strategy`): Constructs trees by executing insert operations with generated [Key, Value] pairs. The node count is constrained to [0, 50], and key uniqueness is enforced.
 
 ```python
 keys_strategy = st.one_of(st.integers(min_value = -25, max_value = 25), st.integers())
@@ -319,7 +296,7 @@ trees_strategy = st.lists(
 
 #### Assumptions
 
-In property-based testing, assumptions may be employed to constrain the range or attributes of input data. If an assumption is unsatisfied, Hypothesis will automatically generate other input data that satisfies the assumption for testing. Assumptions are typically declared using the `assume()` function.
+Property-based testing utilizes assumptions to restrict the domain of generated inputs. If a generated value fails to satisfy the condition specified in `assume()`, Hypothesis silently discards that case and continues searching for valid inputs. This process continues until sufficient satisfying examples are found, ensuring the property is verified against meaningful data.
 
 ```python
 from hypothesis import given, assume
@@ -332,20 +309,20 @@ def test_positive_numbers(a):
 
 #### Shrinking
 
-Hypothesis also offers a feature called shrinking. When a property test fails, Hypothesis attempts to find a smaller input data set to make it easier to understand why the test failed.
+A key feature of Hypothesis is **shrinking**. If a test case fails, it doesn't just report the original complex input. Instead, it intelligently simplifies that input to the smallest form that still causes the failure, making it much easier to identify the underlying issue.
 
 ### Pytest
 
-pytest is a powerful testing framework for Python that makes writing and running tests simple and scalable. It automatically discovers test files and functions, provides detailed failure reports, and supports various plugins for extended functionality.
+Pytest is a robust Python testing framework that simplifies test creation and execution. It features automatic test discovery, comprehensive error reporting, and a rich plugin ecosystem.
 
-`simple_test.py` performs simple testing on the BST in `lab4\bugs\bug1.py`. You may utilise pytest as follows:
+To run the basic tests in `simple_test.py` against the BST in `lab4\bugs\bug1.py` using pytest, use the following command:
 
 ```bash
 \lab4\tests$ pytest simple_test.py -v --tb=short # Detailed output results
 \lab4\tests$ pytest simple_test.py -q --tb=no # Concise output results
 ```
 
-The results of the operation are as follows:
+The test results are shown below:
 
 ```tex
 $ pytest simple_test.py -q --tb=no
