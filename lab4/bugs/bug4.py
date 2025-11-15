@@ -105,7 +105,7 @@ class BST(Generic[K, V]):
             return self
         
         if self.key() > key:
-            # BUG(1): Seeking the opposite path
+            # BUG(1): Mistakenly selecting the subtree to delete
             return BST(
                 left = self.get_left(),
                 entry = self._entry,
@@ -118,7 +118,7 @@ class BST(Generic[K, V]):
             # )
         
         elif self.key() < key:
-            # BUG(1): Seeking the opposite path
+            # BUG(1): Mistakenly selecting the subtree to delete
             return BST(
                 left = self.get_left().delete(key),
                 entry = self._entry,
@@ -140,7 +140,7 @@ class BST(Generic[K, V]):
     @staticmethod
     def union(bst1: "BST[K,V]", bst2: "BST[K,V]") -> "BST[K,V]":
 
-        # BUG(2): The values in bst2 are merged into bst1, keys in bst2 take precedence over keys in bst1 (contrary to design intent)
+        # BUG(2): Mistakenly prioritizing bst2 over bst1 when their keys are identical
         result = bst1
         for key, value in bst2.to_list():
             result = result.insert(key, value)
