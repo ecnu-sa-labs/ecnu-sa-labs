@@ -22,51 +22,76 @@ A binary search tree (BST), is a special type of binary tree used for both searc
 
 A binary search tree is either an empty tree or a binary tree satisfying the following properties:
 
-+ If its left subtree is non-empty, then all nodes in the left subtree have values less than the root's value;
-+ If its right subtree is non-empty, then all nodes in the right subtree have values greater than the root's value;
-+ Both its left and right subtrees are themselves binary search trees.
++ If its left subtree is non-empty, then all nodes in the left subtree have keys less than the root's key;
++ If its right subtree is non-empty, then all nodes in the right subtree have keys greater than the root's key;
++ Both its left and right subtrees are  binary search trees.
 
-Characteristics of a binary search tree: Left subtree < root < right subtree. The in-order traversal sequence of a binary search tree is an increasing sequence. For example, consider a binary search tree whose in-order traversal sequence is shown in the diagram below.
+The key characteristic of a BST can be summarized as: `left subtree < root < right subtree`. This ordering guarantees that an in-order traversal—which visits nodes in the order left, root, right—produces a sequence of keys in strictly ascending order, as shown in the following example.
 
 <div align="center">
-<img src="../images/lab4-bst-example.png"
+<img src="../images/lab4-bst-example1.png"
   style="height: auto; width: 50%">
 </div>
 
 The fundamental operations of a binary search tree include `insert`, `delete`, `find`, `union`. Its data structure is implemented in `/lab4/src/BST.py`. Should you require clarification on its implementation principles, please refer to [Binary Search Trees & Balanced Trees - OI Wiki](https://oi-wiki.org/ds/bst/).
 
-The following section will cover operations related to binary search trees. Should you be thoroughly familiar with these concepts, you may skip ahead; however, please review the source code in `/lab4/src/BST.py` to ensure you can write the properties appropriately. You should pay attention to the **`NOTE` sections in the source code** and the bolded parts of the following operations, as these pertain to the structure of the binary search tree in this experiment.
+The following section will cover operations related to binary search trees. Should you be thoroughly familiar with these concepts, you may skip ahead; however, please review the source code in `/lab4/src/BST.py` to ensure you can write the properties appropriately. **You should pay attention to the `NOTE` sections in the source code and the bolded parts of the following operations**, as these pertain to the structure of the binary search tree in this experiment.
 
 #### find
 
-Find the value of the node with $key2$ in the tree rooted at the root node $(key1, value1)$.
+Search for a node with the given `key` in the Binary Search Tree.
 
-+ If root is empty, directly return `NIL`.
-+ If  $𝑘𝑒𝑦1 > 𝑘𝑒𝑦2$ , search the left subtree of root.
-+ If  $𝑘𝑒𝑦1<𝑘𝑒𝑦2$, search the right subtree of the root.
-+ If  $𝑘𝑒𝑦1==𝑘𝑒𝑦2$, return the $value$ of the root.
+1. Search Phase:
+
+   - If `current.key > target.key`: Search recursively in the left subtree (where smaller keys reside)
+
+   - If `current.key < target.key`: Search recursively in the right subtree (where larger keys reside)
+
+2. Termination Cases:
+
+   - Case 1 leaf node reached: Key not found in the search path, return `None`
+
+   - Case 2 key match found: Current node's key equals target key, return the corresponding value
 
 ```python
 def find(self, key: K) -> Optional[V]:
+    """
+    Search for a node with the given key in the Binary Search Tree.
+
+    Args:
+        key: The key to search for in the BST
+
+    Returns:
+        The value associated with the key if found, None otherwise
+    """
     if self.is_leaf():
+        # Base case: Reached a leaf node without finding the key
         return None
 
     if self.key() > key:
+        # Current node's key is greater than target key
+        # Search recursively in the left subtree (where smaller keys reside)
         return self.get_left().find(key)
     elif self.key() < key:
+        # Current node's key is less than target key
+        # Search recursively in the right subtree (where larger keys reside)
         return self.get_right().find(key)
 
+    # Current node's key matches the target key - search successful
     return self.value()
 ```
 
 #### insert
 
-Insert a node $(key2, value2)$ into a binary search tree rooted at node $(key1, value1)$, Where $key$ denotes the key for comparison and $value$ represents the corresponding value. The classification is as follows:
+Insert a new key-value pair into the Binary Search Tree.
 
-+ If root is empty, directly return the new node $(key2, value2)$.
-+ If  $𝑘𝑒𝑦1 > 𝑘𝑒𝑦2$ , insert the node $(𝑘𝑒𝑦, 𝑣𝑎𝑙𝑢𝑒)$ into the left subtree of root.
-+ If  $𝑘𝑒𝑦1<𝑘𝑒𝑦2$, insert the node $(𝑘𝑒𝑦,𝑣𝑎𝑙𝑢𝑒)$ into the right subtree of the root.
-+ If  $𝑘𝑒𝑦1==𝑘𝑒𝑦2$, **overwrite the root's original weight**, i.e. the current node's weight changes from $𝑘𝑒𝑦1$ to $𝑘𝑒𝑦2$.
+Wrapper Method: `insert` creates a new branch and calls the internal recursive method
+
+Recursive Insertion: `_insert_branch` handles the actual insertion logic while maintaining BST properties
+
+- If `current.key > branch.key`: Insert into left subtree.
+- If `current.key < branch.key`: Insert into right subtree.
+- If `current.key == branch.key`: **Update the existing key with the new value**.
 
 **The insertion principle in this experiment is "the last insertion wins"**
 
@@ -76,22 +101,38 @@ def insert(self, key: K, value: V) -> "BST[K,V]":
     return self._insert_branch(branch)
 
 def _insert_branch(self, branch: "BST[K,V]") -> "BST[K,V]":
+    """
+    Internal recursive method to insert a branch into the BST.
+
+    Args:
+        branch: The branch (node) to be inserted
+
+    Returns:
+        A new BST with the branch inserted at the correct position
+    """
     if self.is_leaf():
+        # Base case: Reached an empty position, insert the branch here.
         return branch
 
     if self.key() > branch.key():
+        # Current node's key is greater than the branch's key.
+        # Insert recursively into the left subtree.
         return BST(
             left = self.get_left()._insert_branch(branch),
             entry = self._entry,
             right = self.get_right()
         )
     elif self.key() < branch.key():
+        # Current node's key is less than the branch's key.
+        # Insert recursively into the right subtree.
         return BST(
             left = self.get_left(),
             entry = self._entry,
             right = self.get_right()._insert_branch(branch)
         )
-    # NOTE: If the keyword is identical, the newly inserted weight shall be replaced with the original value.
+
+    # Current node's key matches the branch's key - update the value
+    # If the key is identical, the newly inserted value replaces the original value
     return BST(
         left = self.get_left(),
         entry = branch._entry,
@@ -101,20 +142,48 @@ def _insert_branch(self, branch: "BST[K,V]") -> "BST[K,V]":
 
 #### delete
 
-Delete a node with key 𝑘𝑒𝑦 from a binary search tree rooted at node root. Following the same search sequence as insertion, first locate the node with $key$ within the binary search tree. The classification and discussion proceed as follows:
+Delete the node with the given key from the Binary Search Tree.
 
-- If the root doesn't have any children, then delete it.
+1. Search Phase:
 
-+ If the root has only one child, return that child.
+   + If `current.key > target.key`: Search and delete recursively in the left subtree
 
-+ If the root has two non-empty child nodes, **replace it with the minimum value node of its right subtree (the leftmost node in the right subtree), and append its left subtree**, and then remove it.
+   - If `current.key < target.key`: Search and delete recursively in the right subtree
+
+2. Deletion Cases:
+
+   - Case 1: No left child: Replace node with its right child
+
+   - Case 2: No right child: Replace node with its left child
+
+   - Case 3: Two children: Use the right child as replacement and insert left child into right subtree
+
+3. Two-Child Deletion Strategy:
+
+   - The right child takes the position of the deleted node
+
+   - The entire left subtree is inserted into the right subtree
+
+   - This maintains BST properties since all left subtree values < right subtree values
 
 ```python
     def delete(self, key:K) -> "BST[K,V]":
+        """
+        Delete the node with the given key from the Binary Search Tree.
+        
+        Args:
+            key: The key to delete from the BST
+            
+        Returns:
+            A new BST with the specified key removed (if it existed)
+        """
         if self.is_leaf():
+            # Base case: Key not found in the tree, return unchanged
             return self
         
         if self.key() > key:
+            # Current node's key is greater than target key
+            # Delete recursively from the left subtree
             return BST(
                 left = self.get_left().delete(key),
                 entry = self._entry,
@@ -122,26 +191,57 @@ Delete a node with key 𝑘𝑒𝑦 from a binary search tree rooted at node roo
             )
         
         elif self.key() < key:
+            # Current node's key is less than target key
+            # Delete recursively from the right subtree
             return BST(
                 left = self.get_left(),
                 entry = self._entry,
                 right = self.get_right().delete(key)
             )
         
+        # Current node's key matches the target key - delete this node
+        # Case 1: Node has no left child, replace with right child
         if self.get_left().is_leaf():
             return self.get_right()
+        # Case 2: Node has no right child, replace with left child
         if self.get_right().is_leaf():
             return self.get_left()
-        # NOTE: If there are two children, replace the original position with the right child and insert the left child into the right child.
+        # Case 3: Node has two children
+        # Replace the current node with the right child 
+        # and insert the left child into the right child's subtree
         return self.get_right()._insert_branch(self.get_left())
 ```
 
 #### union
 
-It should be noted that since keys are unique in the binary tree, **nodes with identical keys will have their values updated**. In this experiment, the merge operation corresponds to `union(bst1, bst2)`. For matching keys, the value from `bst1` will overwrite that of `bst2`.
+Compute the union of two Binary Search Trees.
+
+1. Initialization:
+   - Start with `bst2` as the base result tree
+   - This provides all elements from the second tree as a foundation
+2. Merge Process:
+   - Convert `bst1` to a list using `to_list()` method
+   - Iterate through each key-value pair in `bst1`
+   - Insert each pair into the result tree using the `insert` method
+3. Conflict Resolution:
+   - When the same key exists in both trees, the value from `bst1` **replaces** the value from `bst2`
+   - **This follows the specified precedence rule: bst1 values take priority**
 
 ```python
+@staticmethod
 def union(bst1: "BST[K,V]", bst2: "BST[K,V]") -> "BST[K,V]":
+    """
+    Compute the union of two Binary Search Trees.
+
+    Args:
+        bst1: The first binary search tree
+        bst2: The second binary search tree
+
+    Returns:
+        A new BST containing all key-value pairs from both trees
+        When keys conflict, values from bst1 take precedence over bst2
+    """
+
     # NOTE: When the key-value pair is identical, the value in BST1 shall replace the value in BST2.
     result = bst2
     for key, value in bst1.to_list():
@@ -151,20 +251,27 @@ def union(bst1: "BST[K,V]", bst2: "BST[K,V]") -> "BST[K,V]":
 
 ### Hypothesis
 
-Hypothesis is a Python testing library based on property-based testing. It verifies general properties of code by automatically generating test data, rather than relying solely on specific test cases.
+Hypothesis is a Python testing library based on property-based testing. It verifies general properties of code by automatically generating test data, rather than relying solely on specific single test cases.
 
 ```python
 # Traditional testing
-def test_addition():
-    assert 1 + 1 == 2
-    assert 2 + 2 == 4
-    assert -1 + 1 == 0
+def test_sort_example():
+    list_a = [3, 1, -1] # feed single input
+    output = sort(list_a)
+    expected_output = [-1, 1, 3]
+    assert output == expected_output # check single output
     
 # Hypothesis property-based test
-from hypothesis import given, strategies as st
-@given(st.integers(), st.integers())
-def test_addition_commutative(a, b):
-    assert a + b == b + a  # Verify the commutative law
+# Input generator automatically creates various lists.
+@given(st.lists(st.integers(), min_size=0, max_size=1000))
+def test_sort_property(input_list):
+    # Pre-condition
+    assume(len(input_list) > 1)
+    
+	sorted_list = sort(input_list)
+    # Post-condition: Verify the sorting property holds
+    for i in range(len(sorted_list) - 1):
+        assert sorted_list[i] <= sorted_list[i + 1]
 ```
 
 #### Strategies
@@ -212,128 +319,59 @@ trees_strategy = st.lists(
 
 #### Assumptions
 
-In property testing, assumptions may be employed to constrain the range or attributes of input data. If an assumption is unsatisfied, Hypothesis will automatically generate other input data that satisfies the assumption for testing. Assumptions are typically declared using the `assume()` function.
+In property-based testing, assumptions may be employed to constrain the range or attributes of input data. If an assumption is unsatisfied, Hypothesis will automatically generate other input data that satisfies the assumption for testing. Assumptions are typically declared using the `assume()` function.
 
 ```python
 from hypothesis import given, assume
 
 @given(st.integers())
 def test_positive_numbers(a):
-    assume(a > 0)  # Ensure that a must be greater than zero.
+    assume(a > 0)  # Pre-condition: Ensure that a must be greater than zero.
     assert is_positive(a)
 ```
 
 #### Shrinking
 
-Hypothesis also offers a feature called shrink. When a property test fails, Hypothesis attempts to find a smaller input data set to make it easier to understand why the test failed.
+Hypothesis also offers a feature called shrinking. When a property test fails, Hypothesis attempts to find a smaller input data set to make it easier to understand why the test failed.
 
-## Lab Introduction
+### Pytest
 
-### Project Structure
+pytest is a powerful testing framework for Python that makes writing and running tests simple and scalable. It automatically discovers test files and functions, provides detailed failure reports, and supports various plugins for extended functionality.
 
-```bash
-.
-|-- bugs
-|   |-- __init__.py
-|   |-- bug1.py # Bugs has been inserted into both find and union for detection by test1.
-|   |-- bug2.py # Bugs has been inserted into both the delete and union for detection by test2.
-|   |-- bug3.py # Bug has been introduced in the delete function for detection by test3.
-|   `-- bug4.py # Bugs has been inserted into both the delete and union operations for detection by test4.
-|-- requirements.txt
-|-- src
-|   |-- BST.py # Correct implementation of the BST data structure
-|   |-- BSTUtils.py # Related utility functions
-|   `-- __init__.py
-`-- tests
-    |-- conftest.py # Runtime Environment Configuration and Test Report Generation
-    |-- hypothesis.ini # Hypothesis configuration
-    |-- makefile # Run the scripts, including all, clean, test1, test2, test3, test4
-    |-- simple_test.py # simple test for BST
-    |-- test1.py # TODO: Write Validity Properties tests for find and delete.
-    |-- test2.py # TODO: Write Postcondition Properties tests for delete and union.
-    |-- test3.py # TODO: Write Metamorphic Properties tests for delete and union.
-    `-- test4.py # TODO: Write Model-based Properties tests for delete and union.
-```
-
-### Traget
-
-1. TODO1:  Write **Validity Properties** tests for find and union respectively to identify two bugs in `\bugs\bug1.py`:
-
-   + BUG(1) In `find`: During the search, the right subtree will be mistakenly treated as the left subtree.
-
-   + BUG(2) In `union`: Do not compare keys for merging; instead, directly attach it as the left subtree — this will violate the condition left < root < right.
-
-2. TODO2: Write **Postcondition Properties** tests for delete and union respectively to identify tow bugs in `\bugs\bug2.py`:
-
-   + BUG(1) In `delete`: Path error when locating the key
-   + BUG(2) In `union`: The values in bst2 are merged into bst1, keys in bst2 take precedence over keys in bst1 (contrary to design intent)
-
-3. TODO3: Write **Metamorphic Properties** tests for delete and union respectively to identify one bugs in `\bugs\bug3.py`:
-
-   + BUG(1) In `delete`: Path error when locating the key
-   + **Note that there are no insertion bugs in unions, but writing metamorphic properties for unions is prone to errors and readily detects bugs.**
-
-4. TODO4: Write **Model-based Properties** tests for delete and union respectively to identify one bugs in `\bugs\bug4.py`:
-
-   + BUG(1) In `delete`: Seeking the opposite path.
-   + BUG(2) In `union`: The values in bst2 are merged into bst1, keys in bst2 take precedence over keys in bst1 (contrary to design intent).
-
-### Execution
-
-PyTest is a powerful and flexible Python testing framework. Its core objective is to make testing straightforward, readable, and scalable. `lab4\tests\simple_test.py` contains a straightforward basic test for BST which you can run as follows:
+`simple_test.py` performs simple testing on the BST in `lab4\bugs\bug1.py`. You may utilise pytest as follows:
 
 ```bash
-/lab4/tests$ pytest -v simple_test.py --tb=short # Detailed Mode
-/lab4/tests$ pytest -q simple_test.py --tb=no # Simple Mode
+\lab4\tests$ pytest simple_test.py -v --tb=short # Detailed output results
+\lab4\tests$ pytest simple_test.py -q --tb=no # Concise output results
 ```
 
-Relevant pytest parameters can be viewed from [pytest](https://pytest.cn/en/stable/).
-
-You may run files such as test1.py in the same manner, and the makefile we provide facilitates their execution.
-
-```bash
-/lab4/tests$ pytest -v test1.py --tb=short # Detailed Mode
-/lab4/tests$ pytest -q test1.py --tb=no # Simple Mode
-/lab4/tests$ make test1 # the smame to simple mode instruction
-```
-
-You can execute all files from test1.py to test4.py and clear the cache using the following command:
-
-```bash
-/lab4/tests$ make all # execute test1.py to test.py
-/lab4/tests$ make clean # Clear the cache and restore the workspace
-```
-
-The execution results will be displayed in the terminal, and a test report will be generated in `/lab4/tests/report`. This report contains detailed assert information and minimised test cases for failure.
-
-It is worth noting that the hypothesis includes built-in **sharding operations**, which simplify complex examples. For this experiment, the objective is to minimise the number of nodes while maximising the proximity of values to zero. Consequently, **most failed examples involve 0, -1, 1, and NIL**.
+The results of the operation are as follows:
 
 ```tex
-File and Function: test1.py::test_find_valid
-
-Exception Info:
-<ExceptionInfo AssertionError('assert False\n +  where False = is_valid(BST((1, 0), BST((0, 0), NIL, NIL), BST((0, 0), NIL, NIL)))') tblen=30>
-
-Failure Message:
-E   assert False
-     +  where False = is_valid(BST((1, 0), BST((0, 0), NIL, NIL), BST((0, 0), NIL, NIL)))
-    Falsifying example: test_find_valid(
-        key=0,
-        bst=build_bst_from_tuples([(1, 0), (0, 0)]),
-    )
-    Explanation:
-        These lines were always and only run by failing examples:
-            /lab4/bugs/bug1.py:171
-            /lab4/bugs/bug1.py:172
-            /lab4/bugs/bug1.py:173
-            /lab4/src/BSTUtils.py:39
+$ pytest simple_test.py -q --tb=no
+...F..F..F.                                                                        [100%]
+================================ short test summary info =================================
+FAILED simple_test.py::test_three_inserted_values_can_be_found - AssertionError: assert None == 'twenty'
+FAILED simple_test.py::test_a_deleted_value_can_no_longer_be_found - AssertionError: assert None == 'twenty'
+FAILED simple_test.py::test_union_of_two_bsts_contains_keys_of_both - AssertionError: assert {(1, 'one'), ..., (5, 'five')} == {(1, 'one'), ..., (5, 'five')}
+3 failed, 8 passed in 0.09s
 ```
-
-The aforementioned report explains that test_find_valid in `test1.py` uncovered a bug, triggered by the assertion: `is_valid(BST((1, 0), BST((0, 0), NIL, NIL), BST((0, 0), NIL, NIL)))`. The minimal test case triggering the bug is: `test_find_valid(key=0, bst=build_bst_from_tuples([(1, 0), (0, 0)]))`.This information will better assist you in understanding and writing about nature.
 
 ## Lab Instructions
 
-### Validity Properties
+### Bugs
+
+| TODO      | Property Type            | Target Methods    | Bugs to Identify     | Bug Description                                              |
+| :-------- | :----------------------- | :---------------- | :------------------- | :----------------------------------------------------------- |
+| **TODO1** | Validity Properties      | `find`, `union`   | **Bug1.py - BUG(1)** | In `find`: During search, right subtree mistakenly treated as left subtree |
+|           |                          |                   | **Bug1.py - BUG(2)** | In `union`: Does not compare keys for merging, directly attaches as left subtree, violating BST property |
+| **TODO2** | Postcondition Properties | `delete`, `union` | **Bug2.py - BUG(1)** | In `delete`: Path error when locating the key                |
+|           |                          |                   | **Bug2.py - BUG(2)** | In `union`: Values in bst2 merged into bst1, but keys in bst2 take precedence (contrary to design) |
+| **TODO3** | Metamorphic Properties   | `delete`, `union` | **Bug3.py - BUG(1)** | In `delete`: Path error when locating the key                |
+| **TODO4** | Model-based Properties   | `delete`, `union` | **Bug4.py - BUG(1)** | In `delete`: Seeking the opposite path                       |
+|           |                          |                   | **Bug4.py - BUG(2)** | In `union`: Values in bst2 merged into bst1, keys in bst2 take precedence over bst1 |
+
+### Validity Testing
 
 #### Knowledge of Validity Properties
 

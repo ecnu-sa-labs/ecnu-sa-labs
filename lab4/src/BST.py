@@ -63,14 +63,29 @@ class BST(Generic[K, V]):
         return None if self.is_leaf() else self._entry[1]
     
     def find(self, key: K) -> Optional[V]:
+        """
+        Search for a node with the given key in the Binary Search Tree.
+        
+        Args:
+            key: The key to search for in the BST
+            
+        Returns:
+            The value associated with the key if found, None otherwise
+        """
         if self.is_leaf():
+            # Base case: Reached a leaf node without finding the key
             return None
         
         if self.key() > key:
+            # Current node's key is greater than target key
+            # Search recursively in the left subtree (where smaller keys reside)
             return self.get_left().find(key)
         elif self.key() < key:
+            # Current node's key is less than target key
+            # Search recursively in the right subtree (where larger keys reside)
             return self.get_right().find(key)
         
+        # Current node's key matches the target key - search successful
         return self.value()
     
     def insert(self, key: K, value: V) -> "BST[K,V]":
@@ -78,23 +93,38 @@ class BST(Generic[K, V]):
         return self._insert_branch(branch)
     
     def _insert_branch(self, branch: "BST[K,V]") -> "BST[K,V]":
+        """
+        Internal recursive method to insert a branch into the BST.
+        
+        Args:
+            branch: The branch (node) to be inserted
+            
+        Returns:
+            A new BST with the branch inserted at the correct position
+        """
         if self.is_leaf():
+            # Base case: Reached an empty position, insert the branch here.
             return branch
         
         if self.key() > branch.key():
+            # Current node's key is greater than the branch's key.
+            # Insert recursively into the left subtree.
             return BST(
                 left = self.get_left()._insert_branch(branch),
                 entry = self._entry,
                 right = self.get_right()
             )
         elif self.key() < branch.key():
+            # Current node's key is less than the branch's key.
+            # Insert recursively into the right subtree.
             return BST(
                 left = self.get_left(),
                 entry = self._entry,
                 right = self.get_right()._insert_branch(branch)
             )
         
-        # NOTE: If the keyword is identical, the newly inserted weight shall be replaced with the original value.
+        # Current node's key matches the branch's key - update the value
+        # If the key is identical, the newly inserted value replaces the original value
         return BST(
             left = self.get_left(),
             entry = branch._entry,
@@ -102,10 +132,22 @@ class BST(Generic[K, V]):
         )
     
     def delete(self, key:K) -> "BST[K,V]":
+        """
+        Delete the node with the given key from the Binary Search Tree.
+        
+        Args:
+            key: The key to delete from the BST
+            
+        Returns:
+            A new BST with the specified key removed (if it existed)
+        """
         if self.is_leaf():
+            # Base case: Key not found in the tree, return unchanged
             return self
         
         if self.key() > key:
+            # Current node's key is greater than target key
+            # Delete recursively from the left subtree
             return BST(
                 left = self.get_left().delete(key),
                 entry = self._entry,
@@ -113,21 +155,40 @@ class BST(Generic[K, V]):
             )
         
         elif self.key() < key:
+            # Current node's key is less than target key
+            # Delete recursively from the right subtree
             return BST(
                 left = self.get_left(),
                 entry = self._entry,
                 right = self.get_right().delete(key)
             )
         
+        # Current node's key matches the target key - delete this node
+        # Case 1: Node has no left child, replace with right child
         if self.get_left().is_leaf():
             return self.get_right()
+        # Case 2: Node has no right child, replace with left child
         if self.get_right().is_leaf():
             return self.get_left()
-        # NOTE: If there are two children, replace the original position with the right child and insert the left child into the right child.
+        # Case 3: Node has two children
+        # Replace the current node with the right child 
+        # and insert the left child into the right child's subtree
         return self.get_right()._insert_branch(self.get_left())
 
     @staticmethod
     def union(bst1: "BST[K,V]", bst2: "BST[K,V]") -> "BST[K,V]":
+        """
+        Compute the union of two Binary Search Trees.
+        
+        Args:
+            bst1: The first binary search tree
+            bst2: The second binary search tree
+            
+        Returns:
+            A new BST containing all key-value pairs from both trees
+            When keys conflict, values from bst1 take precedence over bst2
+        """
+
         # NOTE: When the key-value pair is identical, the value in BST1 shall replace the value in BST2.
         result = bst2
         for key, value in bst1.to_list():

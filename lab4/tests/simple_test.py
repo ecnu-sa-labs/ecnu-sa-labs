@@ -1,4 +1,5 @@
-from src import BST, is_valid
+from bugs import BSTBug1 as BST
+from src import is_valid
 import pytest
 
 def test_new_bst_is_empty():
@@ -88,7 +89,6 @@ def test_union_of_two_bsts_contains_keys_of_both():
     one = bst.insert(1, "one").insert(2, "two").insert(3, "three")
     two = bst.insert(4, "four").insert(5, "five").insert(3, "eerht")
     union = BST.union(one, two)
-    # Java semantics: left (one) overrides right (two) for key conflicts
     expected_map = {k: v for k, v in two.to_list()}
     for k, v in one.to_list():
         expected_map[k] = v
