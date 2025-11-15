@@ -104,7 +104,7 @@ class BST(Generic[K, V]):
         if self.is_leaf():
             return self
         
-        # BUG(1): Path error when locating the key
+        # BUG(1): Mistakenly selecting the search path.
         if self.key() < key:
         # if self.key() > key:
             return BST(
@@ -112,7 +112,7 @@ class BST(Generic[K, V]):
                 entry = self._entry,
                 right = self.get_right()
             )
-        # BUG(1): Path error when locating the key
+        # BUG(1): Mistakenly selecting the search path.
         # elif self.key() < key:
         elif self.key() > key:
             return BST(
@@ -130,7 +130,7 @@ class BST(Generic[K, V]):
 
     @staticmethod
     def union(bst1: "BST[K,V]", bst2: "BST[K,V]") -> "BST[K,V]":
-        # BUG(2): The values in bst2 are merged into bst1, keys in bst2 take precedence over keys in bst1 (contrary to design intent)
+        # BUG(2): Mistakenly prioritizing bst2 over bst1 when their keys are identical
         result = bst1
         for key, value in bst2.to_list():
             result = result.insert(key, value)

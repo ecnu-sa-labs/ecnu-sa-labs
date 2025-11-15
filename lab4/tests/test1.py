@@ -49,13 +49,11 @@ def test_nil_valid() -> None:
 # After inserting a key-value pair, the result remains a valid BST.
 @given(keys_strategy, st.integers(), trees_strategy)
 def test_insert_valid(key: int, value: int, bst: BST[int,int]) -> None:
-    # assume(is_valid(bst))
     assert is_valid(bst.insert(key, value))
 
 # After deleting a key, the result remains a valid BST.
 @given(keys_strategy, trees_strategy)
 def test_delete_valid(key: int, bst: BST[int,int]) -> None:
-    # assume(is_valid(bst))
     assert is_valid(bst.delete(key))
 
 # Ensure the generator is effective

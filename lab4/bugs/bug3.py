@@ -104,7 +104,7 @@ class BST(Generic[K, V]):
         if self.is_leaf():
             return self
         
-        # BUG(1): Path error when locating the key
+        # BUG(1): Mistakenly selecting the search path.
         # if self.key() > key:
         if self.key() < key:
             return BST(

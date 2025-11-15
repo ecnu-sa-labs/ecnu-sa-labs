@@ -67,7 +67,7 @@ class BST(Generic[K, V]):
             return None
         
         if self.key() > key:
-            # BUG(1): During the search, the right subtree will be mistakenly treated as the left subtree.
+            # BUG(1): Mistakenly assigning left subtree to right attribute
             self._right = self.get_left()
             return self.get_left().find(key)
         elif self.key() < key:
@@ -128,7 +128,7 @@ class BST(Generic[K, V]):
     @staticmethod
     def union(bst1: "BST[K,V]", bst2: "BST[K,V]") -> "BST[K,V]":
 
-        # BUG(2): Do not compare keys for merging; instead, directly attach it as the left subtree — this will violate the condition left < root < right.
+        # BUG(2): Mistakenly puting the bst1 as the bst2's left subtree
         return BST(
             left = bst2,
             entry = bst1._entry,
