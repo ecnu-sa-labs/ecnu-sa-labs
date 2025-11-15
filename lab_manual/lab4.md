@@ -334,7 +334,7 @@ def test_positive_numbers(a):
 
 Hypothesis also offers a feature called shrinking. When a property test fails, Hypothesis attempts to find a smaller input data set to make it easier to understand why the test failed.
 
-## Pytest
+### Pytest
 
 pytest is a powerful testing framework for Python that makes writing and running tests simple and scalable. It automatically discovers test files and functions, provides detailed failure reports, and supports various plugins for extended functionality.
 
@@ -359,7 +359,19 @@ FAILED simple_test.py::test_union_of_two_bsts_contains_keys_of_both - AssertionE
 
 ## Lab Instructions
 
-### Validity Properties
+### Bugs
+
+| TODO      | Property Type            | Target Methods    | Bugs to Identify     | Bug Description                                              |
+| :-------- | :----------------------- | :---------------- | :------------------- | :----------------------------------------------------------- |
+| **TODO1** | Validity Properties      | `find`, `union`   | **Bug1.py - BUG(1)** | In `find`: During search, right subtree mistakenly treated as left subtree |
+|           |                          |                   | **Bug1.py - BUG(2)** | In `union`: Does not compare keys for merging, directly attaches as left subtree, violating BST property |
+| **TODO2** | Postcondition Properties | `delete`, `union` | **Bug2.py - BUG(1)** | In `delete`: Path error when locating the key                |
+|           |                          |                   | **Bug2.py - BUG(2)** | In `union`: Values in bst2 merged into bst1, but keys in bst2 take precedence (contrary to design) |
+| **TODO3** | Metamorphic Properties   | `delete`, `union` | **Bug3.py - BUG(1)** | In `delete`: Path error when locating the key                |
+| **TODO4** | Model-based Properties   | `delete`, `union` | **Bug4.py - BUG(1)** | In `delete`: Seeking the opposite path                       |
+|           |                          |                   | **Bug4.py - BUG(2)** | In `union`: Values in bst2 merged into bst1, keys in bst2 take precedence over bst1 |
+
+### Validity Testing
 
 #### Knowledge of Validity Properties
 
