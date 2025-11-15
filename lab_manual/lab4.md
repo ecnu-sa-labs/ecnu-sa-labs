@@ -1,16 +1,17 @@
 # Metamorphic Testing and Property-based Testing
 
+Use property-based testing to validate the implementations of binary search trees.
+
 ## Objective
 
-In this experiment, you shall apply your knowledge of **Metamorphic Testing and Property-based Testing** to write properties using Python and **Hypothesis**, thereby testing the implementation of **a binary search tree**.
+In this lab, you shall apply property-based testing to validate the implementations of binary search trees based on [Hypothesis](https://github.com/HypothesisWorks/hypothesis). Hypothesis is a popular property-based testing tool for Python. Through this lab, you will learn how to define different forms of properties for effective testing.
 
 ## Setup
 
-Please ensure that the Python environment contains the packages `pytest` and `hypothesis` listed in `lab4\requirements.txt`. If they are not present, you can install them using the following command: 
+Please install the Python packages `pytest` and `hypothesis`:
 
 ```bash
-/lab4$ pip list | grep -e pytest -e hypothesis # Check whether pytest and hypothesis are already installed
-/lab4$ pip install -r requirements.txt  	    # Install the required packages
+/lab4$ pip install -r requirements.txt  # Install the required packages
 ```
 
 ## Prerequisite knowledge
