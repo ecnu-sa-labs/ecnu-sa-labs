@@ -161,10 +161,10 @@ lab4/tests$ pytest simple_test.py -v --tb=short # Detailed output results
 |   `-- bug4.py     # Bugs has been planted into delete and union and intended to be found by test4.py
 |-- requirements.txt
 |-- src
-|   |-- BST.py # Correct implementation of the BST data structure
-|   |-- BSTUtils.py # Related utility functions
+|   |-- BST.py               # Correct implementation of the BST data structure
+|   |-- BSTUtils.py          # Utility functions
 |   |-- __init__.py
-|   `-- test_strategies.py
+|   `-- test_strategies.py   # Testing strategies for Hypothesis
 `-- tests
     |-- conftest.py      # Runtime Environment Configuration and Test Report Generation
     |-- hypothesis.ini   # Hypothesis configuration
