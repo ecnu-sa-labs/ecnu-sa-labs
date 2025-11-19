@@ -106,8 +106,7 @@ trees_strategy = st.lists(
 ).map(build_bst_from_tuples)
 ```
 
-+ `keys_strategy`: It picks a key from a restricted range [-25, 25] or from 
-the full integer range at random. 
++ `keys_strategy`: It picks a key from a restricted range [-25, 25] or from the full integer range at random. 
 
 >> The design purpose is: (1) The restricted range (-25 to 25) increases the probability of key collisions (same key appearing multiple times) to mimic real-world usage of BST; (2) The full range ensures you also test with diverse, widely-spaced keys. This design makes testing more effective by balancing collision scenarios with general cases.
  
@@ -190,32 +189,9 @@ If you want to obtain detailed results, you can run:
 
 ### Validity Testing
 
-Many data-structures need to satisfy **invariant properties**, above and beyond being well-typed, and binary search trees are no exception: the keys in the tree should be ordered. In this section, we shall see how to write properties that check that this invariant is preserved by each operation.
+Binary search trees should always satisfy a validity property no matter which operation (`insert`, `delete`, `find` and `union`) has been performed: *the keys in the tree should be ordered* --- for every node in the tree, (1) the key of all nodes in its left subtree is less than the node’s own key, and (2) the key of all nodes in its right subtree is greater than the node’s own key. 
 
-We find that a **invariant property: all the keys in a left subtree must be less than the key in the node, and all the keys in the right subtree must be greater**.
-
-You can verify whether a binary search tree is satisfy the invariant properties using the `is_valid` function in `lab4\src\BSTUtils.py`. 
-
-```python
-def is_valid(bst: BST[K,V]) -> bool:
-    if bst.is_leaf():
-        return True
-    root_key = bst.key()
-    left = bst.get_left()
-    right = bst.get_right()
-
-    if not is_valid(left) or not is_valid(right):
-        return False
-    if any(k > root_key for k in left.keys()):
-        return False
-    if any(k < root_key for k in right.keys()):
-        return False
-    return True
-```
-
-Now it is straightforward to define properties that check that every operation that constructs a tree, constructs a valid one:
-
-Clearly, we must verify that the tree remains valid after inserting a value node or deleting a node.
+For example, we can use this validty property to check the validity of the BST after `insert` and `delete` operations are executed.
 
 ```python
 # An empty tree is a valid binary search tree.
@@ -233,13 +209,12 @@ def test_delete_valid(key: int, bst: BST[int,int]) -> None:
     assert is_valid(bst.delete(key))
 ```
 
-**Summary: Validity testing consists of defining a function to check the invariants of your datatypes, writing properties to test that your generators and shrinkers only produce valid results, and writing a property for each function under test that performs a single random call, and checks that the return value is valid.**
-
 #### TODO1
 
-Now, write **Validity Properties** tests for `find` and `delete` respectively to identify tow bugs in `\bugs\bug1.py`.
+In this section, you are required to define the preceding validity property in `lab4\src\BSTUtils.py` which checks the keys in a BST is always ordered.
 
-After that, Run the following command to detect whether the two bugs in `lab4\bugs\bug1` concerning `find` and `union` have been identified.
+Based on your defined validty property, you are required to validate whether the two core operations `find` and `union` respect the validity property respectively in `lab4\report\test1.py`. 
+After that, you can run the following command to confirm whether the validity property can help find the two bugs in `lab4\bugs\bug1.py`.
 
 ```bash
 lab4\tests$ make test1
@@ -248,7 +223,7 @@ lab4\tests$ make test1
 lab4\tests$ pytest -v test1.py --tb=short
 ```
 
-You should obtain the following result and get the assert information and sharking test seed in `lab4\report\test1`:
+You should obtain the following testing results:
 
 ```tex
 Run Validity Testing (test1.py)...
@@ -258,9 +233,9 @@ FAILED test1.py::test_union_valid - assert False
 2 failed, 3 passed in 1.12s
 ```
 
-### Postconditions Testing
+### Postcondition Testing
 
-A postcondition is a property that should be True after a call, or (equivalently, for a pure function) True of its result. Thus, we can define properties by asking ourselves “What should be True after calling f?”. For example, after calling `insert`, then we should be able to `find the key just inserted, and any previously inserted keys with unchanged values.
+A postcondition is a property or condition that must be true after a function/operation completes execution. It describes the guaranteed state or result when the function finishes. For example, after the operation `insert` is executed, the key just inserted should exist, and any original key should be unchanged.
 
 ```python
 # Insertions should not affect the search results of other keys (including themselves).
@@ -271,7 +246,7 @@ def test_insert_post(key: int, value: int, bst: BST[int,int], search_key:int) ->
     assert found == expected
 ```
 
-When considering how to design the postcondition for `find`, an obvious approach is to return the corresponding value if the key exists in the tree, or return None otherwise. However, this would be indistinguishable from replicating the `find` functionality itself, and replicating existing functionality is costly and counterproductive. Therefore, **avoid replicating your code in your tests.** We can finesse this problem using a very powerful and general idea, that of constructing a test case whose outcome is easy to predict. In this case, we know that a tree must contain a key `key`, if we have just inserted it. Likewise, we know that a tree cannot contain a key `key`, if we have just deleted it. Thus we can write two postconditions for `find`, covering the two cases:
+For the operation `find`, we can also come up some postcondition properties. We know that a tree must contain a key if we have just inserted this key. Likewise, we know that a tree should not contain a key if we have just deleted this key. Thus we can write two postcondition properties for `find`:
 
 ```python
 # After insertion, the lookup should return the inserted value.
@@ -285,17 +260,10 @@ def test_find_post_absent(key: int, bst: BST[int,int]) -> None:
     assert bst.delete(key).find(key) is None
 ```
 
-**Summary: A postcondition tests a single function, calling it with random arguments, and checking an expected relationship between its arguments and its result.**
-
 #### TODO2
 
-Following the approach of `insert`，Write **Postcondition Properties** tests for `delete` and `union` respectively to identify tow bugs in `\bugs\bug2.py`.
-
-For `delete`, deletion should not affect the search results for other keys.
-
-For `union`, after merging, the lookup should return the correct value, with keys from bst1 taking precedence over keys from bst2.
-
-After that, Run the following command to detect whether the two bugs in `lab4\bugs\bug2` concerning `delete` and `union` have been identified.
+You are required to define some postcondition properties for the two core operations `delete` and `union` respectively in `lab4\report\test2.py`.
+After that, you can run the following command to confirm whether your properties can help find the two bugs in `lab4\bugs\bug2.py`.
 
 ```bash
 lab4\tests$ make test2
@@ -304,9 +272,7 @@ lab4\tests$ make test2
 lab4\tests$ pytest -v test2.py --tb=short
 ```
 
-You should obtain the following result and get the assert information and sharking test seed in `lab4\report\test2`:
-
-Note: no bug has been introduced in the find function; the incorrect find determination is due to an error in the delete operation.
+You should obtain the following testing results:
 
 ```bash
 Run Postconditions Testing (test2.py)...
@@ -349,8 +315,6 @@ def test_insert_metamorph_by_insert(key1: int, value1: int, key2: int, value2: i
     expected = bst.insert(key2, value2).insert(key1, value1)
     assert equivalent(inserted, expected)
 ```
-
-**Summary: A metamorphic property tests a single function by making (usually) two related calls, and checking the expected relationship between the two results.**
 
 #### TODO3
 

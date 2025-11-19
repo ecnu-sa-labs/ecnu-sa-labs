@@ -38,7 +38,6 @@ def test_strategy_valid(bst: BST[int,int]) ->None:
 def test_find_valid(key: int, bst: BST[int,int]) -> None:
     ...
 
-
 # TODO: After merging two binary search trees, the result remains a valid binary search tree.
 @given(trees_strategy, trees_strategy)
 def test_union_valid(bst1: BST[int,int], bst2: BST[int,int]) -> None:
