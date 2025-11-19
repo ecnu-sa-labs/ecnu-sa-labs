@@ -8,21 +8,25 @@ In this lab, you shall apply property-based testing to validate the implementati
 
 ## Setup
 
-Please install the Python packages `pytest` and `hypothesis`:
+Please install the Python packages `pytest` and `hypothesis` in your lab environment:
 
 ```bash
 /lab4$ pip install -r requirements.txt  # Install the required packages
 ```
 
-## Prerequisite knowledge
+## Prerequisite
 
 ### Binary Search Tree (BST)
 
-A binary search tree (BST) is a specialized form of a binary tree, designed to support efficient searching and sorting operations. It satisfies these properties:
+A Binary Search Tree (BST) is a rooted binary tree with specific ordering properties that enable efficient insertion, deletion, and search operations. 
 
-1. Any non-empty left subtree must have all keys which are less than the root's key.
-2. Any non-empty right subtree must have all keys which are greater than the root's key.
-3. Both subtrees must also be binary search trees.
+For every node in the tree:
+
+1. The key of all nodes in its left subtree is less than the node’s own key.
+
+2. The key of all nodes in its right subtree is greater than the node’s own key.
+
+3. The keys are typically unique.
 
 Consequently, an in-order traversal—visiting nodes in the order of left, root, right—will always yield a sequence of keys in strictly ascending order, as illustrated in the following example.
 
@@ -30,93 +34,44 @@ Consequently, an in-order traversal—visiting nodes in the order of left, root,
 <img src="../images/lab4-bst-example1.png"
   style="height: auto; width: 50%">
 </div>
-The binary search tree (BST) implementation for this lab supports four core operations `insert`, `delete`, `find`, and `union`. The complete code is located in `/lab4/src/BST.py`. Background theory on BSTs can be found at [Binary Search Trees & Balanced Trees - OI Wiki](https://oi-wiki.org/ds/bst/).
 
-The following section will cover operations related to binary search trees. **Please pay close attention to the `NOTE` comments in the code and the bolded text in the operation descriptions below**, as they highlight key details specific to the BST implementation in this lab.
+In this lab, `/lab4/src/BST.py` gives an implementation of binary search tree (BST). This BST implementation supports keys of any comparable type and values of any type, and four core operations `insert`, `delete`, `find`, and `union`. Please carefully read the code to understand the implementation.
 
-#### find
-
-Searches for a node with the specified key in the Binary Search Tree.
-
-+ Search Phase: Compare target key with current node:
-
-  - If `key < current.key`: recurse to left subtree
-
-  - If `key > current.key`: recurse to right subtree
-
-+ Return the `current.value` if `key == current.key`, or `None` if a leaf is reached.
-
-#### insert
-
-Inserts a new key-value pair into the Binary Search Tree, following the principle of **"the last insertion wins"** for duplicate keys.
-
-+ Search Phase: Compare insertion key with current node:
-
-  - If `key < current.key`: recurse to left subtree
-
-  - If `key > current.key`: recurse to right subtree
-  - If `key == current.key`: **update the existing node's value with the new value**
-
-+ If the search reaches a leaf: insert new node
-
-#### delete
-
-Deletes a node with the specified key from the Binary Search Tree while maintaining BST ordering.
-
-+ Search Phase: Compare target key with current node:
-
-  - If `key < current.key`: recurse to left subtree
-
-  - If `key > current.key`: recurse to right subtree
-
-+ Deletion Cases when `key == current.key`:
-
-  - Case 1: No left child → replace with right child
-
-  - Case 2: No right child → replace with left child
-
-  - Case 3: Two children → replace with right child, then insert left child into right subtree
-
-+ If key is not found, return unchanged tree upon reaching leaf
-
-#### union
-
-Computes the union of two Binary Search Trees containing all key-value pairs from both trees. **Values from `bst1` take precedence over `bst2` (following "last insertion wins")**.
-
-+ Initialize result with `bst2`
-+ Iterate through all key-value pairs in `bst1`
-+ Insert each pair into result using BST insertion
 
 ### Hypothesis
 
-Hypothesis is a Python library that implements property-based testing. This approach verifies the correctness of code by checking it against general rules or invariants, using a wide array of automatically generated test cases, rather than relying solely on specific single test cases.
+Hypothesis is a Python library that implements property-based testing (PBT). PBT validates the correctness of a function (or a module or even a system) based on some given properties. It uses a wide array of automatically generated test cases rather than a single test case to effectively stress test this function. It would shrink and return counter-example inputs if some property violations are found.
+
+In the code below, we illustrate how classic *example-based testing* to test a `sort` function (see `test_sort_by_example`) and how *property-based testing* (based on Hypothesis, see `test_sort_by_property`) to test this `sort` function. Here, this `sort` function sorts the numbers in the ascending order.
 
 ```python
-# Traditional testing
-def test_sort_example():
-    list_a = [3, 1, -1] # feed single input
-    output = sort(list_a)
+# Example-based testing
+def test_sort_by_example():
+    input_list = [3, 1, -1] # feed single input
+    output = sort(input_list)
     expected_output = [-1, 1, 3]
     assert output == expected_output # check single output
     
-# Hypothesis property-based test
-# Input generator automatically creates various lists.
+# Property-based testing based Hypothesis
+# Automatically generate random lists of integers with 0 to 1000 elements.
 @given(st.lists(st.integers(), min_size=0, max_size=1000))
-def test_sort_property(input_list):
+def test_sort_by_property(input_list):
     # Pre-condition
     assume(len(input_list) > 1)
     
 	sorted_list = sort(input_list)
-    # Post-condition: Verify the sorting property holds
+    # Post-condition: validate the sorting property holds
     for i in range(len(sorted_list) - 1):
         assert sorted_list[i] <= sorted_list[i + 1]
 ```
 
 #### Strategies
 
-Strategies are the core component of Hypothesis, responsible for automatically generating test data.
+Strategies in Hypothesis are the data generators that automatically create diverse test inputs (with different types and forms) for your property-based tests. 
 
 ```python
+from hypothesis import strategies as st
+
 # Basic Type
 st.integers()           # integer
 st.floats()             # floating-point number  
@@ -132,7 +87,7 @@ st.tuples(st.integers(), st.text())        # Tuple
 st.one_of(st.integers(), st.text())        # One of several types
 ```
 
-In this experiment, the following strategies have been designed for you:
+In this lab, we have already implemented the following strategies:
 
 + Keys (`keys_strategy`): The keys strategy combines integers from a restricted range (-25 to 25) with the full integer range to **increase the probability of key collisions during testing**, making property-based testing more efficient by focusing test effort on meaningful scenarios where keys actually interact within the data structure.
 + Values( `st.integers()`): Generate random integer values.
@@ -169,7 +124,7 @@ To run the basic tests in `simple_test.py` against the BST in `lab4\bugs\bug1.py
 \lab4\tests$ pytest simple_test.py -q --tb=no # Concise output results
 ```
 
-The test results are shown below:
+The testing results are shown below:
 
 ```tex
 $ pytest simple_test.py -q --tb=no
@@ -181,7 +136,7 @@ FAILED simple_test.py::test_union_of_two_bsts_contains_keys_of_both - AssertionE
 3 failed, 8 passed in 0.09s
 ```
 
-If you want to more details:
+If you want to obtain detailed outputs, you can run:
 
 ```bash
 \lab4\tests$ pytest simple_test.py -v --tb=short # Detailed output results

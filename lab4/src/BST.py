@@ -139,7 +139,7 @@ class BST(Generic[K, V]):
             key: The key to delete from the BST
             
         Returns:
-            A new BST with the specified key removed (if it existed)
+            A new BST with the specified key removed (if the key exists)
         """
         if self.is_leaf():
             # Base case: Key not found in the tree, return unchanged
@@ -186,10 +186,10 @@ class BST(Generic[K, V]):
             
         Returns:
             A new BST containing all key-value pairs from both trees
-            When keys conflict, values from bst1 take precedence over bst2
+            When two keys are identical, the values from bst1 overwrite the values from bst2
         """
 
-        # NOTE: When the key-value pair is identical, the value in BST1 shall replace the value in BST2.
+        # NOTE: When the key-value pair is identical, the value in bst1 shall overwrites the value in bst2.
         result = bst2
         for key, value in bst1.to_list():
             result = result.insert(key, value)
