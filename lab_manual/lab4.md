@@ -177,7 +177,10 @@ If you want to obtain detailed results, you can run:
 
 ### Properties and Planted Bugs in BST
 
-| TODOS     | Property Type            | Target Methods    | Bugs to Identify     | Bug Description                                              |
+In this lab, you are required to learn and define the following four types of properties in the context of validating BST.
+You are expected to write different properties to hunting for the bugs we have planted into BST. Have fun and enjoy!
+
+| TODOS     | Property Types           | Buggy Methods    | Planted Bugs     | Bug Description                                              |
 | :-------- | :----------------------- | :---------------- | :------------------- | :----------------------------------------------------------- |
 | **TODO1** | Validity Properties      | `find`, `union`   | **Bug1.py - BUG(1)** | In `find(key)`: Mistakenly assigning left subtree to right attribute |
 |           |                          |                   | **Bug1.py - BUG(2)** | In `union(bst1, bst2)`: Mistakenly puting the bst1 as the bst2's left subtree |
