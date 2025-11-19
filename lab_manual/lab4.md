@@ -178,6 +178,9 @@ lab4/tests$ pytest simple_test.py -v --tb=short # Detailed output results
 
 ### Properties and Planted Bugs in BST
 
+In this lab, you will learn and define the following four types of properties in the context of validating BST.
+You are expected to write different properties for hunting the bugs we have planted into BST. Have fun and enjoy!
+
 | Property Type            | Target Methods    | Bugs to Identify | Bug Description                                              |
 | :----------------------- | :---------------- | :--------------- | :----------------------------------------------------------- |
 | Validity Properties      | `find`, `union`   | bug1.py - BUG(1) | In `find(key)`: Mistakenly assigning left subtree to right attribute |
@@ -187,7 +190,6 @@ lab4/tests$ pytest simple_test.py -v --tb=short # Detailed output results
 | Metamorphic Properties   | `delete`, `union` | bug3.py - BUG(1) | In `delete(key)`: Mistakenly selecting the search path.      |
 | Model-based Properties   | `delete`, `union` | bug4.py - BUG(1) | In `delete(key)`: Mistakenly selecting the subtree to delete |
 |                          |                   | bug4.py - BUG(2) | In `union(bst1, bst2)`: Mistakenly prioritizing bst2 over bst1 when their keys are identical |
-
 ### Validity Properties
 
 Binary search trees should always satisfy a validity property no matter which operation (`insert`, `delete`, `find` and `union`) has been performed: *the keys in the tree should be ordered* --- for every node in the tree, (1) the key of all nodes in its left subtree is less than the node’s own key, and (2) the key of all nodes in its right subtree is greater than the node’s own key. 
