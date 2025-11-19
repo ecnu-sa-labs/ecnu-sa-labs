@@ -184,7 +184,7 @@ You are expected to write different properties for hunting the bugs we have plan
 | Property Type            | Target Methods    | Bugs to Identify | Bug Description                                              |
 | :----------------------- | :---------------- | :--------------- | :----------------------------------------------------------- |
 | Validity Properties      | `find`, `union`   | bug1.py - BUG(1) | In `find(key)`: Mistakenly assigning left subtree to right attribute |
-|                          |                   | bug1.py - BUG(2) | In `union(bst1, bst2)`: Mistakenly puting the bst1 as the bst2's left subtree |
+|                          |                   | bug1.py - BUG(2) | In `union(bst1, bst2)`: Mistakenly putting the bst1 as the bst2's left subtree |
 | Postcondition Properties | `delete`, `union` | bug2.py - BUG(1) | In `delete(key)`: Mistakenly selecting the search path.      |
 |                          |                   | bug2.py - BUG(2) | In `union`: Mistakenly prioritizing bst2 over bst1 when their keys are identical |
 | Metamorphic Properties   | `delete`, `union` | bug3.py - BUG(1) | In `delete(key)`: Mistakenly selecting the search path.      |
@@ -214,11 +214,11 @@ def test_delete_valid(key: int, bst: BST[int,int]) -> None:
 
 #### TODO1
 
-In this section, you are required to define the preceding validity property in `lab4/src/BSTUtils.py` which checks the keys in a BST is always ordered.
+(1) In this section, you are required to define the preceding validity property in `lab4/src/BSTUtils.py` which checks the keys in a BST is always ordered. You can find some hints in the code comments.
 
-Based on your defined validity property, you are required to validate whether the two core operations `find` and `union` respect the validity property respectively in `lab4/tests/test1.py`. 
+(2) Based on your defined validity property, you are required to write relevant code based on the validity property to check whether the two core operations `find` and `union` respect the validity property respectively in `lab4/tests/test1.py`. You can find some hints in the code comments.
 
-After that, you can run the following command to confirm whether the validity property can help find the two bugs planted in `lab4/bugs/bug1.py`.
+After that, you can run the following command to confirm whether the validity property can successfully find the two bugs planted in `lab4/bugs/bug1.py`.
 
 ```bash
 lab4/tests$ make test1
@@ -266,8 +266,9 @@ def test_find_post_absent(key: int, bst: BST[int,int]) -> None:
 
 #### TODO2
 
-You are required to define some postcondition properties for the two core operations `delete` and `union` respectively in `lab4/tests/test2.py`.
-After that, you can run the following command to confirm whether your properties can help find the two bugs planted in `lab4/bugs/bug2.py`.
+You are required to define some postcondition properties for the two core operations `delete` and `union` respectively in `lab4/tests/test2.py`. You can find some hints in the code comments.
+
+After that, you can run the following command to confirm whether your properties can successfully find the two bugs planted in `lab4/bugs/bug2.py`.
 
 ```bash
 lab4/tests$ make test2
@@ -302,7 +303,7 @@ def test_insert_metamorph_by_insert(key1: int, value1: int, key2: int, value2: i
     assert equivalent(inserted, expected)
 ```
 
-You may wondering why we need to check whether key1 and key2 are identical in the preceding property. The reason is that the `insert` operation follows *the last insertion wins*. Therefore, the following metamorphic relation is buggy, which may lead to false positives in testing.
+You may wonder why we need to check whether key1 and key2 are identical in the preceding property. The reason is that the `insert` operation follows *the last insertion wins*. Therefore, the following metamorphic relation is buggy, which may lead to false positives in testing.
 
 ```python
 @given(keys_strategy, st.integers(), keys_strategy, st.integers(), trees_strategy)
@@ -316,11 +317,11 @@ def test_insert_metamorph_by_insert(key1: int, value1: int, key2: int, value2: i
 #### TODO3
 
 
-In this section, you are required to define the `equivalent` function in `lab4/src/BSTUtils.py` which checks the two BSTs are equivalent in terms of the containing (key, value) pairs while disregarding the differences between tree structures.
+(1) In this section, you are required to define the `equivalent` function in `lab4/src/BSTUtils.py` which checks the two BSTs are equivalent in terms of the containing (key, value) pairs while disregarding the differences between tree structures. You can find some hints in the code comments.
 
-Based on your implemented `equivalent` function, you are required to come up some metamorphic properties for the operations `delete` and `union` respectively in `lab4/tests/test3.py` to identify one bug planted in `lab4/bugs/bug3.py`.
+(2) Based on your implemented `equivalent` function, you are required to come up some metamorphic properties for the operations `delete` and `union` respectively in `lab4/tests/test3.py` to identify one bug planted in `lab4/bugs/bug3.py`. You can find some hints in the code comments.
 
-After that, you can run the following command to confirm whether your properties can help find one bug planted in `lab4/bugs/bug3.py`. Note that we only planted one bug in `delete`, and `union` is correct and does not have bugs. If your properties find some bugs in `union`, you may need to carefully check whether your property is correctly defined.
+After that, you can run the following command to confirm whether your properties can successfully find one bug planted in `lab4/bugs/bug3.py`. Note that we only planted one bug in `delete`, and `union` is correct and does not have bugs. If your properties find some bugs in `union`, you may need to carefully check whether your property is correctly defined.
 
 ```python
 lab4/tests$ make test3
@@ -391,7 +392,7 @@ Following the preceding example on `insert`, you are required to define some mod
 
 + For `union`, you can perform a `union` operation on two BSTs and their corresponding abstract data structures (e.g., two `list`s) to determine whether the final sets are equivalent.
 
-After that, you can run the following command to confirm whether your properties can help find two bugs planted in `lab4/bugs/bug4.py`.
+After that, you can run the following command to confirm whether your properties can successfully find two bugs planted in `lab4/bugs/bug4.py`.
 
 ```python
 lab4/tests$ make test4
