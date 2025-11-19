@@ -177,8 +177,8 @@ If you want to obtain detailed results, you can run:
 
 ### Properties and Planted Bugs in BST
 
-In this lab, you are required to learn and define the following four types of properties in the context of validating BST.
-You are expected to write different properties to hunting for the bugs we have planted into BST. Have fun and enjoy!
+In this lab, you will learn and define the following four types of properties in the context of validating BST.
+You are expected to write different properties for hunting the bugs we have planted into BST. Have fun and enjoy!
 
 | TODOS     | Property Types           | Buggy Methods    | Planted Bugs     | Bug Description                                              |
 | :-------- | :----------------------- | :---------------- | :------------------- | :----------------------------------------------------------- |
