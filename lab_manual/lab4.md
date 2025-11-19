@@ -11,7 +11,7 @@ In this lab, you shall apply property-based testing to validate the implementati
 Please install the Python packages `pytest` and `hypothesis` in your lab environment:
 
 ```bash
-/lab4$ pip install -r requirements.txt  # Install the required packages
+lab4$ pip install -r requirements.txt  # Install the required packages
 ```
 
 ## Prerequisite
@@ -35,7 +35,7 @@ Consequently, an in-order traversal—visiting nodes in the order of left, root,
   style="height: auto; width: 50%">
 </div>
 
-In this lab, `/lab4/src/BST.py` gives an implementation of binary search tree (BST). This BST implementation supports keys of any comparable type and values of any type, and four core operations `insert`, `delete`, `find`, and `union`. Please carefully read the code to understand the implementation.
+In this lab, `lab4/src/BST.py` gives an implementation of binary search tree (BST). This BST implementation supports keys of any comparable type and values of any type, and four core operations `insert`, `delete`, `find`, and `union`. Please carefully read the code to understand the implementation.
 
 
 ### Hypothesis
@@ -87,7 +87,7 @@ st.tuples(st.integers(), st.text())        # Tuple
 st.one_of(st.integers(), st.text())        # One of several types
 ```
 
-In this lab, `/lab4/src/test_strategies.py` has already implemented two strategies, i.e., `keys_strategy` and `trees_strategy`:
+In this lab, `lab4/src/test_strategies.py` has already implemented two strategies, i.e., `keys_strategy` and `trees_strategy`:
 
 ```python
 keys_strategy = st.one_of(st.integers(min_value = -25, max_value = 25), st.integers())
@@ -108,11 +108,11 @@ trees_strategy = st.lists(
 
 + `keys_strategy`: It picks a key from a restricted range [-25, 25] or from the full integer range at random. 
 
->> The design purpose is: (1) The restricted range (-25 to 25) increases the probability of key collisions (same key appearing multiple times) to mimic real-world usage of BST; (2) The full range ensures you also test with diverse, widely-spaced keys. This design makes testing more effective by balancing collision scenarios with general cases.
- 
+> The design purpose is: (1) The restricted range (-25 to 25) increases the probability of key collisions (same key appearing multiple times) to mimic real-world usage of BST; (2) The full range ensures you also test with diverse, widely-spaced keys. This design makes testing more effective by balancing collision scenarios with general cases.
+
 + `trees_strategy`: It generates random BST objects with up to 50 (key, value) pairs, and the keys are unique. 
 
->> Internally, this strategy uses the `insert` operation to add the nodes with (key, value) and build up the BST.
+> Internally, this strategy uses the `insert` operation to add the nodes with (key, value) and build up the BST.
 
 
 #### Shrinking
@@ -123,10 +123,10 @@ A key feature of Hypothesis is shrinking. If a test case fails, it doesn't just 
 
 Pytest is a robust Python testing framework that simplifies test creation and execution. It features automatic test discovery, comprehensive error reporting, and a rich plugin ecosystem.
 
-To get yourself familiar with Pytest, you can run `/lab4/tests/simple_test.py` which tests a buggy version of BST (corresponding to `lab4/bugs/bug1.py`):
+To get yourself familiar with Pytest, you can run `lab4/tests/simple_test.py` which tests a buggy version of BST (corresponding to `lab4/bugs/bug1.py`):
 
 ```bash
-/lab4/tests$ pytest simple_test.py -q --tb=no # Concise output results
+lab4/tests$ pytest simple_test.py -q --tb=no # Concise output results
 ```
 
 You would obtain the following testing results which indicate 3 tests failed and 8 tests passed:
@@ -144,7 +144,7 @@ FAILED simple_test.py::test_union_of_two_bsts_contains_keys_of_both - AssertionE
 If you want to obtain detailed results, you can run:
 
 ```bash
-\lab4\tests$ pytest simple_test.py -v --tb=short # Detailed output results
+lab4/tests$ pytest simple_test.py -v --tb=short # Detailed output results
 ```
 
 ## Lab Instructions
@@ -163,7 +163,8 @@ If you want to obtain detailed results, you can run:
 |-- src
 |   |-- BST.py # Correct implementation of the BST data structure
 |   |-- BSTUtils.py # Related utility functions
-|   `-- __init__.py
+|   |-- __init__.py
+|   `-- test_strategies.py
 `-- tests
     |-- conftest.py # Runtime Environment Configuration and Test Report Generation
     |-- hypothesis.ini # Hypothesis configuration
@@ -177,21 +178,21 @@ If you want to obtain detailed results, you can run:
 
 ### Properties and Planted Bugs in BST
 
-| TODOS     | Property Type            | Target Methods    | Bugs to Identify     | Bug Description                                              |
-| :-------- | :----------------------- | :---------------- | :------------------- | :----------------------------------------------------------- |
-| **TODO1** | Validity Properties      | `find`, `union`   | **Bug1.py - BUG(1)** | In `find(key)`: Mistakenly assigning left subtree to right attribute |
-|           |                          |                   | **Bug1.py - BUG(2)** | In `union(bst1, bst2)`: Mistakenly puting the bst1 as the bst2's left subtree |
-| **TODO2** | Postcondition Properties | `delete`, `union` | **Bug2.py - BUG(1)** | In `delete(key)`: Mistakenly selecting the search path.      |
-|           |                          |                   | **Bug2.py - BUG(2)** | In `union`: Mistakenly prioritizing bst2 over bst1 when their keys are identical |
-| **TODO3** | Metamorphic Properties   | `delete`, `union` | **Bug3.py - BUG(1)** | In `delete(key)`: Mistakenly selecting the search path.      |
-| **TODO4** | Model-based Properties   | `delete`, `union` | **Bug4.py - BUG(1)** | In `delete(key)`: Mistakenly selecting the subtree to delete |
-|           |                          |                   | **Bug4.py - BUG(2)** | In `union(bst1, bst2)`: Mistakenly prioritizing bst2 over bst1 when their keys are identical |
+| Property Type            | Target Methods    | Bugs to Identify | Bug Description                                              |
+| :----------------------- | :---------------- | :--------------- | :----------------------------------------------------------- |
+| Validity Properties      | `find`, `union`   | bug1.py - BUG(1) | In `find(key)`: Mistakenly assigning left subtree to right attribute |
+|                          |                   | bug1.py - BUG(2) | In `union(bst1, bst2)`: Mistakenly puting the bst1 as the bst2's left subtree |
+| Postcondition Properties | `delete`, `union` | bug2.py - BUG(1) | In `delete(key)`: Mistakenly selecting the search path.      |
+|                          |                   | bug2.py - BUG(2) | In `union`: Mistakenly prioritizing bst2 over bst1 when their keys are identical |
+| Metamorphic Properties   | `delete`, `union` | bug3.py - BUG(1) | In `delete(key)`: Mistakenly selecting the search path.      |
+| Model-based Properties   | `delete`, `union` | bug4.py - BUG(1) | In `delete(key)`: Mistakenly selecting the subtree to delete |
+|                          |                   | bug4.py - BUG(2) | In `union(bst1, bst2)`: Mistakenly prioritizing bst2 over bst1 when their keys are identical |
 
 ### Validity Properties
 
 Binary search trees should always satisfy a validity property no matter which operation (`insert`, `delete`, `find` and `union`) has been performed: *the keys in the tree should be ordered* --- for every node in the tree, (1) the key of all nodes in its left subtree is less than the node’s own key, and (2) the key of all nodes in its right subtree is greater than the node’s own key. 
 
-For example, we can use this validty property to check the validity of the BST after `insert` and `delete` operations are executed.
+For example, we can use this validity property to check the validity of the BST after `insert` and `delete` operations are executed.
 
 ```python
 # An empty tree is a valid binary search tree.
@@ -211,20 +212,20 @@ def test_delete_valid(key: int, bst: BST[int,int]) -> None:
 
 #### TODO1
 
-In this section, you are required to define the preceding validity property in `lab4\src\BSTUtils.py` which checks the keys in a BST is always ordered.
+In this section, you are required to define the preceding validity property in `lab4/src/BSTUtils.py` which checks the keys in a BST is always ordered.
 
-Based on your defined validty property, you are required to validate whether the two core operations `find` and `union` respect the validity property respectively in `lab4\test\test1.py`. 
+Based on your defined validity property, you are required to validate whether the two core operations `find` and `union` respect the validity property respectively in `lab4/tests/test1.py`. 
 
-After that, you can run the following command to confirm whether the validity property can help find the two bugs planted in `lab4\bugs\bug1.py`.
+After that, you can run the following command to confirm whether the validity property can help find the two bugs planted in `lab4/bugs/bug1.py`.
 
 ```bash
-lab4\tests$ make test1
+lab4/tests$ make test1
 
-# If you want more detailed output
-lab4\tests$ pytest -v test1.py --tb=short
+# If you want more detailed output results
+lab4/tests$ pytest -v test1.py --tb=short
 ```
 
-You should obtain the following testing results and could find the shrinked tests in `lab4\tests\report\test1`:
+You should obtain the following testing results and could find the shrinked tests in `lab4/tests/report/test1`:
 
 ```tex
 Run Validity Testing (test1.py)...
@@ -263,17 +264,17 @@ def test_find_post_absent(key: int, bst: BST[int,int]) -> None:
 
 #### TODO2
 
-You are required to define some postcondition properties for the two core operations `delete` and `union` respectively in `lab4\test\test2.py`.
-After that, you can run the following command to confirm whether your properties can help find the two bugs planted in `lab4\bugs\bug2.py`.
+You are required to define some postcondition properties for the two core operations `delete` and `union` respectively in `lab4/tests/test2.py`.
+After that, you can run the following command to confirm whether your properties can help find the two bugs planted in `lab4/bugs/bug2.py`.
 
 ```bash
-lab4\tests$ make test2
+lab4/tests$ make test2
 
-# If you want more detailed output
-lab4\tests$ pytest -v test2.py --tb=short
+# If you want more detailed output results
+lab4/tests$ pytest -v test2.py --tb=short
 ```
 
-You should obtain the following testing results and could find the shrinked tests in `lab4\tests\report\test2`:
+You should obtain the following testing results and could find the shrinked tests in `lab4/tests/report/test2`:
 
 ```bash
 Run Postconditions Testing (test2.py)...
@@ -299,8 +300,7 @@ def test_insert_metamorph_by_insert(key1: int, value1: int, key2: int, value2: i
     assert equivalent(inserted, expected)
 ```
 
-You may wondering why we need to check whether key1 and key2 are identical in the preceding property. The reason is that
-the `insert` operation follows *the last insertion wins*. Therefore, the following metamorphic relation is buggy, which may lead to false positives in testing.
+You may wondering why we need to check whether key1 and key2 are identical in the preceding property. The reason is that the `insert` operation follows *the last insertion wins*. Therefore, the following metamorphic relation is buggy, which may lead to false positives in testing.
 
 ```python
 @given(keys_strategy, st.integers(), keys_strategy, st.integers(), trees_strategy)
@@ -314,20 +314,20 @@ def test_insert_metamorph_by_insert(key1: int, value1: int, key2: int, value2: i
 #### TODO3
 
 
-In this section, you are required to define the `equivalent` function in `lab4\src\BSTUtils.py` which checks the two BSTs are equivalent in terms of the containing (key, value) pairs while disregarding the differences between tree structures.
+In this section, you are required to define the `equivalent` function in `lab4/src/BSTUtils.py` which checks the two BSTs are equivalent in terms of the containing (key, value) pairs while disregarding the differences between tree structures.
 
-Based on your implemented `equivalent` function, you are required to come up some metamorphic properties for the operations `delete` and `union` respectively in `lab4\test\test3.py` to identify one bug planted in `\bugs\bug3.py`.
+Based on your implemented `equivalent` function, you are required to come up some metamorphic properties for the operations `delete` and `union` respectively in `lab4/tests/test3.py` to identify one bug planted in `lab4/bugs/bug3.py`.
 
-After that, you can run the following command to confirm whether your properties can help find one bug planted in `lab4\bugs\bug3.py`. Note that we only planted one bug in `delete`, and `union` is correct and does not have bugs. If your properties find some bugs in `union`, you may need to carefully check whether your property is correctly defined.
+After that, you can run the following command to confirm whether your properties can help find one bug planted in `lab4/bugs/bug3.py`. Note that we only planted one bug in `delete`, and `union` is correct and does not have bugs. If your properties find some bugs in `union`, you may need to carefully check whether your property is correctly defined.
 
 ```python
-lab4\tests$ make test3
+lab4/tests$ make test3
 
-# If you want more detailed output
-lab4\tests$ pytest -v test3.py --tb=short
+# If you want more detailed output results
+lab4/tests$ pytest -v test3.py --tb=short
 ```
 
-You should obtain the following result and could find the shrinked tests in `lab4\tests\report\test3`:
+You should obtain the following result and could find the shrinked tests in `lab4/tests/report/test3`:
 
 ```tex
 Run Metamorphic Testing (test3.py)...
@@ -342,7 +342,7 @@ In 1972, Tony Hoare proposed an approach to proving the correctness of *data rep
 
 In this lab:
 
-+ date representation: BST
++ data representation: BST
 + abstraction function: `BST::to_list()`
 + abstract data: List[Tuple[K,V]]
 
@@ -383,22 +383,22 @@ def test_insert_model(key: int, value: int, bst: BST[int,int]) -> None:
 
 #### TODO4
 
-Following the preceding example on `insert`, you are required to define some model-based properties for the operations `delete` and `union` respectively to identify the two bugs planted in `\bugs\bug4.py`:
+Following the preceding example on `insert`, you are required to define some model-based properties for the operations `delete` and `union` respectively to identify the two bugs planted in `lab4/bugs/bug4.py`:
 
 + For `delete`, you can perform a `delete` operation on the BST and an abstract data structure (e.g., a `list`) to determine whether the final sets are equivalent.
 
 + For `union`, you can perform a `union` operation on two BSTs and their corresponding abstract data structures (e.g., two `list`s) to determine whether the final sets are equivalent.
 
-After that, you can run the following command to confirm whether your properties can help find two bugs planted in `lab4\bugs\bug4.py`.
+After that, you can run the following command to confirm whether your properties can help find two bugs planted in `lab4/bugs/bug4.py`.
 
 ```python
-lab4\tests$ make test4
+lab4/tests$ make test4
 
-# If you want more detailed output
-lab4\tests$ pytest -v test4.py --tb=short
+# If you want more detailed output results
+lab4/tests$ pytest -v test4.py --tb=short
 ```
 
-You should obtain the following result and can find the shrinked tests in `lab4\tests\report\test4`:
+You should obtain the following result and can find the shrinked tests in `lab4/tests/report/test4`:
 
 ```bash
 Run Model-based Properties Testing (test4.py)...

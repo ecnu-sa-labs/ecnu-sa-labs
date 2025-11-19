@@ -23,23 +23,16 @@ class Comparable (Protocol):
 K = TypeVar('K', bound = Comparable)
 V = TypeVar('V')
 
+# TODO:  the keys in the tree should be ordered --- for every node in the tree
+# (1) the key of all nodes in its left subtree is less than the node’s own key 
+# (2) the key of all nodes in its right subtree is greater than the node’s own key
 def is_valid(bst: BST[K,V]) -> bool:
-    if bst.is_leaf():
-        return True
-    root_key = bst.key()
-    left = bst.get_left()
-    right = bst.get_right()
-
-    if not is_valid(left) or not is_valid(right):
-        return False
-    if any(k > root_key for k in left.keys()):
-        return False
-    if any(k < root_key for k in right.keys()):
-        return False
     return True
 
+# TODO: checks the two BSTs are equivalent in terms of the containing (key, value) pairs while disregarding the differences between tree structures.
+# NOTE you can use the BST::to_list() to get all (key, value) pairs in a BST tree.
 def equivalent(bst1: BST[K,V], bst2: BST[K,V]) -> bool:
-    return set(bst1.to_list()) == set(bst2.to_list())
+    return True
 
 def insertions(bst: BST[K,V]) -> List[Tuple[K,V]]:
     return bst.to_list()
