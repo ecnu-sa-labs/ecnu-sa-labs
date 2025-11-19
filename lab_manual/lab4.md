@@ -87,11 +87,7 @@ st.tuples(st.integers(), st.text())        # Tuple
 st.one_of(st.integers(), st.text())        # One of several types
 ```
 
-In this lab, we have already implemented the following strategies:
-
-+ Keys (`keys_strategy`): The keys strategy combines integers from a restricted range (-25 to 25) with the full integer range to **increase the probability of key collisions during testing**, making property-based testing more efficient by focusing test effort on meaningful scenarios where keys actually interact within the data structure.
-+ Values( `st.integers()`): Generate random integer values.
-+ BST(`trees_strategy`): Constructs trees by executing insert operations with generated (Key, Value)pairs. The node count is constrained to [0, 50], and key uniqueness is enforced.
+In this lab, `/lab4/src/test_strategies.py` has already implemented two strategies, i.e., `keys_strategy` and `trees_strategy`:
 
 ```python
 keys_strategy = st.one_of(st.integers(min_value = -25, max_value = 25), st.integers())
@@ -110,6 +106,16 @@ trees_strategy = st.lists(
 ).map(build_bst_from_tuples)
 ```
 
++ `keys_strategy`: It picks a key from a restricted range [-25, 25] or from 
+the full integer range at random. 
+
+>> The design purpose is: (1) The restricted range (-25 to 25) increases the probability of key collisions (same key appearing multiple times) to mimic real-world usage of BST; (2) The full range ensures you also test with diverse, widely-spaced keys. This design makes testing more effective by balancing collision scenarios with general cases.
+ 
++ `trees_strategy`: It generates random BST objects with up to 50 (key, value) pairs, and the keys are unique. 
+
+>> Internally, this strategy uses the `insert` operation to add the nodes with (key, value) and build up the BST.
+
+
 #### Shrinking
 
 A key feature of Hypothesis is shrinking. If a test case fails, it doesn't just report the original complex input. Instead, it intelligently simplifies that input to the smallest form that still causes the failure, making it much easier to identify the underlying issue.
@@ -118,13 +124,13 @@ A key feature of Hypothesis is shrinking. If a test case fails, it doesn't just 
 
 Pytest is a robust Python testing framework that simplifies test creation and execution. It features automatic test discovery, comprehensive error reporting, and a rich plugin ecosystem.
 
-To run the basic tests in `simple_test.py` against the BST in `lab4\bugs\bug1.py` using pytest, use the following command:
+To get yourself familiar with Pytest, you can run `/lab4/tests/simple_test.py` which tests a buggy version of BST (corresponding to `lab4/bugs/bug1.py`):
 
 ```bash
-\lab4\tests$ pytest simple_test.py -q --tb=no # Concise output results
+/lab4/tests$ pytest simple_test.py -q --tb=no # Concise output results
 ```
 
-The testing results are shown below:
+You would obtain the following testing results which indicate 3 tests failed and 8 tests passed:
 
 ```tex
 $ pytest simple_test.py -q --tb=no
@@ -136,7 +142,7 @@ FAILED simple_test.py::test_union_of_two_bsts_contains_keys_of_both - AssertionE
 3 failed, 8 passed in 0.09s
 ```
 
-If you want to obtain detailed outputs, you can run:
+If you want to obtain detailed results, you can run:
 
 ```bash
 \lab4\tests$ pytest simple_test.py -v --tb=short # Detailed output results
