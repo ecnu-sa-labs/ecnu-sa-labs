@@ -213,8 +213,9 @@ def test_delete_valid(key: int, bst: BST[int,int]) -> None:
 
 In this section, you are required to define the preceding validity property in `lab4\src\BSTUtils.py` which checks the keys in a BST is always ordered.
 
-Based on your defined validty property, you are required to validate whether the two core operations `find` and `union` respect the validity property respectively in `lab4\report\test1.py`. 
-After that, you can run the following command to confirm whether the validity property can help find the two bugs in `lab4\bugs\bug1.py`.
+Based on your defined validty property, you are required to validate whether the two core operations `find` and `union` respect the validity property respectively in `lab4\test\test1.py`. 
+
+After that, you can run the following command to confirm whether the validity property can help find the two bugs planted in `lab4\bugs\bug1.py`.
 
 ```bash
 lab4\tests$ make test1
@@ -223,7 +224,7 @@ lab4\tests$ make test1
 lab4\tests$ pytest -v test1.py --tb=short
 ```
 
-You should obtain the following testing results:
+You should obtain the following testing results and could find the shrinked tests in `lab4\tests\report\test1`:
 
 ```tex
 Run Validity Testing (test1.py)...
@@ -262,8 +263,8 @@ def test_find_post_absent(key: int, bst: BST[int,int]) -> None:
 
 #### TODO2
 
-You are required to define some postcondition properties for the two core operations `delete` and `union` respectively in `lab4\report\test2.py`.
-After that, you can run the following command to confirm whether your properties can help find the two bugs in `lab4\bugs\bug2.py`.
+You are required to define some postcondition properties for the two core operations `delete` and `union` respectively in `lab4\test\test2.py`.
+After that, you can run the following command to confirm whether your properties can help find the two bugs planted in `lab4\bugs\bug2.py`.
 
 ```bash
 lab4\tests$ make test2
@@ -272,7 +273,7 @@ lab4\tests$ make test2
 lab4\tests$ pytest -v test2.py --tb=short
 ```
 
-You should obtain the following testing results:
+You should obtain the following testing results and could find the shrinked tests in `lab4\tests\report\test2`:
 
 ```bash
 Run Postconditions Testing (test2.py)...
@@ -285,12 +286,12 @@ FAILED test2.py::test_union_post - assert 1 == 0
 
 ### Metamorphic Testing
 
-Metamorphic testing is a successful approach to the oracle problem in many contexts. The basic idea is this: even if the expected result of a function call such as `tree.insert(key, value)` may be difficult to predict, we may still be able to express an expected relationship between this result, and the result of a related call. In this case, if we insert an additional key into `tree` before calling `insert(key, value)`, then we expect the additional key to appear in the result also. We formalize this as the following metamorphic property:
+Metamorphic testing is a successful approach to the oracle problem in many contexts. The basic idea is: even if the expected result of a function call such as `insert(key, value)` may be difficult to predict, we may still be able to express an expected relationship between this result, and the result of a related call. For example, if we insert an additional key into a BST before calling `insert(key, value)`, we expect the additional key to also appear in the final BST. We formalize this metamorphic relation as the following metamorphic property:
 
 ```python
-# The relationship between the two insertion operations on (key1, value1) and (key2, value2) and the expected result
+# The metamorphic relationship between the two insert operations on (key1, value1) and (key2, value2) and their expected results
 # If the key is identical, insert value2 (rather than value1); otherwise, insert both value1 and value2.
-# the equivalent determining whether trees are equivalent while disregarding their structure
+# the equivalent function determining whether the two BSTs are equivalent in terms of the containing (key, value) pairs while disregarding the differences between tree structures.
 @given(keys_strategy, st.integers(), keys_strategy, st.integers(), trees_strategy)
 def test_insert_metamorph_by_insert(key1: int, value1: int, key2: int, value2: int, bst: BST[int,int]) -> None:
     inserted = bst.insert(key1, value1).insert(key2, value2)
@@ -298,14 +299,8 @@ def test_insert_metamorph_by_insert(key1: int, value1: int, key2: int, value2: i
     assert equivalent(inserted, expected)
 ```
 
-`equivalent` is implemented in `lab4\src\BSTUtils`, serving to determine whether trees are equivalent while **disregarding their structural composition**.
-
-```python
-def equivalent(bst1: BST[K,V], bst2: BST[K,V]) -> bool:
-    return set(bst1.to_list()) == set(bst2.to_list())
-```
-
-Note that the following logic is incorrect; please carefully compare it with the distinctions outlined above, The insertion principle in this experiment is **"the last insertion wins"**:
+You may wondering why we need to check whether key1 and key2 are identical in the preceding property. The reason is that
+the `insert` operation follows *the last insertion wins*. Therefore, the following metamorphic relation is buggy, which may lead to false positives in testing.
 
 ```python
 @given(keys_strategy, st.integers(), keys_strategy, st.integers(), trees_strategy)
@@ -318,13 +313,12 @@ def test_insert_metamorph_by_insert(key1: int, value1: int, key2: int, value2: i
 
 #### TODO3
 
-Following the approach of `insert`, write **Metamorphic Properties** tests for `delete` and `union` respectively to identify one bugs in `\bugs\bug3.py`.
 
-For `delete`: To verify the outcome of the delete operation, one may establish a relationship between `delete.insert` and `insert.delete` by **adding an insert**. That is, by inserting before and after the deletion, one can determine whether the tree structures are equivalent.
+In this section, you are required to define the `equivalent` function in `lab4\src\BSTUtils.py` which checks the two BSTs are equivalent in terms of the containing (key, value) pairs while disregarding the differences between tree structures.
 
-For `union`: To verify the outcome of the union operation, one may establish a relationship by **adding an insert**. **Please note that we have not introduced bugs into the union, but the metamorphic properties of this union are prone to errors in implementation. Correct properties will not detect bugs.**
+Based on your implemented `equivalent` function, you are required to come up some metamorphic properties for the operations `delete` and `union` respectively in `lab4\test\test3.py` to identify one bug planted in `\bugs\bug3.py`.
 
-After that, Run the following command to detect whether the two bugs in `lab4\bugs\bug3` concerning `delete` and `union` have been identified.
+After that, you can run the following command to confirm whether your properties can help find one bug planted in `lab4\bugs\bug3.py`. Note that we only planted one bug in `delete`, and `union` is correct and does not have bugs. If your properties find some bugs in `union`, you may need to carefully check whether your property is correctly defined.
 
 ```python
 lab4\tests$ make test3
@@ -333,7 +327,7 @@ lab4\tests$ make test3
 lab4\tests$ pytest -v test3.py --tb=short
 ```
 
-You should obtain the following result and get the assert information and sharking test seed in `lab4\report\test3`:
+You should obtain the following result and could find the shrinked tests in `lab4\tests\report\test3`:
 
 ```tex
 Run Metamorphic Testing (test3.py)...
@@ -344,13 +338,15 @@ FAILED test3.py::test_delete_metamorph_by_insert - assert False
 
 ### Model-based Properties Testing
 
-In 1972, Hoare published an approach to proving the correctness of **data representations**(C. A. Hoare. Proof of correctness of data representations. Acta Inf., 1(4):271–281, December 1972.), by relating them to **abstract data** using **an abstraction function**.
+In 1972, Tony Hoare proposed an approach to proving the correctness of *data representations* (refer to *C. A. Hoare. Proof of correctness of data representations. Acta Inf., 1(4):271–281, December 1972*), by relating them to *abstract data* using *an abstraction function*.
 
-In this experiment:
+In this lab:
 
 + date representation: BST
 + abstraction function: `BST::to_list()`
 + abstract data: List[Tuple[K,V]]
+
+A model-based property tests a single function by making a single call, and compares its result to the result of a related *abstract operation* applied to related abstract arguments. An *abstraction function* maps the real, concrete arguments and results to abstract values, which we also call the *model*.
 
 ```python
 def to_list(self) -> List[Tuple[K,V]]:
@@ -385,17 +381,15 @@ def test_insert_model(key: int, value: int, bst: BST[int,int]) -> None:
     assert set(inserted_bst.to_list()) == set(inserted_abstract_data)
 ```
 
-**Summary: A model-based property tests a single function by making a single call, and comparing its result to the result of a related “abstract operation” applied to related abstract arguments. An abstraction functions maps the real, concrete arguments and results to abstract values, which we also call the “model”.**
-
 #### TODO4
 
-Following the approach of `insert`，Write **Model-based Properties** tests for delete and union respectively to identify one bugs in `\bugs\bug4.py`:
+Following the preceding example on `insert`, you are required to define some model-based properties for the operations `delete` and `union` respectively to identify the two bugs planted in `\bugs\bug4.py`:
 
-+ For `delete`, Perform a delete operation on the BST and abstract data structure, then determine whether the final sets are equivalent.
++ For `delete`, you can perform a `delete` operation on the BST and an abstract data structure (e.g., a `list`) to determine whether the final sets are equivalent.
 
-+ For `union`, Perform a union operation on two BSTs and their corresponding abstract data structures, then determine whether the resulting union is equivalent.
++ For `union`, you can perform a `union` operation on two BSTs and their corresponding abstract data structures (e.g., two `list`s) to determine whether the final sets are equivalent.
 
-After that, Run the following command to detect whether the two bugs in `lab4\bugs\bug2` concerning `delete` and `union` have been identified.
+After that, you can run the following command to confirm whether your properties can help find two bugs planted in `lab4\bugs\bug4.py`.
 
 ```python
 lab4\tests$ make test4
@@ -404,7 +398,7 @@ lab4\tests$ make test4
 lab4\tests$ pytest -v test4.py --tb=short
 ```
 
-You should obtain the following result and get the assert information and sharking test seed in `lab4\report\test4`:
+You should obtain the following result and can find the shrinked tests in `lab4\tests\report\test4`:
 
 ```bash
 Run Model-based Properties Testing (test4.py)...
@@ -416,12 +410,12 @@ FAILED test4.py::test_union_model - assert {(0, 1)} == {(0, 0)}
 
 ## Submission
 
-**Warning: We shall verify whether your code logic complies with the specifications outlined in TODO. Should your approach be bug-oriented or answer-oriented, points will be deducted accordingly.**
+*Note: We shall verify whether your submitted code is bug-oriented. If your code is bug-oriented, your points may be deducted accordingly.*
 
-Once you are done with the lab, submit your code by commiting and pushing the changes under `lab2/`. Specifically, you need to submit the changes to `lab4/tests/test1.py` , `lab4/tests/test2.py` , `lab4/tests/test4.py` ,  `lab4/tests/test4.py` .
+Once you are done with the lab, submit your code by commiting and pushing the changes under `lab4/`. Specifically, you need to submit the changes to `lab4/src/BSTUtils.py`, `lab4/tests/test1.py` , `lab4/tests/test2.py` , `lab4/tests/test4.py` ,  `lab4/tests/test4.py` .
 
 ```bash
-   lab4$ git add tests/test1.py tests/test2.py tests/test3.py tests/test4.py
+   lab4$ git add src/BSTUtils.py tests/test1.py tests/test2.py tests/test3.py tests/test4.py
    lab4$ git commit -m "your commit message here"
    lab4$ git push
 ```
