@@ -155,10 +155,10 @@ lab4/tests$ pytest simple_test.py -v --tb=short # Detailed output results
 .
 |-- bugs
 |   |-- __init__.py
-|   |-- bug1.py # Bugs has been inserted into both find and union for detection by test1.
-|   |-- bug2.py # Bugs has been inserted into both the delete and union for detection by test2.
-|   |-- bug3.py # Bug has been introduced in the delete function for detection by test3.
-|   `-- bug4.py # Bugs has been inserted into both the delete and union operations for detection by test4.
+|   |-- bug1.py     # Bugs has been planted into find and union and intended to be found by test1.py
+|   |-- bug2.py     # Bugs has been planted into delete and union and intended to be found by test2.py
+|   |-- bug3.py     # Bug has been planted into delete and intended to be found by test3.py
+|   `-- bug4.py     # Bugs has been planted into delete and union and intended to be found by test4.py
 |-- requirements.txt
 |-- src
 |   |-- BST.py # Correct implementation of the BST data structure
@@ -166,28 +166,28 @@ lab4/tests$ pytest simple_test.py -v --tb=short # Detailed output results
 |   |-- __init__.py
 |   `-- test_strategies.py
 `-- tests
-    |-- conftest.py # Runtime Environment Configuration and Test Report Generation
-    |-- hypothesis.ini # Hypothesis configuration
-    |-- makefile # Run the scripts, including all, clean, test1, test2, test3, test4
-    |-- simple_test.py # simple test for BST
-    |-- test1.py # TODO: Write Validity Properties tests for find and delete.
-    |-- test2.py # TODO: Write Postcondition Properties tests for delete and union.
-    |-- test3.py # TODO: Write Metamorphic Properties tests for delete and union.
-    `-- test4.py # TODO: Write Model-based Properties tests for delete and union.
+    |-- conftest.py      # Runtime Environment Configuration and Test Report Generation
+    |-- hypothesis.ini   # Hypothesis configuration
+    |-- makefile         # Run the scripts, including all, clean, test1, test2, test3, test4
+    |-- simple_test.py   # simple test for BST
+    |-- test1.py         # TODO1: Define Validity Properties for testing find and delete.
+    |-- test2.py         # TODO2: Define Postcondition Properties for testing delete and union.
+    |-- test3.py         # TODO3: Define Metamorphic Properties for testing delete and union.
+    `-- test4.py         # TODO4: Define Model-based Properties for testing delete and union.
 ```
 
 ### Properties and Planted Bugs in BST
 
 In this lab, you will learn and define the following four types of properties in the context of validating BST.
-You are expected to write different properties for hunting the bugs we have planted into BST. Have fun and enjoy!
+You are expected to define different properties for hunting the bugs we have planted into BST. Have fun and enjoy!
 
 | Property Type            | Target Methods    | Bugs to Identify | Bug Description                                              |
 | :----------------------- | :---------------- | :--------------- | :----------------------------------------------------------- |
-| Validity Properties      | `find`, `union`   | bug1.py - BUG(1) | In `find(key)`: Mistakenly assigning left subtree to right attribute |
-|                          |                   | bug1.py - BUG(2) | In `union(bst1, bst2)`: Mistakenly putting the bst1 as the bst2's left subtree |
-| Postcondition Properties | `delete`, `union` | bug2.py - BUG(1) | In `delete(key)`: Mistakenly selecting the search path.      |
+| Validity Properties      | `find`, `union`   | bug1.py - BUG(1) | In `find(key)`: Mistakenly assigning left subtree to right subtree |
+|                          |                   | bug1.py - BUG(2) | In `union(bst1, bst2)`: Mistakenly puting the bst1 as the bst2's left subtree |
+| Postcondition Properties | `delete`, `union` | bug2.py - BUG(1) | In `delete(key)`: Mistakenly selecting the search direction.      |
 |                          |                   | bug2.py - BUG(2) | In `union`: Mistakenly prioritizing bst2 over bst1 when their keys are identical |
-| Metamorphic Properties   | `delete`, `union` | bug3.py - BUG(1) | In `delete(key)`: Mistakenly selecting the search path.      |
+| Metamorphic Properties   | `delete`, `union` | bug3.py - BUG(1) | In `delete(key)`: Mistakenly selecting the search direction.      |
 | Model-based Properties   | `delete`, `union` | bug4.py - BUG(1) | In `delete(key)`: Mistakenly selecting the subtree to delete |
 |                          |                   | bug4.py - BUG(2) | In `union(bst1, bst2)`: Mistakenly prioritizing bst2 over bst1 when their keys are identical |
 ### Validity Properties
