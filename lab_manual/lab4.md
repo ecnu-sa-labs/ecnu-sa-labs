@@ -1,4 +1,4 @@
-# Metamorphic Testing and Property-based Testing
+# Property-based Testing
 
 Use property-based testing to validate the implementations of binary search trees.
 
