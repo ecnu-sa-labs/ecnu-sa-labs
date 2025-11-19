@@ -175,7 +175,7 @@ If you want to obtain detailed results, you can run:
     `-- test4.py # TODO: Write Model-based Properties tests for delete and union.
 ```
 
-### Bugs
+### Properties and Planted Bugs in BST
 
 | TODOS     | Property Type            | Target Methods    | Bugs to Identify     | Bug Description                                              |
 | :-------- | :----------------------- | :---------------- | :------------------- | :----------------------------------------------------------- |
@@ -187,7 +187,7 @@ If you want to obtain detailed results, you can run:
 | **TODO4** | Model-based Properties   | `delete`, `union` | **Bug4.py - BUG(1)** | In `delete(key)`: Mistakenly selecting the subtree to delete |
 |           |                          |                   | **Bug4.py - BUG(2)** | In `union(bst1, bst2)`: Mistakenly prioritizing bst2 over bst1 when their keys are identical |
 
-### Validity Testing
+### Validity Properties
 
 Binary search trees should always satisfy a validity property no matter which operation (`insert`, `delete`, `find` and `union`) has been performed: *the keys in the tree should be ordered* --- for every node in the tree, (1) the key of all nodes in its left subtree is less than the node’s own key, and (2) the key of all nodes in its right subtree is greater than the node’s own key. 
 
@@ -234,7 +234,7 @@ FAILED test1.py::test_union_valid - assert False
 2 failed, 3 passed in 1.12s
 ```
 
-### Postcondition Testing
+### Postcondition Properties
 
 A postcondition is a property or condition that must be true after a function/operation completes execution. It describes the guaranteed state or result when the function finishes. For example, after the operation `insert` is executed, the key just inserted should exist, and any original key should be unchanged.
 
@@ -284,7 +284,7 @@ FAILED test2.py::test_union_post - assert 1 == 0
 3 failed, 2 passed in 4.10s
 ```
 
-### Metamorphic Testing
+### Metamorphic Properties
 
 Metamorphic testing is a successful approach to the oracle problem in many contexts. The basic idea is: even if the expected result of a function call such as `insert(key, value)` may be difficult to predict, we may still be able to express an expected relationship between this result, and the result of a related call. For example, if we insert an additional key into a BST before calling `insert(key, value)`, we expect the additional key to also appear in the final BST. We formalize this metamorphic relation as the following metamorphic property:
 
@@ -336,7 +336,7 @@ FAILED test3.py::test_delete_metamorph_by_insert - assert False
 1 failed, 2 passed in 2.62s
 ```
 
-### Model-based Properties Testing
+### Model-based Properties
 
 In 1972, Tony Hoare proposed an approach to proving the correctness of *data representations* (refer to *C. A. Hoare. Proof of correctness of data representations. Acta Inf., 1(4):271–281, December 1972*), by relating them to *abstract data* using *an abstraction function*.
 
