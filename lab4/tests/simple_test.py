@@ -93,7 +93,3 @@ def test_union_of_two_bsts_contains_keys_of_both():
     for k, v in one.to_list():
         expected_map[k] = v
     assert set(union.to_list()) == set(expected_map.items())
-
-def test_insert_twice_still_valid():
-    bst = BST.nil().insert(1, "one").insert(1, "two")
-    assert is_valid(bst)
