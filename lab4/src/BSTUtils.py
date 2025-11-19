@@ -1,6 +1,5 @@
 from typing import TypeVar, Protocol, Any, Tuple, List
 from abc import abstractmethod
-from hypothesis import strategies as st
 import random
 
 from .BST import BST

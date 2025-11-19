@@ -4,40 +4,11 @@ import random
 
 from src import is_valid, equivalent, insertions
 from bugs import BSTBug4 as BST
+from src import create_bst_strategies
 
-
-
-keys_strategy = st.one_of(st.integers(min_value = -25, max_value = 25), st.integers())
-
-def build_bst_from_tuples(kv_list: List[Tuple[int,int]]) -> BST[int,int]:
-    bst: BST[int,int] = BST.nil()
-    for k, v in kv_list:
-        bst = bst.insert(k, v)
-    return bst
-
-trees_strategy = st.lists(
-    st.tuples(keys_strategy, st.integers()),
-    min_size = 0,
-    max_size = 50,
-    unique_by = lambda kv: kv[0]
-).map(build_bst_from_tuples)
-
-def build_eqivalent_bst_from_tuples(kv_list: List[Tuple[int,int]]) -> Tuple[BST[int,int], BST[int,int]]:
-    bst1: BST[int,int] = BST.nil()
-    for k, v in kv_list:
-        bst1 = bst1.insert(k, v)
-    random.shuffle(kv_list)
-    bst2: BST[int,int] = BST.nil()
-    for k, v in kv_list:
-        bst2 = bst2.insert(k, v)
-    return [bst1, bst2]
-
-equivalent_trees_strategy = st.lists(
-    st.tuples(keys_strategy, st.integers()),
-    min_size = 0,
-    max_size = 50,
-    unique_by = lambda kv: kv[0]
-).map(build_eqivalent_bst_from_tuples)
+strategies = create_bst_strategies(BST)
+keys_strategy = strategies['keys_strategy']
+trees_strategy = strategies['trees_strategy']
 
 # ---------------- Model-based Properties Testing ----------------
 
