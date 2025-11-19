@@ -237,7 +237,7 @@ def test_delete_valid(key: int, bst: BST[int,int]) -> None:
 
 #### TODO1
 
-Now, write **Validity Properties** tests for `find` and `delete` respectively to identify tow bugs in `\bugs\bug1.py`.
+Now, write **Validity Properties** tests for `find` and `union` respectively to identify tow bugs in `\bugs\bug1.py`.
 
 After that, Run the following command to detect whether the two bugs in `lab4\bugs\bug1` concerning `find` and `union` have been identified.
 
