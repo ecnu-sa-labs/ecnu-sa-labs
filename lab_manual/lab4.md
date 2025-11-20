@@ -123,7 +123,7 @@ A key feature of Hypothesis is shrinking. If a test case fails, it doesn't just 
 
 Pytest is a robust Python testing framework that simplifies test creation and execution. It features automatic test discovery, comprehensive error reporting, and a rich plugin ecosystem.
 
-To get yourself familiar with Pytest, you can run `lab4/tests/simple_test.py` which tests a buggy version of BST (corresponding to `lab4/bugs/bug1.py`):
+To get yourself familiar with Pytest, you can run `lab4/tests/simple_test.py` which tests a buggy version of BST (corresponding to `lab4/bugs/bug1.py`) under `lab4/tests`:
 
 ```bash
 lab4/tests$ pytest simple_test.py -q --tb=no # Concise output results
