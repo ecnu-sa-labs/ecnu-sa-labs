@@ -231,10 +231,10 @@ You should obtain the following testing results and could find the shrinked test
 
 ```tex
 Run Validity Testing (test1.py)...
-...FF
+....FF
 FAILED test1.py::test_find_valid - assert False
 FAILED test1.py::test_union_valid - assert False
-2 failed, 3 passed in 1.12s
+2 failed, 4 passed in 1.38s
 ```
 
 ### Postcondition Properties
