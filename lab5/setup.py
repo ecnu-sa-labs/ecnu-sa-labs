@@ -16,6 +16,6 @@ setup(
     python_requires=">=3.6",
     description="A simple character-wise delta debugger.",
     entry_points={"console_scripts": ["delta-debugger=delta_debugger.__main__:main"]},
-    packages=find_packages(include=["delta_debug", "delta_debug.*"]),
+    packages=find_packages(include=["delta_debugger", "delta_debugger.*"]),
     install_requires=requirements,
 )
