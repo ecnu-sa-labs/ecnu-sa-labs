@@ -55,7 +55,7 @@ where fuzzer will store its results.
 /lab4/test$ make sanity1               # Instrument and build sanity1.
 /lab4/test$ mkdir fuzz_output_sanity1  # Create output directory.
 # Run the fuzzer on sanity1 with a timeout of 6 seconds.
-/lab4/test$ timeout 6s fuzzer ./sanity1 fuzz_input fuzz_output_sanity1
+/lab4/test$ timeout 6s ../lib/fuzzer ./sanity1 fuzz_input fuzz_output_sanity1
 ```
 
 You can also use the Makefile to instrument, build,
