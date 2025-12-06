@@ -12,13 +12,13 @@ in `lab3` to minimize the crashing inputs found by the fuzzer.
 
 ### Setup
 
-The code for Lab 4 is located under `/lab4/`.
+The code for Lab 4 is located under `/lab5/`.
 
 This lab builds on top of the previous labs.
 We have provided you with pre-compiled binaries for
 the `runtime` library,
 `InstrumentPass` for `coverage` and `sanitize`,
-and a `fuzzer` executable; you can find them under `lab4/lib`.
+and a `fuzzer` executable; you can find them under `lab5/lib`.
 Their implementations are identical to the implementations in `lab3`.
 
 
@@ -30,7 +30,7 @@ We do so by building a python package called `delta_debugger`.
 To build and install the package, run:
 
 ```sh
-/lab4$ make install
+/lab5$ make install
 ```
 
 Unlike with `c++`, you won't need to re-run this command
@@ -52,18 +52,18 @@ the program and setup appropriate output directories
 where fuzzer will store its results.
 
 ```sh
-/lab4/test$ make sanity1               # Instrument and build sanity1.
-/lab4/test$ mkdir fuzz_output_sanity1  # Create output directory.
+/lab5/test$ make sanity1               # Instrument and build sanity1.
+/lab5/test$ mkdir fuzz_output_sanity1  # Create output directory.
 # Run the fuzzer on sanity1 with a timeout of 6 seconds.
-/lab4/test$ timeout 6s fuzzer ./sanity1 fuzz_input fuzz_output_sanity1
+/lab5/test$ timeout 6s ../lib/fuzzer ./sanity1 fuzz_input fuzz_output_sanity1
 ```
 
 You can also use the Makefile to instrument, build,
 setup output directory and run the fuzzer for you:
 
 ```sh
-/lab4/test$ make sanity1               # Instrument and build sanity1.
-/lab4/test$ make fuzz-sanity1          # Run the fuzzer on sanity1.
+/lab5/test$ make sanity1               # Instrument and build sanity1.
+/lab5/test$ make fuzz-sanity1          # Run the fuzzer on sanity1.
 ```
 
 ##### Step 3.
@@ -87,7 +87,7 @@ You can now use `delta-debugger` to minimize the crashing
 inputs found by the fuzzer.
 
 ```
-/lab4/test$ delta-debugger ./sanity1 fuzz_output_sanity1/failure/input1
+/lab5/test$ delta-debugger ./sanity1 fuzz_output_sanity1/failure/input1
 ```
 
 The last argument is path to the crashing input and depends on which input you want to minimize.
@@ -97,12 +97,12 @@ Additionally, before running another invocation of `delta-debugger`, make sure t
 You can do this by running:
 
 ```sh
-/lab4/test$ rm -rf fuzz_output_sanity1 && mkdir fuzz_output_sanity1
+/lab5/test$ rm -rf fuzz_output_sanity1 && mkdir fuzz_output_sanity1
 ```
 
 ### Lab Instructions
 
-You will need to edit the `lab4/delta_debugger/delta.py` file to build a delta debugging tool.
+You will need to edit the `lab5/delta_debugger/delta.py` file to build a delta debugging tool.
 We have provided a template function --- `delta_debug` --- for you to
 implement your minimization logic.
 The `delta_debug` function takes a `target` program, and `input` that causes `target` to crash,
@@ -146,18 +146,18 @@ And the delta debugger will store its result in `crashing-input.delta` file.
 As a specific example consider the string: "This is theh) ", which causes `test2` to fail:
 
 ```sh
-/lab4/test$ echo -n "This is theh) " > tmp
-/lab4/test$ delta-debugger ./test2 tmp
-/lab4/test$ cat tmp.delta
+/lab5/test$ echo -n "This is theh) " > tmp
+/lab5/test$ delta-debugger ./test2 tmp
+/lab5/test$ cat tmp.delta
 This is
 ```
 
 ### Items to Submit
 
-Once you are done with the lab, submit your code by commiting and pushing the changes under `lab4/`. Specifically, you need to submit the changes to `delta_debugger/delta.py`.
+Once you are done with the lab, submit your code by commiting and pushing the changes under `lab5/`. Specifically, you need to submit the changes to `delta_debugger/delta.py`.
 
 ```sh
-lab4$ git add delta_debugger/delta.py
-lab4$ git commit -m "your commit message here"
-lab4$ git push
+lab5$ git add delta_debugger/delta.py
+lab5$ git commit -m "your commit message here"
+lab5$ git push
 ```
