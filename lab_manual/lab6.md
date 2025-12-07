@@ -26,7 +26,7 @@ For the second part of this lab you will implement various functions in `src/Cha
 
 ### Setup
 
-The skeleton code for Lab5 is located under `lab5/`.
+The skeleton code for lab6 is located under `lab6/`.
 
 ##### Step 1.
 
@@ -36,12 +36,12 @@ One thing to note is the use of the `-DUSE_REFERENCE=ON` flag:
 this lab comprises two parts and this flag will allow you to focus on the features needed for Part 1 independently of Part 2.
 
 ```sh
-/lab5$ mkdir build && cd build
-/lab5/build$ cmake -DUSE_REFERENCE=ON ..
-/lab5/build$ make
+/lab6$ mkdir build && cd build
+/lab6/build$ cmake -DUSE_REFERENCE=ON ..
+/lab6/build$ make
 ```
 
-Among the files generated, you should now see `DivZeroPass.so` in the `lab5/build` directory.
+Among the files generated, you should now see `DivZeroPass.so` in the `lab6/build` directory.
 
 We are now ready to run our bare-bones lab on a sample input C program.
 
@@ -55,8 +55,8 @@ The `opt` command optimizes that LLVM IR program and generates an equivalent LLV
 In particular, the `-mem2reg` option promotes every [AllocaInst][LLVM AllocaInst] to a register, allowing your analyzer to ignore handling pointers in this lab.
 
 ```sh
-/lab5/test$ clang -emit-llvm -S -fno-discard-value-names -Xclang -disable-O0-optnone -c -o test04.ll test04.c
-/lab5/test$ opt -mem2reg -S test04.ll -o test04.opt.ll
+/lab6/test$ clang-19 -emit-llvm -S -fno-discard-value-names -Xclang -disable-O0-optnone -c -o test04.ll test04.c
+/lab6/test$ opt-19 -passes="mem2reg" -S test04.ll -o test04.opt.ll
 ```
 
 ##### Step 3
@@ -68,7 +68,7 @@ Similar to former labs, you will implement your analyzer as an LLVM pass, called
 Then you will use the `opt` command to run this pass on the optimized LLVM IR program as follows:
 
 ```sh
-/lab5/test$ opt -load ../build/DivZeroPass.so -DivZero -disable-output test04.opt.ll > test04.out 2> test04.err
+/lab6/test$ opt-19 -load-pass-plugin ../build/DivZeroPass.so -passes="DivZero" -disable-output test04.opt.ll > test04.out 2> test04.err
 ```
 
 Upon successful completion of this lab, the output in `test/test04.out` should be as follows:
@@ -113,7 +113,7 @@ In part 2 of the lab, we will focus on implementing item 3, to combine the resul
 transfer functions to get an intra-procedural, flow-sensitive, path-insensitive Divide-by-Zero analysis.
 
 We have provided a framework to build your division-by-zero static analyzer.
-The framework is composed of files `Domain.cpp`, `Transfer.cpp`, `ChaoticIteration.cpp` and `DivZeroAnalysis.cpp` under `lab5/src/`.
+The framework is composed of files `Domain.cpp`, `Transfer.cpp`, `ChaoticIteration.cpp` and `DivZeroAnalysis.cpp` under `lab6/src/`.
 
 Additionally, you have been provided with `src/Utils.cpp` which defines a few useful functions:
 
@@ -344,15 +344,15 @@ In part 2, you will need to implement the `doAnalysis` function yourself, but fo
 Follow these steps to compile using the reference binary:
 
 ```sh
-/lab5/build$ rm CMakeCache.txt
-/lab5/build$ cmake -DUSE_REFERENCE=ON ..
-/lab5/build$ make
+/lab6/build$ rm CMakeCache.txt
+/lab6/build$ cmake -DUSE_REFERENCE=ON ..
+/lab6/build$ make
 ```
 
 As we demonstrated in the Setup section, run your analyzer on the test files using `opt`:
 
 ```sh
-/lab5/test$ opt -load ../build/DivZeroPass.so -DivZero -disable-output test04.opt.ll
+/lab6/test$ opt -load ../build/DivZeroPass.so -DivZero -disable-output test04.opt.ll
 ```
 
 If there is a divide-by-zero error in the program, your output should be as follows:
@@ -447,9 +447,9 @@ Now that you’re writing your own version of `doAnalysis`, you may need to rebu
 Follow these steps to compile using your implementation:
 
 ```sh
-/lab5/build$ rm CMakeCache.txt
-/lab5/build$ cmake ..
-/lab5/build$ make
+/lab6/build$ rm CMakeCache.txt
+/lab6/build$ cmake ..
+/lab6/build$ make
 ```
 
 Upon completing the above steps, your analysis should produce 2 output files.
@@ -499,12 +499,12 @@ Out set:
 
 ### Submission
 
-Once you are done with the lab, submit your code by commiting and pushing the changes under `lab5/`. Specifically, you need to submit the changes to `src/ChaoticIteration.cpp`, `src/DivZeroAnalysis.cpp` and `src/Transfer.cpp`.
+Once you are done with the lab, submit your code by commiting and pushing the changes under `lab6/`. Specifically, you need to submit the changes to `src/ChaoticIteration.cpp`, `src/DivZeroAnalysis.cpp` and `src/Transfer.cpp`.
 
 ```sh
-lab5$ git add src/ChaoticIteration.cpp src/DivZeroAnalysis.cpp src/Transfer.cpp
-lab5$ git commit -m "your commit message here"
-lab5$ git push
+lab6$ git add src/ChaoticIteration.cpp src/DivZeroAnalysis.cpp src/Transfer.cpp
+lab6$ git commit -m "your commit message here"
+lab6$ git push
 ```
 
 [LLVM template functions]: http://releases.llvm.org/8.0.0/docs/ProgrammersManual.html#the-isa-cast-and-dyn-cast-templates

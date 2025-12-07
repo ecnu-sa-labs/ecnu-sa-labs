@@ -9,6 +9,12 @@
 #include "llvm/IR/ValueMap.h"
 #include "llvm/Pass.h"
 #include "llvm/Support/raw_ostream.h"
+
+#include "llvm/IR/PassManager.h"
+#include "llvm/Passes/PassPlugin.h"
+#include "llvm/Passes/PassBuilder.h"
+#include "llvm/Passes/OptimizationLevel.h"
+
 #include <algorithm>
 #include <iterator>
 #include <map>

@@ -79,6 +79,41 @@ bool DivZeroAnalysis::runOnFunction(Function &F) {
 }
 
 char DivZeroAnalysis::ID = 1;
-static RegisterPass<DivZeroAnalysis> X("DivZero", "Divide-by-zero Analysis",
-                                       false, false);
+// static RegisterPass<DivZeroAnalysis> X("DivZero", "Divide-by-zero Analysis",
+//                                        false, false);
+
+struct DivZeroAnalysisNPMWrapper : public PassInfoMixin<DivZeroAnalysisNPMWrapper> {
+  PreservedAnalyses run(Function& F, FunctionAnalysisManager&) {
+    DivZeroAnalysis P;
+    bool Modified = P.runOnFunction(F);
+    return Modified ? PreservedAnalyses::none() : PreservedAnalyses::all();
+  }
+};
+
+const auto PASS_NAME = "DivZeroPass";
+
+extern "C" LLVM_ATTRIBUTE_WEAK PassPluginLibraryInfo llvmGetPassPluginInfo() {
+  return {
+      LLVM_PLUGIN_API_VERSION,
+      PASS_NAME,
+      "0.1",
+      [](PassBuilder& PB) {
+        PB.registerPipelineParsingCallback(
+            [](StringRef Name, FunctionPassManager& FPM,
+               ArrayRef<PassBuilder::PipelineElement>) {
+              if (Name == "DivZero" || Name == PASS_NAME) {
+                FPM.addPass(DivZeroAnalysisNPMWrapper());
+                return true;
+              }
+              return false;
+            });
+        PB.registerPipelineStartEPCallback(
+            [](ModulePassManager& MPM, OptimizationLevel) {
+              MPM.addPass(
+                createModuleToFunctionPassAdaptor(DivZeroAnalysisNPMWrapper()));
+            });
+      } };
+}
+
+
 } // namespace dataflow
