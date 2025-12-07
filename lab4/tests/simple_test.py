@@ -1,5 +1,4 @@
 from bugs import BSTBug1 as BST
-from src import is_valid
 import pytest
 
 def test_new_bst_is_empty():
