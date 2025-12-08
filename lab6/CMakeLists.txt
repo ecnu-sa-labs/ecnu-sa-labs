@@ -1,6 +1,10 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 
-find_package(LLVM 8 REQUIRED CONFIG)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+find_package(LLVM 19 REQUIRED CONFIG)
+
 list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_DIR}")
 include(HandleLLVMOptions)
 include(AddLLVM)
@@ -26,7 +30,7 @@ if (USE_REFERENCE)
     src/Utils.cpp
   )
 
-  target_link_libraries(DivZeroPass HiddenAnalysis)
+  target_link_libraries(DivZeroPass PRIVATE HiddenAnalysis)
 
 else (USE_REFERENCE)
   add_llvm_library(DivZeroPass MODULE

@@ -1,7 +1,7 @@
 To generate documentation from source code, please run:
 
 ```bash
-cd /lab5
+cd /lab6
 doxygen Doxyfile
 ```
 
