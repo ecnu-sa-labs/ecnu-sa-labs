@@ -14,7 +14,7 @@
 |------------------|-------------------------|-------------------------|-------------------------|-----------------------------------------------------------------------------|
 | 动态分析  | [Kea2](https://github.com/ecnusse/Kea2)   |  性质检查模块（Kea2是如何实现动态执行中检查性质的？） | [Paper1](https://tingsu.github.io/files/ASE24-Kea.pdf), [Paper2](https://tingsu.github.io/files/ISSTA23-functional-bugs.pdf) |  2~3分 | 
 | 动态分析  | [AFL](https://github.com/google/AFL)| 输入变异模块（AFL的整个输入变异流程是如何实现的？包括Deterministic、Havoc、Splicing等阶段） | [Doc1](https://afl-1.readthedocs.io/en/latest/index.html), [Doc2](https://lcamtuf.blogspot.com/2014/08/binary-fuzzing-strategies-what-works.html) |  2~3分 | 
-| 动态分析  | [AFL](https://github.com/google/AFL)| 覆盖率统计模块（AFL是如何统计代码覆盖率的？包含插装、覆盖率统计、基于覆盖的反馈） | [Doc1](https://afl-1.readthedocs.io/en/latest/index.html) |  3分 | 
+| 动态分析  | [AFL](https://github.com/google/AFL)| 覆盖率统计模块（AFL是如何统计代码覆盖率的？包含插装、覆盖率统计、基于覆盖的反馈） | [Doc1](https://afl-1.readthedocs.io/en/latest/index.html), [Paper1](https://wcventure.github.io/FuzzingPaper/Paper/SP18_ColLAFL.pdf)  |  3分 | 
 | 动态分析  | [hypothesis](https://github.com/HypothesisWorks/hypothesis)| 输入约减（shrinking）模块（当hypothesis找到一个违反性质的输入后，是如何对该输入做约减的？ | [Paper1](https://www.cs.columbia.edu/~junfeng/08fa-e6998/sched/readings/delta-debug-input.pdf) |  3分 | 
 | 静态分析  | [cppcheck](https://github.com/danmar/cppcheck) | Uninitialized Variable检测模块（cppcheck是如何检测未初始化变量的？）  | 官方仓库上提供了相关手册和资料 |  3~4分 |                    
 
