@@ -352,7 +352,7 @@ Follow these steps to compile using the reference binary:
 As we demonstrated in the Setup section, run your analyzer on the test files using `opt`:
 
 ```sh
-/lab6/test$ opt -load ../build/DivZeroPass.so -DivZero -disable-output test04.opt.ll
+/lab6/test$ opt-19 -load-pass-plugin ../build/DivZeroPass.so -passes="DivZero" -disable-output test04.opt.ll > test04.out 2> test04.err
 ```
 
 If there is a divide-by-zero error in the program, your output should be as follows:
