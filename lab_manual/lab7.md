@@ -1,19 +1,19 @@
-## Pointer Analysis
+# Pointer Analysis
 
 Writing a “division-by-zero” static analysis for C programs as an LLVM pass that handles pointer aliasing and dynamically allocated memory.
 
-### Objective 
+## Objective 
 
 The goal of this lab is to extend the static **divide-by-zero** sanitizer in Lab 6 to perform its analysis in the presence of pointers.
 You will combine the dataflow analysis from the previous lab with a flow-insensitive pointer analysis, resulting in a more comprehensive overall static analysis.
 
-### Setup
+## Setup
 
 The skeleton code for Lab 6 is located under `/lab6`.
 We will frequently refer to the top level directory for Lab 6 as `lab6` when describing file locations.
 This lab is built upon your work from Lab 5, so you can reuse most of your content from the `/lab5/src` directory.
 
-#### Step 1.
+### Step 1.
 
 The following commands set up the lab, using the CMake/Makefile pattern seen before.
 
@@ -29,7 +29,7 @@ Most of these changes can be copied over from the previous lab and then be modif
 
 We are now ready to run our bare-bones lab on a sample input C program.
 
-#### Step 2.
+### Step 2.
 
 Before running the pass, the LLVM IR code must be generated.
 
@@ -54,7 +54,7 @@ Potential Instructions by DivZero:
     %div = sdiv i32 1, %2
 ```
 
-### Format of Input Programs
+## Format of Input Programs
 
 The input format of this lab is the same as that of Lab 6 except now you will handle pointers:
 
@@ -65,7 +65,7 @@ The input format of this lab is the same as that of Lab 6 except now you will ha
 * User inputs are *only* introduced via the set of functions where the provided `isInput` function returns `True`.
 * You *can ignore* other call instructions to other functions.
 
-### Lab Instructions
+## Lab Instructions
 
 In this lab, you will extend the **divide-by-zero** analysis that you implemented in Lab 6 to analyze and catch potential **divide-by-zero** errors in the presence of aliased memory locations.
 
@@ -366,7 +366,7 @@ join them all together via `Domain::join()`,
 then proceed to update the current assignment as well as **all** may-aliased assignments with this abstract value.
 This ensures that all pointer references are in-sync and will converge upon a precise abstract value in our analysis.
 
-### Submission
+## Submission
 
 Once you are done with the lab, submit your code by commiting and pushing the changes under `lab6/`. Specifically, you need to submit the changes to `src/ChaoticIteration.cpp`, `src/DivZeroAnalysis.cpp` and `src/Transfer.cpp`.
 

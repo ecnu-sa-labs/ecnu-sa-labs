@@ -1,0 +1,10 @@
+[project]
+name = "ecnu-sa-labs"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "openai>=2.42.0",
+    "pyyaml>=6.0.3",
+]

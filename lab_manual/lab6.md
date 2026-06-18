@@ -1,20 +1,22 @@
-## Building A Static Analyzer (Dataflow Analysis)
+# Building A Static Analyzer (Dataflow Analysis)
 
 Building a "division-by-zero" static analysis for a subset of the C language that includes branches and loops.
 
-### Objective 
+## Objective 
 
 In this lab, you will build a static analyzer that detects potential divide-by-zero erros in C programs at compile-time.
+
 You will accomplish this by writing an LLVM pass.
+
 Since developing a static analyzer for a full-fledged language like C is a non-trivial endeavor, this lab will be split up into two parts. 
 
-##### PART 1
+### PART 1
 
 1. Implement `DivZeroAnalysis::check` that checks if a given instruction could lead to an error.
 2. Implement `DivZeroAnalysis::transfer` found in `src/Transfer.cpp`.
 3. Implement the `eval` functions in `src/Transfer.cpp` by completing the provided function stubs.
  
-##### PART 2
+### PART 2
 
 For the second part of this lab you will implement various functions in `src/ChaoticIteration`.
 
@@ -24,11 +26,11 @@ For the second part of this lab you will implement various functions in `src/Cha
 4. Implement `join` function that takes the union of two Memory objects, accounting for Domain values.
 5. Implement `equal` function that checks if two Memory objects are equal, accounting for Domain values.
 
-### Setup
+## Setup
 
 The skeleton code for lab6 is located under `lab6/`.
 
-##### Step 1.
+### Step 1.
 
 The following commands set up the lab, using the [Cmake][Cmake ref]/[Makefile][Make ref] pattern seen before.
 
@@ -45,7 +47,7 @@ Among the files generated, you should now see `DivZeroPass.so` in the `lab6/buil
 
 We are now ready to run our bare-bones lab on a sample input C program.
 
-##### Step 2
+### Step 2
 
 Before running the pass on a test program, we need to generate the LLVM IR code for it.
 
@@ -59,7 +61,7 @@ In particular, the `-mem2reg` option promotes every [AllocaInst][LLVM AllocaInst
 /lab6/test$ opt-19 -passes="mem2reg" -S test04.ll -o test04.opt.ll
 ```
 
-##### Step 3
+### Step 3
 
 Similar to former labs, you will implement your analyzer as an LLVM pass, called `DivZeroPass`.
 
@@ -81,7 +83,7 @@ Potential Instructions by DivZero:
 
 The debug output of your program (printed using `errs()`) will be available in the `test/test04.err` file.
 
-### Format of Input Programs
+## Format of Input Programs
 
 To reduce the complexity of the lab we restrict the set of instructions that your analysis must handle.
 We assume that the input programs for this lab may only use the following subset of the C language:
@@ -95,7 +97,7 @@ We assume that the input programs for this lab may only use the following subset
   You can ignore other call instructions to other functions.
 
 
-### Lab Instructions
+## Lab Instructions
 
 A full-fledged static analyzer has three components: 
 1. An abstract domain
@@ -123,10 +125,10 @@ Additionally, you have been provided with `src/Utils.cpp` which defines a few us
     it tries to extract the `Domain` from the instruction itself.
 + `printMemory`, `printInstructionTransfer` and `printMap` will print various debug information to `stderr`.
 
-##### **Part 1: The Check and Transfer Functions**
+### **Part 1: The Check and Transfer Functions**
 
 
-##### Step 1
+#### Step 1
 
 Refresh your understanding about program abstractions by reading the article on [A Menagerie of Program Abstractions][Menagerie Link]. 
 
@@ -147,7 +149,7 @@ So, more concretely, if the Domain of `%x` is `Domain::Zero` and the Domain of `
 
 
 
-##### Step 2
+#### Step 2
 
 Inspect `DivZeroAnalysis::runOnFunction` to understand how, at a high-level, the compiler pass performs the analysis:
 ```cpp
@@ -183,7 +185,7 @@ So, at a high level, `runOnFunction` will:
 2. Fill them using a chaotic iteration algorithm.
 3. Find potential divide by zero errors by using the `InMap` entries for each divide instruction to check whether the divisor may be zero.
 
-##### Step 3
+#### Step 3
 
 Understand the memory abstraction in the provided framework. 
 
@@ -214,7 +216,7 @@ Therefore you will use the objects for instructions `I1` and `I2` to refer to va
 
 For example, `variable(I1)` will refer to `%x`.
 
-##### Step 4
+#### Step 4
 
 Now that we understand how the pass performs the analysis and how we will store each abstract state, we can begin implementation. 
 
@@ -331,7 +333,7 @@ Domain *eval(PHINode *Phi, const Memory *InMem) {
 }
 ```
 
-##### Step 5
+#### Step 5
 
 Implement the `DivZeroAnalysis::check` function found in `src/DivZeroAnalysis.cpp`.
 This function checks an `Instruction` to determine if a division-by-zero is **possible**.
@@ -364,7 +366,7 @@ Instructions that potentially divide by zero:
 ```
 
 
-##### Part 2 : Putting it all together - dataflow analysis
+### Part 2 : Putting it all together - dataflow analysis
 
 Now that you have code to populate in and out maps and use them to check for divide-by-zero errors, your next step is to implement the chaotic iteration algorithm in function `doAnalysis` found in `src/ChaoticIteration.cpp`.
 
@@ -401,7 +403,7 @@ In order for you to focus on the dataflow portion of this assignment, we have pr
 
 You will next implement the various parts of the chaotic iteration algorithm.
 
-##### Step 1
+#### Step 1
 
 In `flowIn`, you will perform the first step of the reaching definitions analysis by taking the union of all **OUT** variables from all predecessors of `I`. 
 You may find the `getPredecessors` method in `src/ChaoticIteration.cpp` to be helpful here. 
@@ -418,11 +420,11 @@ Within this function, you will also need to consider the `Domain` values when me
 Refer to the abstract domain on why this is necessary. 
 Recall that a `join` operation for combining two abstract values is defined in the `Domain` class.
 
-##### Step 2
+#### Step 2
 
 Call the `transfer` function that you implemented in Part 1 to populate the **OUT** set for the current instruction.
 
-##### Step 3
+#### Step 3
 
 In `flowOut`, you will determine whether or not a given instruction needs to be analyzed again. 
 This should be done in the following function that is templated for you below:
@@ -440,7 +442,7 @@ Recall that an `equal` operation to evaluate equality between two abstract value
 
 Lastly, in `flowOut` be sure that you update the `OutMap` for instruction `I` to include values in `Post`.
 
-##### Step 4
+#### Step 4
 
 Recall in Part 1, a reference `doAnalysis` could be used to verify your `check` and `transfer` implementations. 
 Now that you’re writing your own version of `doAnalysis`, you may need to rebuild the pass without the reference. 
@@ -497,7 +499,7 @@ Out set:
 ```
 
 
-### Submission
+## Submission
 
 Once you are done with the lab, submit your code by commiting and pushing the changes under `lab6/`. Specifically, you need to submit the changes to `src/ChaoticIteration.cpp`, `src/DivZeroAnalysis.cpp` and `src/Transfer.cpp`.
 

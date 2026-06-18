@@ -1,0 +1,30 @@
+name: Generate PDF
+
+# triggered manually
+on: 
+  workflow_dispatch
+
+jobs:
+  convert_via_pandoc:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker://pandoc/extra:3-ubuntu
+        with:
+          # --shift-heading-level-by=-1        编号偏移量，不要动
+          # --toc-depth=2                      目录最深层级
+          # --number-sections                  标题是否编号
+          # --syntax-highlighting=idiomatic    代码块样式
+          # --top-level-division="chapter"     分页符标记，需和book: true classoption: [oneside]二者一起删除
+          args: >-  # break string of arguments into multiple lines
+            output/output.md --output=output/result.pdf --pdf-engine=xelatex
+            --template .github/template/eisvogel.latex
+            --from markdown+raw_html+footnotes
+            --toc-depth=2
+            --number-sections
+            --syntax-highlighting idiomatic
+            --top-level-division="chapter"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: output
+          path: output

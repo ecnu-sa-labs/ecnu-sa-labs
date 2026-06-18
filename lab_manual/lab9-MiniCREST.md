@@ -1,8 +1,8 @@
-## Dynamic Symbolic Execution
+# Dynamic Symbolic Execution
 
 Building a dynamic symbolic executor for C programs with LLVM and Z3.
 
-### Objective
+## Objective
 
 In this lab, you will implement a dynamic symbolic execution (DSE) engine that automatically generates inputs to efficiently explore different program paths.
 You will use an LLVM pass to encode C programs into our symbolic interpretation API that we have provided.
@@ -13,7 +13,7 @@ This lab is divided into three parts:
 2. Using Z3's C++ API, write the constraint logic for dynamic symbolic interpretation in `src/Runtime.cpp`.
 3. Implement a backtracking search algorithm for exploring new program paths in `src/Strategy.cpp`.
 
-### Setup
+## Setup
 
 The skeleton code for Lab 7 is located under `/lab7`.
 We will frequently refer to the top level directory for Lab 7 as `lab7` when describing file locations for the lab.
@@ -40,7 +40,7 @@ You can run the dse program with the following commands:
 
 Initially, you will see `formula.smt2` not found since you have not implemented the instrumentation part yet.
 
-### Format of Input Programs
+## Format of Input Programs
 
 Input programs in this lab are assumed to have only sub-features of the C language as follows:
 
@@ -48,7 +48,7 @@ Input programs in this lab are assumed to have only sub-features of the C langua
     You can ignore other types of values.
 -   Assume that user inputs are only introduced via the `DSE_Input` function and other call instructions to other functions do not exist.
 
-### Example Input and Output
+## Example Input and Output
 
 Your DSE engine should run on a given instrumented program.
 For example, this will find a crashing input after 1 iteration with the input stored in `input.txt`:
@@ -63,7 +63,7 @@ Crashing input found (1 iters)
 X0,1024
 ```
 
-### Lab Instructions
+## Lab Instructions
 
 *Dynamic symbolic execution* (DSE) uses techniques from both randomized testing and symbolic execution to search all of a program's execution paths for bugs.
 DSE tracks both runtime values and symbolic constraints, and uses the former to simplify solving the latter during a backtracking search on program computation trees.
@@ -74,7 +74,7 @@ We provide several details on how to do this in the following sections.
 
 This lab assumes that input programs only have integer variables (no pointers or other types of variables) and do not have functions (no `CallInst`).
 
-#### Understanding Z3
+### Understanding Z3
 
 Z3 is a theorem prover developed at Microsoft.
 It's a large and complex tool, so this will serve as a cursory guide for its capabilities and what it can do.
@@ -346,7 +346,7 @@ All the IDs of executed branch instructions will be stored in `branch.txt` in or
 Given the current satisfiable path formula, function `searchStrategy` will propose a formula to derive new inputs that can lead to exploring more paths.
 The main function in `DSE.cpp` will iteratively generate new inputs until a crashing input is found or a timeout occurs.
 
-### Submission
+## Submission
 
 Once you are done with the lab, you can create a `submission.zip` file using the following command:
 
