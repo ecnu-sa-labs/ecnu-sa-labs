@@ -65,7 +65,7 @@ which first runs AFL with a timeout of 30 seconds per program,
 and then runs CSA.
 
 ```sh
-/lab1$ make check_versions && make all
+/lab1$ make all
 ```
 
 On running the above command, you will see the output that looks
