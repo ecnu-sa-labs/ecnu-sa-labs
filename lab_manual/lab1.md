@@ -1,28 +1,28 @@
-## Understanding Static and Dynamic Analysis
+# Understanding Static and Dynamic Analysis
 
 Understanding the basic concepts of software analysis and metrics used to estimate the effectiveness of analysis.
 
-### Objective
+## Objective
 
 The objective of this lab is to use standard analysis tools for static and
 dynamic analysis on C programs to discover divide-by-zero errors and interpreting
 their results to better understand various trade-offs between the techniques.
 Specifically, we will use <a href="https://github.com/google/AFL">AFL</a> (American Fuzzy Lop), a dynamic analyzer (fuzzer) and <a href="https://clang-analyzer.llvm.org/">CSA</a> (Clang Static Analyzer), a static analyzer.
 
-### Pre-Requisites
+## Pre-Requisites
 
 The lectures introduce various terminology used throughout this lab such as:
 static and dynamic analysis, soundness, completeness, precision, recall, and more.
 
-### Setup
+## Setup
 
-##### Step 1.
+### Step 1.
 The skeleton code for Lab 1 is located under `/lab1`.
 We will refer to this top-level directory for Lab 1 simply as `lab1`
 when describing file locations for the lab.
 
 
-##### Step 2.
+### Step 2.
 Throughout the labs, we will use `CMake`, a modern tool for
 managing the build process.
 If you’re unfamiliar with `CMake` we recommend reading the
@@ -35,7 +35,7 @@ or [Learn Make in Y minutes][learn-make-in-y-minutes] first,
 and then peruse file `lab1/Makefile`.
 Ensure that you are comfortable with using `Makefile` in this lab.
 
-##### Step 3.
+### Step 3.
 
 Inspect the Makefile to see the commands used to run <a href="https://github.com/google/AFL">AFL</a> and <a href="https://clang-analyzer.llvm.org/">CSA</a>.
 
@@ -51,12 +51,12 @@ timeout 30s afl-fuzz -i afl_input -o afl_output -- ./test1
 clang -v --analyze c_programs/test1.c
 ```
 
-### Lab Instructions
+## Lab Instructions
 
 In this lab, you will run AFL and CSA on a suite of C programs,
 study these two tools’ results, and report your findings.
 
-##### Step 1.
+### Step 1.
 
 Run the provided analysis tools, AFL and CSA, on all C programs
 located under the `lab1/c_programs` directory.
@@ -104,7 +104,7 @@ under the `lab1/results` directory:
        ...
 ```
 
-##### Step 2.
+### Step 2.
 
 Determine the ground truth (`right` vs. `wrong`) of the C programs with respect to
 division-by-zero errors.
@@ -114,7 +114,7 @@ some program inputs.
 Write your answers in file `lab1/answers.txt` in the “ground truth” column
 of the table for each test.
 
-##### Step 3.
+### Step 3.
 
 Study the output of AFL and CSA and determine if they accept or reject each program.
 Fill in your answers in file `lab1/answers.txt` in the corresponding columns of
@@ -137,17 +137,17 @@ c_programs/test9.c:10:17: warning: Division by zero [core.DivideZero]
       |             ~~~~^~~~~
 ```
 
-##### Step 4.
+### Step 4.
 
 Using your entries from Steps 2 and 3, calculate the
 Precision, Recall, and F1 Score of each column.
 Enter them in the corresponding rows in `lab1/answers.txt`.
 
-##### Step 5.
+### Step 5.
 
 Answer the questions in `answers.txt` with the help of the table you filled in.
 
-### Submission
+## Submission
 
 Once you are done with the lab, submit your results by commiting and pushing the changes under `lab1/`. 
 Note that please submit the results on your *local machine* rather than on the remote machine in Docker.

@@ -1,8 +1,8 @@
-## Delta Debugging
+# Delta Debugging
 
 Building a delta debugger for minimizing inputs that cause a program to crash --- making it easier for the user to understand the bug.
 
-### Objective
+## Objective
 
 In this lab, you will build a delta debugger that implements
 an efficient algorithm for finding a 1-minimal crashing input
@@ -10,7 +10,7 @@ given a large crashing input.
 You will combine this tool with a fuzzer like the one you built
 in `lab3` to minimize the crashing inputs found by the fuzzer.
 
-### Setup
+## Setup
 
 The code for Lab 4 is located under `/lab5/`.
 
@@ -22,7 +22,7 @@ and a `fuzzer` executable; you can find them under `lab5/lib`.
 Their implementations are identical to the implementations in `lab3`.
 
 
-##### Step 1.
+### Step 1.
 
 This lab uses python to implement delta debugger.
 We do so by building a python package called `delta_debugger`.
@@ -41,7 +41,7 @@ Further, you will be able to use your delta debugger using the
 The `delta-debugger` tool performs delta debugging to shrink
 a crashing input to a program.
 
-##### Step 2.
+### Step 2.
 
 To use `delta-debugger` with a program you first need to find some input
 that will crash the program.
@@ -66,7 +66,7 @@ setup output directory and run the fuzzer for you:
 /lab5/test$ make fuzz-sanity1          # Run the fuzzer on sanity1.
 ```
 
-##### Step 3.
+### Step 3.
 
 Once you have run the fuzzer you will find inputs
 that couse the program to crash under
@@ -100,7 +100,7 @@ You can do this by running:
 /lab5/test$ rm -rf fuzz_output_sanity1 && mkdir fuzz_output_sanity1
 ```
 
-### Lab Instructions
+## Lab Instructions
 
 You will need to edit the `lab5/delta_debugger/delta.py` file to build a delta debugging tool.
 We have provided a template function --- `delta_debug` --- for you to
@@ -131,7 +131,7 @@ that takes a `target`, an `input` and a parameter `n`
 that correspond to search granularity, and performs one iteration of delta debugging algorithm to
 return the next `input` and `n`.
 
-### Example Input and Output
+## Example Input and Output
 
 Your delta debugger should run on any executable that accepts input from `stdin`.
 
@@ -152,7 +152,7 @@ As a specific example consider the string: "This is theh) ", which causes `test2
 This is
 ```
 
-### Items to Submit
+## Items to Submit
 
 Once you are done with the lab, submit your code by commiting and pushing the changes under `lab5/`. Specifically, you need to submit the changes to `delta_debugger/delta.py`.
 

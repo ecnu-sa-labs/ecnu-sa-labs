@@ -1,11 +1,11 @@
-## Dynamic Taint Analysis
+# Dynamic Taint Analysis
 
 Writing a dynamic taint analysis tool for C/C++ programs as an LLVM pass to detect `ControlFlowHijack` and `InjectionAttack` problems in the programs.
 
-### Objective
+## Objective
 In this lab, you will build a dynamic taint analysis tool on the IR intermediate representation. By implementing taint sources, taint propagation strategies, and taint sinks, you will be able to trace the propagation of taints within the program, thereby detecting potential security issues.
 
-### Setup
+## Setup
 The code for Lab7 is located under `/lab7/`.
 
 - Open the lab7 folder in VS Code, using the 'Open Folder' option in VS Code.
@@ -15,7 +15,7 @@ The code for Lab7 is located under `/lab7/`.
 - Inside the development environment the skeleton code for Lab 6_2 will be located under /lab7.
 - Afterwards, if VS Code prompts you to select a kit for the lab then pick Clang 8.
 
-#### lab7's project structure:
+### lab7's project structure:
 
 ```
 - lib
@@ -31,7 +31,7 @@ The code for Lab7 is located under `/lab7/`.
   -- Utils.cpp: Some helper functions, such as `getOperandsString`, etc.
 ```
 
-#### Step 1
+### Step 1
 The following commands set up the lab, using the CMake/Makefile pattern.
 ```
 /lab7$ mkdir -p build && cd build
@@ -41,7 +41,7 @@ The following commands set up the lab, using the CMake/Makefile pattern.
 
 You should see several files created in the lab7/build directory. A LLVM pass named `DynTaintAnalysisPass.so` will be generated as the result of linking `DynTaintAnalysisPass.cpp` and `Instrument.cpp` under `lab7/src`, and a runtime library called `libruntime.so`, corresponding to `lab7/lib/runtime.cpp`. These are all source files that you will modify later. If you recall the project build steps of lab2, the steps here are almost identical to the part where it uses a dynamic analysis pass.
 
-#### Step 2
+### Step 2
 Generate LLVM IR as you did in previous lab.
 ```
 /lab7$ cd test
@@ -49,21 +49,21 @@ Generate LLVM IR as you did in previous lab.
 /lab7/test$ clang -emit-llvm -S -fno-discard-value-names -c -o ControlFlowHijack.ll ControlFlowHijack.cpp -g
 ```
 
-#### Step 3
+### Step 3
 Use opt to run the provided DynTaintAnalysisPass pass on the compiled C++ program. This step generates an instrumented program with runtime function calls.
 ```
 /lab7/test$ opt -load ../build/DynTaintAnalysisPass.so -DynTaintAnalysisPass -S InjectionAttack.ll -o InjectionAttack.dynamic.ll
 /lab7/test$ opt -load ../build/DynTaintAnalysisPass.so -DynTaintAnalysisPass -S ControlFlowHijack.ll -o ControlFlowHijack.dynamic.ll
 ```
 
-#### Step 4
+### Step 4
 Next, compile the instrumented program and link it with the runtime library to produce a standalone executable:
 ```
 /lab7/test$ clang -o InjectionAttack -L../build -lruntime InjectionAttack.dynamic.ll
 /lab7/test$ clang -o ControlFlowHijack -L../build -lruntime ControlFlowHijack.dynamic.ll
 ```
 
-#### Step 5
+### Step 5
 Finally run the executable. When you complete all the source files, they should work like this:
 ```
 /lab7/test$ ./InjectionAttack
@@ -123,8 +123,8 @@ Taint detected in sensitive position: %19!
 You've discovered the secret value!
 ```
 
-### Lab Instructions
-#### Program being analyzed
+## Lab Instructions
+### Program being analyzed
 We provide two programs to be analyzed:`InjectionAttack.cpp` and `ControlFlowHijack.cpp`.
 
 In `InjectionAttack.cpp`, when the user enters the required filename argument to `/bin/cat`, additional commands can be run unchecked if some additional content is added. For example, if a user inputs `example.txt ; ls -al`, the command string becomes: `/bin/cat example.txt ; ls -al`. The first command (`/bin/cat example.txt`) is executed to display the contents of `example.txt`, and then the second command (`ls -al`) is executed without any restrictions. This allows an attacker to execute arbitrary commands on the system, leading to potential unauthorized access or manipulation of files.
@@ -192,7 +192,7 @@ You've discovered the secret value!
 ```
 
 
-#### Dynamic Taint Analysis
+### Dynamic Taint Analysis
 Taint analysis consists of three components: `taint source`/`taint propagation strategy`/`taint sink`
 
 - taintsource
@@ -217,7 +217,7 @@ Taint analysis consists of three components: `taint source`/`taint propagation s
 
 
 
-#### Features of our tool
+### Features of our tool
 Different taint analysis tools have different features of data structures and taint processing methods.Here, we declare some features of our tool:
 
 - Taint granularity
@@ -256,7 +256,7 @@ Different taint analysis tools have different features of data structures and ta
 
     For LoadInst, since its source operand must be a pointer, the address of the source operand can determine whether pollution is needed, so there is only one Ptr version.
 
-#### TODO List:
+### TODO List:
 In terms of code/technical implementation, dynamic taint analysis requires the following three steps:   
 `1.`Develop the instrumentation logic and package it as an LLVM pass;  
 `2.`Use the pass to instrument the IR file of the target program, inserting calls to runtime functions;  
@@ -268,10 +268,10 @@ So in this lab, we need to complete the instrumentation logic as well as  the ru
 - Complete the instrumentation functions for `Trunc` and `Load` instructions in `Instrument.cpp`.
 - Complete the runtime analysis functions for `Store`and `BinaryOperator` instructions in `runtime.cpp`.
 
-#### Relating to instrumentation
+### Relating to instrumentation
 The instrumentation method in this lab is similar to the dynamic analysis pass of lab2. if you forgot some of the details, review [Instrumentation Pass](https://github.com/ecnu-sa-labs/ecnu-sa-labs/blob/ff8658063073a4aa46afa6552bd18c281b477baf/lab_manual/lab2.md#instrumentation-pass) and [Inserting Instructions into LLVM code](https://github.com/ecnu-sa-labs/ecnu-sa-labs/blob/ff8658063073a4aa46afa6552bd18c281b477baf/lab_manual/lab2.md#inserting-instructions-into-llvm-code) in **lab2's tutorial**.
 
-### Submission
+## Submission
 Once you are done with the lab, submit your code by commiting and pushing the changes under lab7/. Specifically, you need to submit the changes to `src/DynTaintAnalysisPass.cpp`, `src/Instrument.cpp` and `lib/runtime.cpp`
 ```
    lab7$ git add src/DynTaintAnalysisPass.cpp src/Instrument.cpp lib/runtime.cpp
