@@ -415,7 +415,7 @@ FAILED test4.py::test_union_model - assert {(0, 1)} == {(0, 0)}
 
 *Note: We shall verify whether your submitted code is bug-oriented. If your code is bug-oriented, your points may be deducted accordingly.*
 
-Once you are done with the lab, submit your code by commiting and pushing the changes under `lab4/`. Specifically, you need to submit the changes to `lab4/src/BSTUtils.py`, `lab4/tests/test1.py` , `lab4/tests/test2.py` , `lab4/tests/test4.py` ,  `lab4/tests/test4.py` .
+Once you are done with the lab, submit your code by commiting and pushing the changes under `lab4/`. Specifically, you need to submit the changes to `lab4/src/BSTUtils.py`, `lab4/tests/test1.py` , `lab4/tests/test2.py` , `lab4/tests/test3.py` ,  `lab4/tests/test4.py` .
 
 ```bash
    lab4$ git add src/BSTUtils.py tests/test1.py tests/test2.py tests/test3.py tests/test4.py
