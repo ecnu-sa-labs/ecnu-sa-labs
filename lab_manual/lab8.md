@@ -6,16 +6,16 @@ Writing a dynamic taint analysis tool for C/C++ programs as an LLVM pass to dete
 In this lab, you will build a dynamic taint analysis tool on the IR intermediate representation. By implementing taint sources, taint propagation strategies, and taint sinks, you will be able to trace the propagation of taints within the program, thereby detecting potential security issues.
 
 ### Setup
-The code for Lab7 is located under `/lab7/`.
+The code for Lab8 is located under `/lab8/`.
 
-- Open the lab7 folder in VS Code, using the 'Open Folder' option in VS Code.
+- Open the lab8 folder in VS Code, using the 'Open Folder' option in VS Code.
 - Make sure the Docker is running on your machine.
 - Open the VS Code Command Palette by pressing F1; search and select Reopen in Container.
 - This will set up the development environment for this lab in VS Code.
-- Inside the development environment the skeleton code for Lab 6_2 will be located under /lab7.
+- Inside the development environment the skeleton code for Lab 8_2 will be located under /lab8.
 - Afterwards, if VS Code prompts you to select a kit for the lab then pick Clang 8.
 
-#### lab7's project structure:
+#### lab8's project structure:
 
 ```
 - lib
@@ -34,39 +34,39 @@ The code for Lab7 is located under `/lab7/`.
 #### Step 1
 The following commands set up the lab, using the CMake/Makefile pattern.
 ```
-/lab7$ mkdir -p build && cd build
-/lab7/build$ cmake ..
-/lab7/build$ make
+/lab8$ mkdir -p build && cd build
+/lab8/build$ cmake ..
+/lab8/build$ make
 ```
 
-You should see several files created in the lab7/build directory. A LLVM pass named `DynTaintAnalysisPass.so` will be generated as the result of linking `DynTaintAnalysisPass.cpp` and `Instrument.cpp` under `lab7/src`, and a runtime library called `libruntime.so`, corresponding to `lab7/lib/runtime.cpp`. These are all source files that you will modify later. If you recall the project build steps of lab2, the steps here are almost identical to the part where it uses a dynamic analysis pass.
+You should see several files created in the lab8/build directory. A LLVM pass named `DynTaintAnalysisPass.so` will be generated as the result of linking `DynTaintAnalysisPass.cpp` and `Instrument.cpp` under `lab8/src`, and a runtime library called `libruntime.so`, corresponding to `lab8/lib/runtime.cpp`. These are all source files that you will modify later. If you recall the project build steps of lab2, the steps here are almost identical to the part where it uses a dynamic analysis pass.
 
 #### Step 2
 Generate LLVM IR as you did in previous lab.
 ```
-/lab7$ cd test
-/lab7/test$ clang -emit-llvm -S -fno-discard-value-names -c -o InjectionAttack.ll InjectionAttack.cpp -g
-/lab7/test$ clang -emit-llvm -S -fno-discard-value-names -c -o ControlFlowHijack.ll ControlFlowHijack.cpp -g
+/lab8$ cd test
+/lab8/test$ clang -emit-llvm -S -fno-discard-value-names -c -o InjectionAttack.ll InjectionAttack.cpp -g
+/lab8/test$ clang -emit-llvm -S -fno-discard-value-names -c -o ControlFlowHijack.ll ControlFlowHijack.cpp -g
 ```
 
 #### Step 3
 Use opt to run the provided DynTaintAnalysisPass pass on the compiled C++ program. This step generates an instrumented program with runtime function calls.
 ```
-/lab7/test$ opt -load ../build/DynTaintAnalysisPass.so -DynTaintAnalysisPass -S InjectionAttack.ll -o InjectionAttack.dynamic.ll
-/lab7/test$ opt -load ../build/DynTaintAnalysisPass.so -DynTaintAnalysisPass -S ControlFlowHijack.ll -o ControlFlowHijack.dynamic.ll
+/lab8/test$ opt -load ../build/DynTaintAnalysisPass.so -DynTaintAnalysisPass -S InjectionAttack.ll -o InjectionAttack.dynamic.ll
+/lab8/test$ opt -load ../build/DynTaintAnalysisPass.so -DynTaintAnalysisPass -S ControlFlowHijack.ll -o ControlFlowHijack.dynamic.ll
 ```
 
 #### Step 4
 Next, compile the instrumented program and link it with the runtime library to produce a standalone executable:
 ```
-/lab7/test$ clang -o InjectionAttack -L../build -lruntime InjectionAttack.dynamic.ll
-/lab7/test$ clang -o ControlFlowHijack -L../build -lruntime ControlFlowHijack.dynamic.ll
+/lab8/test$ clang -o InjectionAttack -L../build -lruntime InjectionAttack.dynamic.ll
+/lab8/test$ clang -o ControlFlowHijack -L../build -lruntime ControlFlowHijack.dynamic.ll
 ```
 
 #### Step 5
 Finally run the executable. When you complete all the source files, they should work like this:
 ```
-/lab7/test$ ./InjectionAttack
+/lab8/test$ ./InjectionAttack
 Filename:example.txt ; ls -al
 tainted var address: 0x7ffc369a6c90
 That's the address in:%arraydecay
@@ -94,7 +94,7 @@ drwxrwxrwx 1 root root   512 Nov 26 12:10 ..
 ```
 
 ```
-/lab7/test$ ./ControlFlowHijack
+/lab8/test$ ./ControlFlowHijack
 input:AAAAAAAAA
 tainted var : %call1
 Taint propagated from %call1 to 0x7ffca89e706c
@@ -138,7 +138,7 @@ system(cmd); // Warning: Untrusted data is passed to a system call
 ```
 Example Attack:
 ```
-/lab7/test$ ./InjectionAttack
+/lab8/test$ ./InjectionAttack
 Filename:example.txt ; ls -al
 This is an example txt file.total 32
 drwxrwxrwx 1 root root   512 Nov 26 09:22 .
@@ -186,7 +186,7 @@ int main() {
 ```
 Example Attack:
 ```
-/lab7/test$ ./ControlFlowHijack
+/lab8/test$ ./ControlFlowHijack
 input:AAAAAAAAA
 You've discovered the secret value!
 ```
@@ -272,9 +272,9 @@ So in this lab, we need to complete the instrumentation logic as well as  the ru
 The instrumentation method in this lab is similar to the dynamic analysis pass of lab2. if you forgot some of the details, review [Instrumentation Pass](https://github.com/ecnu-sa-labs/ecnu-sa-labs/blob/ff8658063073a4aa46afa6552bd18c281b477baf/lab_manual/lab2.md#instrumentation-pass) and [Inserting Instructions into LLVM code](https://github.com/ecnu-sa-labs/ecnu-sa-labs/blob/ff8658063073a4aa46afa6552bd18c281b477baf/lab_manual/lab2.md#inserting-instructions-into-llvm-code) in **lab2's tutorial**.
 
 ### Submission
-Once you are done with the lab, submit your code by commiting and pushing the changes under lab7/. Specifically, you need to submit the changes to `src/DynTaintAnalysisPass.cpp`, `src/Instrument.cpp` and `lib/runtime.cpp`
+Once you are done with the lab, submit your code by commiting and pushing the changes under lab8/. Specifically, you need to submit the changes to `src/DynTaintAnalysisPass.cpp`, `src/Instrument.cpp` and `lib/runtime.cpp`
 ```
-   lab7$ git add src/DynTaintAnalysisPass.cpp src/Instrument.cpp lib/runtime.cpp
-   lab7$ git commit -m "your commit message here"
-   lab7$ git push
+   lab8$ git add src/DynTaintAnalysisPass.cpp src/Instrument.cpp lib/runtime.cpp
+   lab8$ git commit -m "your commit message here"
+   lab8$ git push
 ```
