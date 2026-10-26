@@ -9,18 +9,18 @@ You will combine the dataflow analysis from the previous lab with a flow-insensi
 
 ### Setup
 
-The skeleton code for Lab 6 is located under `/lab6`.
-We will frequently refer to the top level directory for Lab 6 as `lab6` when describing file locations.
-This lab is built upon your work from Lab 5, so you can reuse most of your content from the `/lab5/src` directory.
+The skeleton code for Lab 7 is located under `/lab7`.
+We will frequently refer to the top level directory for Lab 7 as `lab7` when describing file locations.
+This lab is built upon your work from Lab 6, so you can reuse most of your content from the `/lab6/src` directory.
 
 #### Step 1.
 
 The following commands set up the lab, using the CMake/Makefile pattern seen before.
 
 ```sh
-/lab6$ mkdir build && cd build
-/lab6$ cmake ..
-/lab6$ make
+/lab7$ mkdir build && cd build
+/lab7$ cmake ..
+/lab7$ make
 ```
 
 Among the files generated, you should see `DivZeroPass.so` in the `build` directory, similar to the previous lab.
@@ -34,8 +34,8 @@ We are now ready to run our bare-bones lab on a sample input C program.
 Before running the pass, the LLVM IR code must be generated.
 
 ```sh
-/lab6/test$ clang -emit-llvm -S -fno-discard-value-names -Xclang -disable-O0-optnone -c test13.c -o test13.ll
-/lab6/test$ opt -load ../build/DivZeroPass.so -DivZero test13.ll
+/lab7/test$ clang -emit-llvm -S -fno-discard-value-names -Xclang -disable-O0-optnone -c test13.c -o test13.ll
+/lab7/test$ opt -load ../build/DivZeroPass.so -DivZero test13.ll
 ```
 
 The first line (`clang`) generates LLVM IR code from the input C program `test13.c`.
@@ -48,7 +48,7 @@ However, in this lab we no longer do that so you will extend your previous code 
 Upon successful completion of this lab, the output should be as follows:
 
 ```sh
-/lab6/test$ opt -load ../build/DivZeroPass.so -DivZero test13.ll
+/lab7/test$ opt -load ../build/DivZeroPass.so -DivZero test13.ll
 Running DivZero on f
 Potential Instructions by DivZero:
     %div = sdiv i32 1, %2
@@ -104,7 +104,7 @@ So in `doAnalysis`, you will need to handle functions with arguments and set up 
 
 Familiarize yourself with the `doAnalysis()` routine that acts as the entrypoint to your **divide-by-zero** LLVM pass.
 In last lab, you implemented the chaotic iteration algorithm here.
-For Lab 6, the function signature for `doAnalysis()` has now changed slightly to include a **PointerAnalysis** object.
+For Lab 7, the function signature for `doAnalysis()` has now changed slightly to include a **PointerAnalysis** object.
 We will go over this in Part 2.
 
 ```cpp
@@ -368,12 +368,12 @@ This ensures that all pointer references are in-sync and will converge upon a pr
 
 ### Submission
 
-Once you are done with the lab, submit your code by commiting and pushing the changes under `lab6/`. Specifically, you need to submit the changes to `src/ChaoticIteration.cpp`, `src/DivZeroAnalysis.cpp` and `src/Transfer.cpp`.
+Once you are done with the lab, submit your code by commiting and pushing the changes under `lab7/`. Specifically, you need to submit the changes to `src/ChaoticIteration.cpp`, `src/DivZeroAnalysis.cpp` and `src/Transfer.cpp`.
 
 ```sh
-lab6$ git add src/ChaoticIteration.cpp src/DivZeroAnalysis.cpp src/Transfer.cpp
-lab6$ git commit -m "your commit message here"
-lab6$ git push
+lab7$ git add src/ChaoticIteration.cpp src/DivZeroAnalysis.cpp src/Transfer.cpp
+lab7$ git commit -m "your commit message here"
+lab7$ git push
 ```
 
 [LLVM AllocaInst]: https://llvm.org/doxygen/classllvm_1_1AllocaInst.html
