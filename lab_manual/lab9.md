@@ -45,17 +45,17 @@ wsl --set-default Ubuntu
 Open WSL2, download your repository, and open it with VSCode (using the Windows version of VSCode, no need to download it separately):
 
 ``` bash
-lab8: code .
+lab9: code .
 ```
 Make sure VSCode has the Docker and Dev Container extensions installed, then simply reopen the container.
 
 Additionally, a potential issue is that the LLVM version in our current container is outdated and not suitable for running MiniKLEE. To address this, I added a hot patch to download the appropriate LLVM version **automically** from the network when the container starts. However, for some students with **poor network**, you'd better switch to a domestic mirror, such as Aliyun or Tsinghua mirrors. After switching the mirror, re-download the corresponding LLVM version. You can either restart the container to download it **automatically** or **download it manually**:
 
 ``` bash
-lab8$ rm llvm.sh                        # Remove the current llvm.sh
-lab8$ wget https://apt.llvm.org/llvm.sh # Download llvm.sh from the network
-lab8$ chmod +x llvm.sh                  # Grant execute permission
-lab8$ ./llvm.sh 14 all                  # Execute to download LLVM version 14
+lab9$ rm llvm.sh                        # Remove the current llvm.sh
+lab9$ wget https://apt.llvm.org/llvm.sh # Download llvm.sh from the network
+lab9$ chmod +x llvm.sh                  # Grant execute permission
+lab9$ ./llvm.sh 14 all                  # Execute to download LLVM version 14
 ```
 
 > I apologize for the rushed lab preparation and any inconvenience it may have caused.
@@ -168,7 +168,7 @@ To simpilfy, input programs in this lab are assumed to have **only sub-features 
 <!-- TOC --><a name="23-setup"></a>
 ### 2.3 Setup
 
-To build your own `miniklee`, simply type `make` in `lab8` directory:
+To build your own `miniklee`, simply type `make` in `lab9` directory:
 
 ``` bash
 $ make
@@ -519,10 +519,10 @@ After implementing task 3, run the test case `test/example.c` to verify your cha
 <!-- TOC --><a name="7-submission"></a>
 ## 7. Submission
 
-Once you are done with the lab, submit your code by commiting and pushing the changes under lab8/. Specifically, you need to submit the changes to `src/Executor.cpp`
+Once you are done with the lab, submit your code by commiting and pushing the changes under lab9/. Specifically, you need to submit the changes to `src/Executor.cpp`
 
 ``` bash
-   lab8$ git add src/Executor.cpp
-   lab8$ git commit -m "your commit message here"
-   lab8$ git push
+   lab9$ git add src/Executor.cpp
+   lab9$ git commit -m "your commit message here"
+   lab9$ git push
 ```
