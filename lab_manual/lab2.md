@@ -450,26 +450,18 @@ In particular, for this course we shall use them to find bugs in a program.
 
 ### Submission
 
-Once you are done with the lab, submit your code by commiting and pushing the changes under `lab2/`. Specifically, you need to submit the changes to `src/DynamicAnalysisPass.cpp` and `src/StaticAnalysisPass.cpp`
+Once you have completed both parts of this lab, commit and push the following files under `lab2/`:
+
+- **Part 1 — Understanding the LLVM IR:** `c_programs/test1.c`, `c_programs/test2.c`, `c_programs/test3.c`, and `c_programs/test4.c`.
+- **Part 2 — Understanding the LLVM API:** `src/DynamicAnalysisPass.cpp` and `src/StaticAnalysisPass.cpp`.
+
 
 ```
-   lab2$ git add src/DynamicAnalysisPass.cpp src/StaticAnalysisPass.cpp
+   lab2$ git add c_programs/test1.c c_programs/test2.c c_programs/test3.c c_programs/test4.c src/DynamicAnalysisPass.cpp src/StaticAnalysisPass.cpp
    lab2$ git commit -m "your commit message here"
    lab2$ git push
 ```
 
-<!--
-Once you are done with the lab, you can create a `submission.zip` file by using
-the following command:
-
-```sh
-/lab2$ make submit
-...
-submission.zip created successfully.
-```
-
-Then upload the `submission.zip` file to TA's email.
--->
 
 [llvm-primer]: https://tingsu.github.io/files/courses/llvm-framework-primer.pdf
 [llvm-lang]: https://llvm.org/docs/LangRef.html
